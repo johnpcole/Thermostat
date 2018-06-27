@@ -1,3 +1,5 @@
+from boilercontroller_component import boilercontroller_module as BoilerController
+from scheduler_component import scheduler_module as Scheduler
 #from controls_component import controls_module as Controller
 #from game_component import game_module as Game
 #from field_component import field_module as Field
@@ -17,6 +19,9 @@ def runapplication():
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 	# Define objects used to drive game            #
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+	boilercontroller = BoilerController.createboilercontroller()
+	scheduler = Scheduler.createscheduler()
 
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()
