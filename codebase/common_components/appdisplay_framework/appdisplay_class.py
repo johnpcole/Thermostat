@@ -97,6 +97,22 @@ class DefineApplicationWindow:
 
 
 	# -------------------------------------------------------------------
+	# Draws a line
+	# -------------------------------------------------------------------
+
+	def drawline(self, firstpoint, secondpoint, linecolour, linewidth, aliased):
+
+		# Draw aliased
+		if aliased == "":
+			GUI.draw.line(self.windowobject, self.colourlibrary.get(linecolour),
+											firstpoint.getcoordinates(), secondpoint.getcoordinates(), linewidth)
+		else:
+			GUI.draw.aaline(self.windowobject, self.colourlibrary.get(linecolour),
+											firstpoint.getcoordinates(), secondpoint.getcoordinates())
+
+
+
+	# -------------------------------------------------------------------
 	# Draws a rectangle
 	# -------------------------------------------------------------------
 

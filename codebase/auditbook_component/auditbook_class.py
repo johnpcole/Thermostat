@@ -1,7 +1,4 @@
-from ..clock_datatype import clock_module as Clock
-
-
-class DefineSchedule:
+class DefineAuditBook:
 
 	# ==========================================================================================
 	# Object Setup
@@ -9,7 +6,7 @@ class DefineSchedule:
 
 	def __init__(self):
 
-		self.scheduleditems = {}
+		self.audititems = {}
 
 	# =========================================================================================
 
@@ -19,10 +16,10 @@ class DefineSchedule:
 
 	# =========================================================================================
 
-	def addscheduleditem(self, newtime, newinstruction):
+	def addscheduleditem(self, newtime, newoutcome):
 
 		if self.doesscheduledtimeexist(newtime) == False:
-			self.scheduleditems[newtime.getvalue()] = newinstruction
+			self.scheduleditems[newtime.getvalue()] = newoutcome
 			return True
 
 		else:
@@ -41,7 +38,7 @@ class DefineSchedule:
 
 	# =========================================================================================
 
-	def getscheduledinstruction(self, queriedtime):
+	def getscheduleditem(self, queriedtime):
 
 		if self.doesscheduledtimeexist(queriedtime) == True:
 			return self.scheduleditems[queriedtime.getvalue()]
@@ -63,8 +60,8 @@ class DefineSchedule:
 
 	def getnextscheduledtime(self, currenttime):
 
-		if len(self.getscheduledtimeintegers()) > 0:
-			sortedlist = self.getscheduledtimeintegers()
+		if len(self.getscheduledtimes()) > 0:
+			sortedlist = self.getscheduledtimes()
 			outcome = -1000
 			for scheduledtime in sortedlist:
 				if scheduledtime > currenttime:
@@ -72,7 +69,7 @@ class DefineSchedule:
 						outcome = scheduledtime
 			if outcome == -1000:
 				outcome = sortedlist[0]
-			return Clock.createasinteger(outcome)
+			return outcome
 
 		else:
 			return -1000
@@ -81,41 +78,29 @@ class DefineSchedule:
 
 	def getearliestscheduledtime(self):
 
-		sortedlist = self.getscheduledtimeintegers()
-		if len(sortedlist) > 0:
-			return Clock.createasinteger(sortedlist[0])
+		if len(self.getscheduledtimes()) > 0:
+			return min(self.scheduleditems.keys())
 
 		else:
 			return -1000
 
 	# =========================================================================================
 
-	def getscheduledtimeintegers(self):
+	def getscheduledtimes(self):
 
 		return sorted(self.scheduleditems.keys())
 
 	# =========================================================================================
 
-	def getscheduledtimes(self):
-
-		sortedlist = self.getscheduledtimeintegers()
-		outcome = []
-		for sorteditem in sortedlist:
-			outcome.append(Clock.createasinteger(sorteditem))
-		return outcome
-
-	# =========================================================================================
-
 	def getrollingscheduledtimes(self, currenttime, desiredlistlength):
 
-		originallist = self.getscheduledtimes()
-		listlength = len(originallist)
+		listlength = len(self.getscheduledtimes())
 		if listlength > 0:
-			currenttimeinteger = currenttime.getvalue()
+			originallist = self.getscheduledtimes()
 			multiplier = 1 + int(desiredlistlength / listlength)
 			outcome = []
 			for scheduledtime in originallist:
-				if scheduledtime.getvalue() > currenttimeinteger:
+				if scheduledtime > currenttime:
 					outcome.append(scheduledtime)
 			for index in range(0, multiplier):
 				outcome = outcome + originallist

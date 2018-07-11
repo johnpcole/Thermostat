@@ -1,33 +1,39 @@
 from boilercontroller_component import boilercontroller_module as BoilerController
 from scheduler_component import scheduler_module as Scheduler
-#from controls_component import controls_module as Controller
+from display_component import display_module as Display
+from common_components.userinterface_framework import userinterface_module as GUI
+from controls_component import controls_module as Controller
+from clock_datatype import clock_module as Clock
 #from game_component import game_module as Game
 #from field_component import field_module as Field
-#from display_component import display_module as Display
 #from defenderarmy_component import defenderarmy_module as DefenderArmy
 #from enemyarmy_component import enemyarmy_module as EnemyArmy
-#from common_components.userinterface_framework import userinterface_module as GUI
 
 
 
 def runapplication():
 
 	# ===============================================================================================================
-	#GUI.init()
+	GUI.init()
 	# ===============================================================================================================
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
-	# Define objects used to drive game            #
+	# Define objects used to drive application     #
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
 	boilercontroller = BoilerController.createboilercontroller()
 	scheduler = Scheduler.createscheduler()
+	display = Display.createdisplay()
+	controls = Controller.createcontroller()
+
+	scheduler.addscheduleditem(Clock.createastime(3, 45, 0), 23)
+	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
+	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
+	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
 
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()
 	#defenderarmy = DefenderArmy.createarmy(field)
-	#controls = Controller.createcontroller(field)
-	#display = Display.createdisplay(field, controls)
 	#game = Game.creategame()
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -39,14 +45,16 @@ def runapplication():
 	# ===============================================================================================================
 	# ===============================================================================================================
 
-	#while controls.getquitstate() == False:
+	while controls.getquitstate() == False:
+
+		currenttime = Clock.getnow()
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Process user input and resulting events       #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 		# Process any input events (mouse clicks, mouse moves)
-		#controls.processinput()
+		controls.processinput()
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# User moves mouse over field or clicks field           #
@@ -144,8 +152,8 @@ def runapplication():
 			# Remove Defenders from field
 			#field.wipedefendersfromfield()
 
-			# Refresh Screen
-			#display.refreshscreen(enemyarmy, defenderarmy, field, controls, game)
+		# Refresh Screen
+		display.refreshscreen(currenttime, controls)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #
@@ -177,6 +185,6 @@ def runapplication():
 		#display.refreshscreen(enemyarmy, defenderarmy, field, controls, game)
 
 	# ===============================================================================================================
-	#GUI.quit()
+	GUI.quit()
 	# ===============================================================================================================
 
