@@ -32,7 +32,8 @@ class DefineClock:
 
 	def getvalue(self):
 
-		return (((self.hours * 24) + self.minutes) * 60) + self.seconds
+		totalminutes = self.minutes + (self.hours * 60)
+		return (totalminutes * 60) + self.seconds
 
 	# =========================================================================================
 

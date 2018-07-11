@@ -27,6 +27,7 @@ def runapplication():
 	controls = Controller.createcontroller()
 
 	scheduler.addscheduleditem(Clock.createastime(3, 45, 0), 23)
+	scheduler.addscheduleditem(Clock.createastime(7, 13, 0), 19)
 	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
 	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
 	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
@@ -153,7 +154,7 @@ def runapplication():
 			#field.wipedefendersfromfield()
 
 		# Refresh Screen
-		display.refreshscreen(currenttime, controls)
+		display.refreshscreen(currenttime, controls, scheduler)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #

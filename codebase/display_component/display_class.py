@@ -20,8 +20,13 @@ class DefineDisplay:
 		# Sets up pygame window related properties & methods and loads images, fonts & custom colours
 		self.display = AppDisplay.createwindow(self.displaysize, "Thermostat")
 		self.display.addfont("Timeline Hours", "", "Font", 14)
+		self.display.addfont("Timeline Temps", "", "Font", 28)
 		self.setupcustomcolours()
 		self.setupimages()
+
+		self.runwaystartline = 90
+		self.runwaytimescale = 36   # How many pixels make up an hour
+
 
 		# Sets up animation clock for next wave plaque and coins & crystals
 		#self.miscanimationclock = Scale.createfull(1000)
@@ -70,9 +75,9 @@ class DefineDisplay:
 	# removes embellishments from the field ready for the next cycle
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, currenttime, controls):
+	def refreshscreen(self, currenttime, controls, scheduler):
 
-		self.drawtimeline(currenttime)
+		self.drawrunway(currenttime, scheduler)
 #
 # 		self.updatemiscanimation()
 #
@@ -244,61 +249,65 @@ class DefineDisplay:
 # 		# Clear list of defenders & enemies
 # 		self.actorlist.clearlists()
 #
-#
-#
+
 	# -------------------------------------------------------------------
 	# Paints the timeline at the top of the screen
 	# -------------------------------------------------------------------
 
- 	def drawtimeline(self, currenttime):
+ 	def drawrunway(self, currenttime, scheduler):
 
-		startline = 90
-		timescale = 36   # How many pixels make up an hour
 
-		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 30), "Black", "", 0)
-		self.display.drawline(Vector.createfromvalues(startline, 0), Vector.createfromvalues(startline, 48),
-																										"Grey", 1, "")
+		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 50), "Black", "", 0)
+		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
+													Vector.createfromvalues(self.runwaystartline, 48), "Grey", 1, "")
 		lasthour = currenttime.gethour()
-		ofsetseconds = int(timescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
+		offsetpixels = int(self.runwaytimescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
+		self.drawrunwaytimings(currenttime, lasthour, offsetpixels)
+		self.drawrunwayinstructions(currenttime, lasthour, offsetpixels, scheduler)
+
+
+	# -------------------------------------------------------------------
+	# Paints the timeline at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawrunwaytimings(self, currenttime, lasthour, offsetpixels):
 
 		for hourindex in range(1, 12):
-			hourmarker = startline + (hourindex * timescale) - ofsetseconds
+			hourmarker = self.runwaystartline + (hourindex * self.runwaytimescale) - offsetpixels
 			hourlabel = str(Clock.convert24hourtohuman(hourindex + lasthour))
 			self.display.drawline(Vector.createfromvalues(hourmarker, 0), Vector.createfromvalues(hourmarker, 15),
 																										"Grey", 1, "")
 			self.display.drawtext(hourlabel, Vector.createfromvalues(hourmarker + 3, 1),
 																					"Left", "Grey", "Timeline Hours")
 			for subindex in range(1, 4):
-				pixelposition = hourmarker - int(subindex * timescale / 4)
-				if startline < pixelposition:
+				pixelposition = hourmarker - int(subindex * self.runwaytimescale / 4)
+				if self.runwaystartline < pixelposition:
 					lineheight = 3 * ((subindex + 1) % 2)
 					self.display.drawline(Vector.createfromvalues(pixelposition, 0),
-													Vector.createfromvalues(pixelposition, lineheight),"Grey", 1, "")
-
-	# 	drawline
-		# 	hour
-		# 	drawtext
-		# 	hour
-		# 	drawline
-		# 	halfhour
-		#
-		# 'overwrite
-		# 'leftoverhang
+													Vector.createfromvalues(pixelposition, lineheight), "Grey", 1, "")
 
 
 
-#  Full width of the health bar
-# 		barfullwidth = 40
-#
-# 		# Top left position of the health bar
-# 		topleftcorner = Vector.add(topleft, Vector.createfromvalues(int((dimensions.getx() - barfullwidth) / 2), 0))
-#
-# 		# Draw full width red bar
-# 		self.display.drawrectangle(topleftcorner, Vector.createfromvalues(barfullwidth, 3), "Dirty Red", "", 0)
-#
-# 		# Draw proportional yellow bar
-# 		self.display.drawrectangle(topleftcorner, Vector.createfromvalues(int(barfullwidth * healthpercentage / 100),
-# 																							3), "Dirty Yellow", "", 0)
+	# -------------------------------------------------------------------
+	# Paints the scheduled settings at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawrunwayinstructions(self, currenttime, lasthour, offsetpixels, scheduler):
+
+		scheduledtimes = scheduler.getscheduledtimes()
+		for scheduledtime in scheduledtimes:
+			scheduledtimevalue = scheduledtime.getvalue()
+			if scheduledtimevalue < currenttime.getvalue():
+				scheduledtimevalue = scheduledtimevalue + (24 * 3600)
+			houroffset = scheduledtimevalue - (3600 * lasthour)
+			pixelposition = self.runwaystartline + int(houroffset * self.runwaytimescale / 3600) - offsetpixels
+
+			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
+								  Vector.createfromvalues(pixelposition, 48),
+								  "Grey", 1, "")
+			self.display.drawtext(str(scheduler.getscheduledinstruction(scheduledtime)),
+										Vector.createfromvalues(pixelposition + 3, 19), "Left", "Grey", "Timeline Temps")
+
 #
 #
 #

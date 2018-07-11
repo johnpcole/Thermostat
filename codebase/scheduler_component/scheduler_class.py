@@ -90,7 +90,7 @@ class DefineSchedule:
 
 	# =========================================================================================
 
-	def getscheduledtimeintegers(self):
+	def getscheduledtimevalues(self):
 
 		return sorted(self.scheduleditems.keys())
 
@@ -98,28 +98,10 @@ class DefineSchedule:
 
 	def getscheduledtimes(self):
 
-		sortedlist = self.getscheduledtimeintegers()
+		sortedlist = self.getscheduledtimevalues()
 		outcome = []
 		for sorteditem in sortedlist:
 			outcome.append(Clock.createasinteger(sorteditem))
 		return outcome
 
 	# =========================================================================================
-
-	def getrollingscheduledtimes(self, currenttime, desiredlistlength):
-
-		originallist = self.getscheduledtimes()
-		listlength = len(originallist)
-		if listlength > 0:
-			currenttimeinteger = currenttime.getvalue()
-			multiplier = 1 + int(desiredlistlength / listlength)
-			outcome = []
-			for scheduledtime in originallist:
-				if scheduledtime.getvalue() > currenttimeinteger:
-					outcome.append(scheduledtime)
-			for index in range(0, multiplier):
-				outcome = outcome + originallist
-			return outcome
-
-		else:
-			return {}
