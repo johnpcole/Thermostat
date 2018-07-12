@@ -1,7 +1,7 @@
-from ..common_components.scale_datatype import scale_module as Scale
+#from ..common_components.scale_datatype import scale_module as Scale
 from ..common_components.vector_datatype import vector_module as Vector
 from ..common_components.appdisplay_framework import appdisplay_module as AppDisplay
-from displayactors_subcomponent import displayactors_module as DisplayActorList
+#from displayactors_subcomponent import displayactors_module as DisplayActorList
 from . import display_privatefunctions as DisplayFunction
 from ..clock_datatype import clock_module as Clock
 
@@ -21,10 +21,11 @@ class DefineDisplay:
 		self.display = AppDisplay.createwindow(self.displaysize, "Thermostat")
 		self.display.addfont("Timeline Hours", "", "Font", 14)
 		self.display.addfont("Timeline Temps", "", "Font", 28)
+		self.display.addfont("Desired Temp", "", "Font", 54)
 		self.setupcustomcolours()
 		self.setupimages()
 
-		self.runwaystartline = 90
+		self.runwaystartline = 65
 		self.runwaytimescale = 36   # How many pixels make up an hour
 
 
@@ -49,9 +50,28 @@ class DefineDisplay:
 	# Adds custom colours
 	# -------------------------------------------------------------------
 	def setupcustomcolours(self):
-		self.display.addcolour("Dirty Red", 230, 0, 0)
-		self.display.addcolour("Dirty Yellow", 230, 230, 0)
-		self.display.addcolour("Dirty Purple", 25, 12, 61)
+
+		self.display.addcolour("5", 0, 0, 255)
+		self.display.addcolour("6", 0, 51, 255)
+		self.display.addcolour("7", 0, 102, 255)
+		self.display.addcolour("8", 0, 153, 255)
+		self.display.addcolour("9", 0, 204, 255)
+		self.display.addcolour("10", 0, 255, 255)
+		self.display.addcolour("11", 0, 255, 204)
+		self.display.addcolour("12", 0, 255, 153)
+		self.display.addcolour("13", 0, 255, 102)
+		self.display.addcolour("14", 0, 255, 51)
+		self.display.addcolour("15", 0, 255, 0)
+		self.display.addcolour("16", 51, 255, 0)
+		self.display.addcolour("17", 102, 255, 0)
+		self.display.addcolour("18", 153, 255, 0)
+		self.display.addcolour("19", 204, 255, 0)
+		self.display.addcolour("20", 255, 255, 0)
+		self.display.addcolour("21", 255, 204, 0)
+		self.display.addcolour("22", 255, 153, 0)
+		self.display.addcolour("23", 255, 102, 0)
+		self.display.addcolour("24", 255, 51, 0)
+		self.display.addcolour("25", 255, 0, 0)
 
 
 
@@ -75,9 +95,9 @@ class DefineDisplay:
 	# removes embellishments from the field ready for the next cycle
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, currenttime, controls, scheduler):
+	def refreshscreen(self, currenttime, controls, scheduler, boilercontroller):
 
-		self.drawrunway(currenttime, scheduler)
+		self.drawrunway(currenttime, scheduler, boilercontroller)
 #
 # 		self.updatemiscanimation()
 #
@@ -254,16 +274,20 @@ class DefineDisplay:
 	# Paints the timeline at the top of the screen
 	# -------------------------------------------------------------------
 
- 	def drawrunway(self, currenttime, scheduler):
+ 	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
 
 		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 50), "Black", "", 0)
 		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
 													Vector.createfromvalues(self.runwaystartline, 48), "Grey", 1, "")
+		currenttemp = boilercontroller.getdesiredtemperature()
+		self.display.drawtext(str(currenttemp), Vector.createfromvalues(self.runwaystartline - 3, -5), "Right",
+													DisplayFunction.gettemperaturecolour(currenttemp), "Desired Temp")
 		lasthour = currenttime.gethour()
 		offsetpixels = int(self.runwaytimescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
 		self.drawrunwaytimings(currenttime, lasthour, offsetpixels)
 		self.drawrunwayinstructions(currenttime, lasthour, offsetpixels, scheduler)
+
 
 
 	# -------------------------------------------------------------------
@@ -305,8 +329,9 @@ class DefineDisplay:
 			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
 								  Vector.createfromvalues(pixelposition, 48),
 								  "Grey", 1, "")
-			self.display.drawtext(str(scheduler.getscheduledinstruction(scheduledtime)),
-										Vector.createfromvalues(pixelposition + 3, 19), "Left", "Grey", "Timeline Temps")
+			tempvalue = scheduler.getscheduledinstruction(scheduledtime)
+			self.display.drawtext(str(tempvalue), Vector.createfromvalues(pixelposition + 3, 19), "Left",
+													DisplayFunction.gettemperaturecolour(tempvalue), "Timeline Temps")
 
 #
 #

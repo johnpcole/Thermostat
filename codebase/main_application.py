@@ -154,7 +154,7 @@ def runapplication():
 			#field.wipedefendersfromfield()
 
 		# Refresh Screen
-		display.refreshscreen(currenttime, controls, scheduler)
+		display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #
