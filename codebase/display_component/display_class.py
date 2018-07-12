@@ -297,8 +297,11 @@ class DefineDisplay:
 
 		# Display current desired temperature
 		currenttemp = boilercontroller.getdesiredtemperature()
-		self.display.drawtext(str(currenttemp), Vector.createfromvalues(self.runwaystartline - 3, -6), "Right",
-													DisplayFunction.gettemperaturecolour(currenttemp), "Desired Temp")
+		self.display.drawtext(	str(currenttemp),
+								Vector.createfromvalues(self.runwaystartline - 3, -6),
+								"Right",
+								DisplayFunction.gettemperaturecolour(currenttemp),
+								"Desired Temp")
 
 		# The current hour
 		lasthour = currenttime.gethour()
@@ -314,11 +317,17 @@ class DefineDisplay:
 
 		# Draw the current time main marker
 		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
-													Vector.createfromvalues(self.runwaystartline, 48), "Grey", 1, "")
+								Vector.createfromvalues(self.runwaystartline, 48),
+								"Grey",
+								1,
+								"")
 
 		# Draw the runway edge
 		#self.display.drawline(Vector.createfromvalues(0, 49),
-		#											Vector.createfromvalues(480, 49), "Grey", 1, "")
+		#						Vector.createfromvalues(480, 49),
+		#						"Grey",
+		#						1,
+		#						"")
 
 
 
@@ -330,8 +339,11 @@ class DefineDisplay:
 
 		# Display the current hour at the current time marker only if it's exactly on the clock
 		if currenttime.getminute() == 0:
-			self.display.drawtext(str(Clock.convert24hourtohuman(lasthour)),
-								Vector.createfromvalues(self.runwaystartline + 3, 1), "Left", "Grey", "Timeline Hours")
+			self.display.drawtext(Clock.convert24hourtohuman(lasthour),
+									Vector.createfromvalues(self.runwaystartline + 3, 1),
+									"Left",
+									"Grey",
+									"Timeline Hours")
 
 		# Print the hour/half/quarter markers for twelve hours
 		for hourindex in range(1, 14):
@@ -340,12 +352,18 @@ class DefineDisplay:
 			hourmarker = self.runwaystartline + (hourindex * self.runwaytimescale) - offsetpixels
 
 			# Draw hour marker line
-			self.display.drawline(Vector.createfromvalues(hourmarker, 0), Vector.createfromvalues(hourmarker, 15),
-																										"Grey", 1, "")
+			self.display.drawline(Vector.createfromvalues(hourmarker, 0),
+									Vector.createfromvalues(hourmarker, 15),
+									"Grey",
+									1,
+									"")
 
 			# Draw hour marker number
-			self.display.drawtext(str(Clock.convert24hourtohuman(hourindex + lasthour)),
-										Vector.createfromvalues(hourmarker + 3, 1), "Left", "Grey", "Timeline Hours")
+			self.display.drawtext(Clock.convert24hourtohuman(hourindex + lasthour),
+									Vector.createfromvalues(hourmarker + 3, 1),
+									"Left",
+									"Grey",
+									"Timeline Hours")
 
 			# Draw the half & quarter markers
 			for subindex in range(1, 4):
@@ -361,7 +379,10 @@ class DefineDisplay:
 
 					# Draw the marker line
 					self.display.drawline(Vector.createfromvalues(pixelposition, 0),
-													Vector.createfromvalues(pixelposition, lineheight), "Grey", 1, "")
+											Vector.createfromvalues(pixelposition, lineheight),
+											"Grey",
+											1,
+											"")
 
 
 
@@ -390,14 +411,20 @@ class DefineDisplay:
 
 			# Draw marker
 			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
-								  Vector.createfromvalues(pixelposition, 48), "Grey", 1, "")
+								 	Vector.createfromvalues(pixelposition, 48),
+								 	"Grey",
+								 	1,
+								 	"")
 
 			# Get desired temperature
 			tempvalue = scheduler.getscheduledinstruction(scheduledtime)
 
 			# Draw desired temperature number
-			self.display.drawtext(str(tempvalue), Vector.createfromvalues(pixelposition + 3, 19), "Left",
-													DisplayFunction.gettemperaturecolour(tempvalue), "Timeline Temps")
+			self.display.drawtext(str(tempvalue),
+									Vector.createfromvalues(pixelposition + 3, 19),
+									"Left",
+									DisplayFunction.gettemperaturecolour(tempvalue),
+									"Timeline Temps")
 
 #
 #

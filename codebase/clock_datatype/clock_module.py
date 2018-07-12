@@ -32,10 +32,17 @@ def timediff(timeone, timetwo):
 	return ClockClass.DefineClock(0, 0, timeone.getvalue() - timetwo.getvalue())
 
 
+
+def timeadd(timeone, timetwo):
+
+	return ClockClass.DefineClock(0, 0, timeone.getvalue() + timetwo.getvalue())
+
+
+
 def convert24hourtohuman(hour):
 
 	rawhour = hour % 12
 	if rawhour == 0:
-		return 12
+		return str(12)
 	else:
-		return rawhour
+		return str(rawhour)

@@ -11,6 +11,8 @@ class DefineSchedule:
 
 		self.scheduleditems = {}
 
+		self.lastchecked = Clock.getnow()
+
 	# =========================================================================================
 
 	def getschedule(self):
@@ -22,7 +24,7 @@ class DefineSchedule:
 	def addscheduleditem(self, newtime, newinstruction):
 
 		if self.doesscheduledtimeexist(newtime) == False:
-			self.scheduleditems[newtime.getvalue()] = newinstruction
+			self.scheduleditems[newtime.getsecondlessvalue()] = newinstruction
 			return True
 
 		else:
@@ -33,7 +35,7 @@ class DefineSchedule:
 	def deletescheduleditem(self, timetodelete):
 
 		if self.doesscheduledtimeexist(timetodelete) == True:
-			del self.scheduleditems[timetodelete.getvalue()]
+			del self.scheduleditems[timetodelete.getsecondlessvalue()]
 			return True
 
 		else:
@@ -44,7 +46,7 @@ class DefineSchedule:
 	def getscheduledinstruction(self, queriedtime):
 
 		if self.doesscheduledtimeexist(queriedtime) == True:
-			return self.scheduleditems[queriedtime.getvalue()]
+			return self.scheduleditems[queriedtime.getsecondlessvalue()]
 
 		else:
 			return -1000
@@ -53,7 +55,7 @@ class DefineSchedule:
 
 	def doesscheduledtimeexist(self, queriedtime):
 
-		if queriedtime.getvalue() in self.scheduleditems:
+		if queriedtime.getsecondlessvalue() in self.scheduleditems:
 			return True
 
 		else:
@@ -61,32 +63,49 @@ class DefineSchedule:
 
 	# =========================================================================================
 
-	def getnextscheduledtime(self, currenttime):
-
-		if len(self.getscheduledtimeintegers()) > 0:
-			sortedlist = self.getscheduledtimeintegers()
-			outcome = -1000
-			for scheduledtime in sortedlist:
-				if scheduledtime > currenttime:
-					if outcome == -1000:
-						outcome = scheduledtime
-			if outcome == -1000:
-				outcome = sortedlist[0]
-			return Clock.createasinteger(outcome)
-
-		else:
-			return -1000
+	# def getnextscheduledtime(self, currenttime):
+	#
+	# 	sortedlist = self.getscheduledtimevalues()
+	# 	if len(sortedlist) > 0:
+	# 		outcome = -1000
+	# 		for scheduledtime in sortedlist:
+	# 			if scheduledtime > currenttime:
+	# 				if outcome == -1000:
+	# 					outcome = scheduledtime
+	# 		if outcome == -1000:
+	# 			outcome = sortedlist[0]
+	# 		return Clock.createasinteger(outcome)
+	#
+	# 	else:
+	# 		return -1000
 
 	# =========================================================================================
 
-	def getearliestscheduledtime(self):
+	# def getlastscheduledtime(self, currenttime):
+	#
+	# 	sortedlist = self.getscheduledtimevalues()
+	# 	if len(sortedlist) > 0:
+	# 		outcome = -1000
+	# 		for scheduledtime in sortedlist:
+	# 			if scheduledtime <= currenttime:
+	# 				outcome = scheduledtime
+	# 		if outcome == -1000:
+	# 			outcome = scheduledtime
+	# 		return Clock.createasinteger(outcome)
+	#
+	# 	else:
+	# 		return -1000
 
-		sortedlist = self.getscheduledtimeintegers()
-		if len(sortedlist) > 0:
-			return Clock.createasinteger(sortedlist[0])
+	# =========================================================================================
 
-		else:
-			return -1000
+	# def getearliestscheduledtime(self):
+	#
+	# 	sortedlist = self.getscheduledtimeintegers()
+	# 	if len(sortedlist) > 0:
+	# 		return Clock.createasinteger(sortedlist[0])
+	#
+	# 	else:
+	# 		return -1000
 
 	# =========================================================================================
 
@@ -105,3 +124,13 @@ class DefineSchedule:
 		return outcome
 
 	# =========================================================================================
+
+	def checkschedule(self, currenttime):
+
+		lasttimechecked = self.lastchecked.getsecondlessvalue()
+		outcome = -1000
+		if lasttimechecked != currenttime.getsecondlessvalue():
+			self.lastchecked = Clock.createasinteger(lasttimechecked + 60)
+			print "Updated Schedule to ", self.lastchecked.gettext()
+			outcome = self.getscheduledinstruction(self.lastchecked)
+		return outcome
