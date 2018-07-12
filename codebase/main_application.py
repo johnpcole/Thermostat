@@ -30,6 +30,7 @@ def runapplication():
 	scheduler.addscheduleditem(Clock.createastime(7, 13, 0), 19)
 	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
 	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
+	scheduler.addscheduleditem(Clock.createastime(20, 50, 0), 20)
 	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
 
 	#field = Field.createfield()
