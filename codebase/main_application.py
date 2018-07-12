@@ -27,8 +27,11 @@ def runapplication():
 	controls = Controller.createcontroller()
 
 	scheduler.addscheduleditem(Clock.createastime(3, 45, 0), 23)
+	scheduler.addscheduleditem(Clock.createastime(7, 13, 0), 19)
+	scheduler.addscheduleditem(Clock.createastime(23, 19, 10), 11)
 	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
 	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
+	scheduler.addscheduleditem(Clock.createastime(20, 50, 0), 20)
 	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
 
 	#field = Field.createfield()
@@ -60,6 +63,10 @@ def runapplication():
 		# User moves mouse over field or clicks field           #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
+		newboilerinstruction = scheduler.checkschedule(currenttime)
+		if newboilerinstruction != -1000:
+			boilercontroller.setdesiredtemperature(newboilerinstruction)
+			print "New Boiler Instruction", newboilerinstruction
 		# If the field is enabled, update the selection property on the field and defender army objects
 		# If we are in add/upgrade mode, we DONT want to start changing the current selection!!!
 		#if controls.updatefieldselectionlocation(field) == True:
@@ -153,7 +160,8 @@ def runapplication():
 			#field.wipedefendersfromfield()
 
 		# Refresh Screen
-		display.refreshscreen(currenttime, controls)
+		if currenttime.getsecond() % 5 == 0:
+			display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #

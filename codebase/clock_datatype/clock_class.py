@@ -32,13 +32,27 @@ class DefineClock:
 
 	def getvalue(self):
 
-		return (((self.hours * 24) + self.minutes) * 60) + self.seconds
+		totalminutes = self.minutes + (self.hours * 60)
+		return (totalminutes * 60) + self.seconds
+
+	# =========================================================================================
+
+	def getsecondlessvalue(self):
+
+		totalminutes = self.minutes + (self.hours * 60)
+		return (totalminutes * 60)
 
 	# =========================================================================================
 
 	def gettext(self):
 
 		return "%02d:%02d:%02d" % (self.hours, self.minutes, self.seconds)
+
+	# =========================================================================================
+
+	def getsecondlesstext(self):
+
+		return "%02d:%02d" % (self.hours, self.minutes)
 
 	# =========================================================================================
 

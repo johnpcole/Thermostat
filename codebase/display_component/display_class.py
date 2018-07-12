@@ -1,7 +1,7 @@
-from ..common_components.scale_datatype import scale_module as Scale
+#from ..common_components.scale_datatype import scale_module as Scale
 from ..common_components.vector_datatype import vector_module as Vector
 from ..common_components.appdisplay_framework import appdisplay_module as AppDisplay
-from displayactors_subcomponent import displayactors_module as DisplayActorList
+#from displayactors_subcomponent import displayactors_module as DisplayActorList
 from . import display_privatefunctions as DisplayFunction
 from ..clock_datatype import clock_module as Clock
 
@@ -19,9 +19,16 @@ class DefineDisplay:
 
 		# Sets up pygame window related properties & methods and loads images, fonts & custom colours
 		self.display = AppDisplay.createwindow(self.displaysize, "Thermostat")
-		self.display.addfont("Timeline Hours", "", "Font", 14)
+		self.setupfonts()
 		self.setupcustomcolours()
 		self.setupimages()
+
+		# Position of current time marker in the runway
+		self.runwaystartline = 65
+
+		# How many pixels make up an hour (36 or 48) in the runway
+		self.runwaytimescale = 36
+
 
 		# Sets up animation clock for next wave plaque and coins & crystals
 		#self.miscanimationclock = Scale.createfull(1000)
@@ -43,19 +50,52 @@ class DefineDisplay:
 	# -------------------------------------------------------------------
 	# Adds custom colours
 	# -------------------------------------------------------------------
+
 	def setupcustomcolours(self):
-		self.display.addcolour("Dirty Red", 230, 0, 0)
-		self.display.addcolour("Dirty Yellow", 230, 230, 0)
-		self.display.addcolour("Dirty Purple", 25, 12, 61)
+
+		self.display.addcolour("5", 0, 0, 255)
+		self.display.addcolour("6", 0, 51, 255)
+		self.display.addcolour("7", 0, 102, 255)
+		self.display.addcolour("8", 0, 153, 255)
+		self.display.addcolour("9", 0, 204, 255)
+		self.display.addcolour("10", 0, 255, 255)
+		self.display.addcolour("11", 0, 255, 204)
+		self.display.addcolour("12", 0, 255, 153)
+		self.display.addcolour("13", 0, 255, 102)
+		self.display.addcolour("14", 0, 255, 51)
+		self.display.addcolour("15", 0, 255, 0)
+		self.display.addcolour("16", 51, 255, 0)
+		self.display.addcolour("17", 102, 255, 0)
+		self.display.addcolour("18", 153, 255, 0)
+		self.display.addcolour("19", 204, 255, 0)
+		self.display.addcolour("20", 255, 255, 0)
+		self.display.addcolour("21", 255, 204, 0)
+		self.display.addcolour("22", 255, 153, 0)
+		self.display.addcolour("23", 255, 102, 0)
+		self.display.addcolour("24", 255, 51, 0)
+		self.display.addcolour("25", 255, 0, 0)
 
 
 
 	# -------------------------------------------------------------------
 	# Adds images
 	# -------------------------------------------------------------------
+
 	def setupimages(self):
 
 		self.display.addimage("test", None, "test", True)
+
+
+
+	# -------------------------------------------------------------------
+	# Adds fonts
+	# -------------------------------------------------------------------
+
+	def setupfonts(self):
+
+		self.display.addfont("Timeline Hours", "", "Font", 14)
+		self.display.addfont("Timeline Temps", "", "Font", 28)
+		self.display.addfont("Desired Temp", "", "Font", 54)
 
 
 
@@ -70,9 +110,9 @@ class DefineDisplay:
 	# removes embellishments from the field ready for the next cycle
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, currenttime, controls):
+	def refreshscreen(self, currenttime, controls, scheduler, boilercontroller):
 
-		self.drawtimeline(currenttime)
+		self.drawrunway(currenttime, scheduler, boilercontroller)
 #
 # 		self.updatemiscanimation()
 #
@@ -244,61 +284,148 @@ class DefineDisplay:
 # 		# Clear list of defenders & enemies
 # 		self.actorlist.clearlists()
 #
-#
-#
+
 	# -------------------------------------------------------------------
 	# Paints the timeline at the top of the screen
 	# -------------------------------------------------------------------
 
- 	def drawtimeline(self, currenttime):
+ 	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
-		startline = 90
-		timescale = 36   # How many pixels make up an hour
 
-		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 30), "Black", "", 0)
-		self.display.drawline(Vector.createfromvalues(startline, 0), Vector.createfromvalues(startline, 48),
-																										"Grey", 1, "")
+		# Blank out area
+		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 50), "Black", "", 0)
+
+		# Display current desired temperature
+		currenttemp = boilercontroller.getdesiredtemperature()
+		self.display.drawtext(	str(currenttemp),
+								Vector.createfromvalues(self.runwaystartline - 3, -6),
+								"Right",
+								DisplayFunction.gettemperaturecolour(currenttemp),
+								"Desired Temp")
+
+		# The current hour
 		lasthour = currenttime.gethour()
-		ofsetseconds = int(timescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
 
-		for hourindex in range(1, 12):
-			hourmarker = startline + (hourindex * timescale) - ofsetseconds
-			hourlabel = str(Clock.convert24hourtohuman(hourindex + lasthour))
-			self.display.drawline(Vector.createfromvalues(hourmarker, 0), Vector.createfromvalues(hourmarker, 15),
-																										"Grey", 1, "")
-			self.display.drawtext(hourlabel, Vector.createfromvalues(hourmarker + 3, 1),
-																					"Left", "Grey", "Timeline Hours")
+		# Number of pixels markers are shifted left
+		offsetpixels = int(self.runwaytimescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
+
+		# Draw hour/half/quarter markers
+		self.drawrunwaytimings(currenttime, lasthour, offsetpixels)
+
+		# Draw upcoming desired temperatures (from schedule)
+		self.drawrunwayinstructions(currenttime, lasthour, offsetpixels, scheduler)
+
+		# Draw the current time main marker
+		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
+								Vector.createfromvalues(self.runwaystartline, 48),
+								"Grey",
+								1,
+								"")
+
+		# Draw the runway edge
+		#self.display.drawline(Vector.createfromvalues(0, 49),
+		#						Vector.createfromvalues(480, 49),
+		#						"Grey",
+		#						1,
+		#						"")
+
+
+
+	# -------------------------------------------------------------------
+	# Paints the timeline at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawrunwaytimings(self, currenttime, lasthour, offsetpixels):
+
+		# Display the current hour at the current time marker only if it's exactly on the clock
+		if currenttime.getminute() == 0:
+			self.display.drawtext(Clock.convert24hourtohuman(lasthour),
+									Vector.createfromvalues(self.runwaystartline + 3, 1),
+									"Left",
+									"Grey",
+									"Timeline Hours")
+
+		# Print the hour/half/quarter markers for twelve hours
+		for hourindex in range(1, 14):
+
+			# Position of hour marker line
+			hourmarker = self.runwaystartline + (hourindex * self.runwaytimescale) - offsetpixels
+
+			# Draw hour marker line
+			self.display.drawline(Vector.createfromvalues(hourmarker, 0),
+									Vector.createfromvalues(hourmarker, 15),
+									"Grey",
+									1,
+									"")
+
+			# Draw hour marker number
+			self.display.drawtext(Clock.convert24hourtohuman(hourindex + lasthour),
+									Vector.createfromvalues(hourmarker + 3, 1),
+									"Left",
+									"Grey",
+									"Timeline Hours")
+
+			# Draw the half & quarter markers
 			for subindex in range(1, 4):
-				pixelposition = hourmarker - int(subindex * timescale / 4)
-				if startline < pixelposition:
+
+				# Position of marker
+				pixelposition = hourmarker - int(subindex * self.runwaytimescale / 4)
+
+				# Only draw marker if it's to the right of the current time marker
+				if self.runwaystartline < pixelposition:
+
+					# Set height of marker lines
 					lineheight = 3 * ((subindex + 1) % 2)
+
+					# Draw the marker line
 					self.display.drawline(Vector.createfromvalues(pixelposition, 0),
-													Vector.createfromvalues(pixelposition, lineheight),"Grey", 1, "")
-
-	# 	drawline
-		# 	hour
-		# 	drawtext
-		# 	hour
-		# 	drawline
-		# 	halfhour
-		#
-		# 'overwrite
-		# 'leftoverhang
+											Vector.createfromvalues(pixelposition, lineheight),
+											"Grey",
+											1,
+											"")
 
 
 
-#  Full width of the health bar
-# 		barfullwidth = 40
-#
-# 		# Top left position of the health bar
-# 		topleftcorner = Vector.add(topleft, Vector.createfromvalues(int((dimensions.getx() - barfullwidth) / 2), 0))
-#
-# 		# Draw full width red bar
-# 		self.display.drawrectangle(topleftcorner, Vector.createfromvalues(barfullwidth, 3), "Dirty Red", "", 0)
-#
-# 		# Draw proportional yellow bar
-# 		self.display.drawrectangle(topleftcorner, Vector.createfromvalues(int(barfullwidth * healthpercentage / 100),
-# 																							3), "Dirty Yellow", "", 0)
+	# -------------------------------------------------------------------
+	# Paints the scheduled settings at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawrunwayinstructions(self, currenttime, lasthour, offsetpixels, scheduler):
+
+		# Get list of scheduled times
+		scheduledtimes = scheduler.getscheduledtimes()
+
+		# Loop over scheduled times
+		for scheduledtime in scheduledtimes:
+
+			# Get integer schedule time value
+			scheduledtimevalue = scheduledtime.getvalue()
+
+			# If the scheduled time is earlier than current time, add 24 hours so it appears in the future
+			if scheduledtimevalue < currenttime.getvalue():
+				scheduledtimevalue = scheduledtimevalue + (24 * 3600)
+
+			# Position of marker
+			houroffset = scheduledtimevalue - (3600 * lasthour)
+			pixelposition = self.runwaystartline + int(houroffset * self.runwaytimescale / 3600) - offsetpixels
+
+			# Draw marker
+			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
+								 	Vector.createfromvalues(pixelposition, 48),
+								 	"Grey",
+								 	1,
+								 	"")
+
+			# Get desired temperature
+			tempvalue = scheduler.getscheduledinstruction(scheduledtime)
+
+			# Draw desired temperature number
+			self.display.drawtext(str(tempvalue),
+									Vector.createfromvalues(pixelposition + 3, 19),
+									"Left",
+									DisplayFunction.gettemperaturecolour(tempvalue),
+									"Timeline Temps")
+
 #
 #
 #
