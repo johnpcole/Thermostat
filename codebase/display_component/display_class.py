@@ -3,7 +3,7 @@ from ..common_components.vector_datatype import vector_module as Vector
 from ..common_components.appdisplay_framework import appdisplay_module as AppDisplay
 #from displayactors_subcomponent import displayactors_module as DisplayActorList
 from . import display_privatefunctions as DisplayFunction
-from ..clock_datatype import clock_module as Clock
+from ..common_components.clock_datatype import clock_module as Clock
 
 
 class DefineDisplay:
@@ -53,27 +53,31 @@ class DefineDisplay:
 
 	def setupcustomcolours(self):
 
-		self.display.addcolour("5", 0, 0, 255)
-		self.display.addcolour("6", 0, 51, 255)
-		self.display.addcolour("7", 0, 102, 255)
-		self.display.addcolour("8", 0, 153, 255)
-		self.display.addcolour("9", 0, 204, 255)
-		self.display.addcolour("10", 0, 255, 255)
-		self.display.addcolour("11", 0, 255, 204)
-		self.display.addcolour("12", 0, 255, 153)
-		self.display.addcolour("13", 0, 255, 102)
-		self.display.addcolour("14", 0, 255, 51)
-		self.display.addcolour("15", 0, 255, 0)
-		self.display.addcolour("16", 51, 255, 0)
-		self.display.addcolour("17", 102, 255, 0)
-		self.display.addcolour("18", 153, 255, 0)
-		self.display.addcolour("19", 204, 255, 0)
-		self.display.addcolour("20", 255, 255, 0)
-		self.display.addcolour("21", 255, 204, 0)
-		self.display.addcolour("22", 255, 153, 0)
-		self.display.addcolour("23", 255, 102, 0)
-		self.display.addcolour("24", 255, 51, 0)
-		self.display.addcolour("25", 255, 0, 0)
+		self.display.addcolour("27", 178, 0, 0)
+		self.display.addcolour("26", 216, 0, 0)
+		self.display.addcolour("25", 255, 38, 38)
+		self.display.addcolour("24", 247, 73, 29)
+		self.display.addcolour("23", 239, 108, 21)
+		self.display.addcolour("22", 232, 144, 13)
+		self.display.addcolour("21", 224, 180, 6)
+		self.display.addcolour("20", 216, 216, 0)
+		self.display.addcolour("19", 180, 224, 6)
+		self.display.addcolour("18", 144, 232, 13)
+		self.display.addcolour("17", 108, 239, 21)
+		self.display.addcolour("16", 73, 247, 29)
+		self.display.addcolour("15", 38, 255, 38)
+		self.display.addcolour("14", 29, 242, 71)
+		self.display.addcolour("13", 20, 229, 104)
+		self.display.addcolour("12", 13, 216, 135)
+		self.display.addcolour("11", 6, 204, 164)
+		self.display.addcolour("10", 0, 191, 191)
+		self.display.addcolour("9", 6, 164, 204)
+		self.display.addcolour("8", 13, 135, 216)
+		self.display.addcolour("7", 20, 104, 229)
+		self.display.addcolour("6", 29, 71, 242)
+		self.display.addcolour("5", 38, 38, 255)
+		self.display.addcolour("4", 0, 0, 216)
+		self.display.addcolour("3", 0, 0, 178)
 
 
 
@@ -96,6 +100,7 @@ class DefineDisplay:
 		self.display.addfont("Timeline Hours", "", "Font", 14)
 		self.display.addfont("Timeline Temps", "", "Font", 28)
 		self.display.addfont("Desired Temp", "", "Font", 54)
+		self.display.addfont("Actual Temp", "", "Font", 148)
 
 
 
@@ -112,8 +117,13 @@ class DefineDisplay:
 
 	def refreshscreen(self, currenttime, controls, scheduler, boilercontroller):
 
+		# Draw Runway
 		self.drawrunway(currenttime, scheduler, boilercontroller)
-#
+
+		# Draw Board
+		self.drawboard(boilercontroller)
+
+
 # 		self.updatemiscanimation()
 #
 # 		if game.cycledisplay(control) == True:
@@ -122,8 +132,13 @@ class DefineDisplay:
 # 			self.paintnewwaveplaque(enemyarmy, control)
 # 			self.paintmanagedefenderplaque(control, defenderarmy)
 # 			self.paintbuttons(control)
-# 			#
+
+ 		# Refresh screen
 		self.display.updatescreen()
+
+		# Blank out area
+		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 240), "Black", "", 0)
+
 # 			#
 # 			self.erasebuttons(control)
 # 			self.erasemanagedefenderplaque(control, field)
@@ -285,6 +300,54 @@ class DefineDisplay:
 # 		self.actorlist.clearlists()
 #
 
+
+	# -------------------------------------------------------------------
+	# Paints the timeline at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawboard(self, boilercontroller):
+
+		xpos = 260
+		ypos = 40
+		degreeoffset = 90
+
+		# Get current temperature
+		tempvalue = max(0, boilercontroller.getcurrenttemperature())
+		integervalue = int(tempvalue)
+		fractionpart = str(tempvalue - float(integervalue))
+		fractionpart = fractionpart[1:3]
+		integerpart = str(integervalue)
+
+		# Draw current temperature
+		self.display.drawtext(integerpart,
+							  Vector.createfromvalues(xpos, ypos),
+							  "Right",
+							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  "Actual Temp")
+
+		self.display.drawtext(fractionpart,
+							  Vector.createfromvalues(xpos, ypos),
+							  "Left",
+							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  "Actual Temp")
+
+		self.display.drawtext("O",
+							  Vector.createfromvalues(xpos+degreeoffset, ypos+30),
+							  "Left",
+							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  "Timeline Temps")
+
+		self.display.drawtext("C",
+							  Vector.createfromvalues(xpos+degreeoffset+20, ypos+30),
+							  "Left",
+							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  "Desired Temp")
+
+
+
+
+
+
 	# -------------------------------------------------------------------
 	# Paints the timeline at the top of the screen
 	# -------------------------------------------------------------------
@@ -292,13 +355,10 @@ class DefineDisplay:
  	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
 
-		# Blank out area
-		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 50), "Black", "", 0)
-
 		# Display current desired temperature
 		currenttemp = boilercontroller.getdesiredtemperature()
 		self.display.drawtext(	str(currenttemp),
-								Vector.createfromvalues(self.runwaystartline - 3, -6),
+								Vector.createfromvalues(self.runwaystartline - 3, -3),
 								"Right",
 								DisplayFunction.gettemperaturecolour(currenttemp),
 								"Desired Temp")
@@ -402,7 +462,7 @@ class DefineDisplay:
 			scheduledtimevalue = scheduledtime.getvalue()
 
 			# If the scheduled time is earlier than current time, add 24 hours so it appears in the future
-			if scheduledtimevalue < currenttime.getvalue():
+			if scheduledtimevalue <= currenttime.getvalue():
 				scheduledtimevalue = scheduledtimevalue + (24 * 3600)
 
 			# Position of marker

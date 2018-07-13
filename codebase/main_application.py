@@ -3,7 +3,7 @@ from scheduler_component import scheduler_module as Scheduler
 from display_component import display_module as Display
 from common_components.userinterface_framework import userinterface_module as GUI
 from controls_component import controls_module as Controller
-from clock_datatype import clock_module as Clock
+from common_components.clock_datatype import clock_module as Clock
 #from game_component import game_module as Game
 #from field_component import field_module as Field
 #from defenderarmy_component import defenderarmy_module as DefenderArmy
@@ -26,13 +26,20 @@ def runapplication():
 	display = Display.createdisplay()
 	controls = Controller.createcontroller()
 
-	scheduler.addscheduleditem(Clock.createastime(3, 45, 0), 23)
-	scheduler.addscheduleditem(Clock.createastime(7, 13, 0), 19)
-	scheduler.addscheduleditem(Clock.createastime(23, 19, 10), 11)
-	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
-	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
-	scheduler.addscheduleditem(Clock.createastime(20, 50, 0), 20)
-	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
+	tt = Clock.getnow().gethour()
+	ss = 4
+	scheduler.addscheduleditem(Clock.createastime(tt, 50, 0), ss)
+	scheduler.addscheduleditem(Clock.createastime(tt, 100, 0), ss + 2)
+	scheduler.addscheduleditem(Clock.createastime(tt, 150, 0), ss + 4)
+	scheduler.addscheduleditem(Clock.createastime(tt, 200, 0), ss + 6)
+	scheduler.addscheduleditem(Clock.createastime(tt, 250, 0), ss + 8)
+	scheduler.addscheduleditem(Clock.createastime(tt, 300, 0), ss + 10)
+	scheduler.addscheduleditem(Clock.createastime(tt, 350, 0), ss + 12)
+	scheduler.addscheduleditem(Clock.createastime(tt, 400, 0), ss + 14)
+	scheduler.addscheduleditem(Clock.createastime(tt, 450, 0), ss + 16)
+	scheduler.addscheduleditem(Clock.createastime(tt, 500, 0), ss + 18)
+	scheduler.addscheduleditem(Clock.createastime(tt, 550, 0), ss + 20)
+	scheduler.addscheduleditem(Clock.createastime(tt, 600, 0), ss + 22)
 
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()

@@ -8,9 +8,9 @@ class DefineBoilerController:
 
 		self.boilerswitchstatus = False
 
-		self.desiredtemperature = 28.0
+		self.desiredtemperature = 5.0
 
-		self.currenttemperature = 1.0
+		self.currenttemperature = 28.8
 
 	# =========================================================================================
 

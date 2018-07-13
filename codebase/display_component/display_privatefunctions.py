@@ -8,8 +8,11 @@
 
 def gettemperaturecolour(temp):
 
-	limitedvalue = max(5, min(25, temp))
+	limitedvalue = max(3, min(27, temp))
 	return str(limitedvalue)
+
+
+
 
 # # -------------------------------------------------------------------
 # # Returns the colour of text for crystal count
