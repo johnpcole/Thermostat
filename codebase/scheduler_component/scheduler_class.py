@@ -11,7 +11,7 @@ class DefineSchedule:
 
 		self.scheduleditems = {}
 
-		self.lastchecked = Clock.createasinteger(0) #Clock.getnow()
+		self.lastchecked = Clock.createasinteger(Clock.getnow().getvalue() + 120)
 
 	# =========================================================================================
 

@@ -24,7 +24,7 @@ class DefineDisplay:
 		self.setupimages()
 
 		# Position of current time marker in the runway
-		self.runwaystartline = 65
+		self.runwaystartline = 68
 
 		# How many pixels make up an hour (36 or 48) in the runway
 		self.runwaytimescale = 36
@@ -309,7 +309,7 @@ class DefineDisplay:
 
 		xpos = 260
 		ypos = 40
-		degreeoffset = 90
+		degreeoffset = 100
 
 		# Get current temperature
 		tempvalue = max(0, boilercontroller.getcurrenttemperature())
@@ -332,16 +332,16 @@ class DefineDisplay:
 							  "Actual Temp")
 
 		self.display.drawtext("O",
-							  Vector.createfromvalues(xpos+degreeoffset, ypos+30),
+							  Vector.createfromvalues(xpos+degreeoffset, ypos+35),
+							  "Left",
+							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  "Timeline Hours")
+
+		self.display.drawtext("C",
+							  Vector.createfromvalues(xpos+degreeoffset+10, ypos+35),
 							  "Left",
 							  DisplayFunction.gettemperaturecolour(tempvalue),
 							  "Timeline Temps")
-
-		self.display.drawtext("C",
-							  Vector.createfromvalues(xpos+degreeoffset+20, ypos+30),
-							  "Left",
-							  DisplayFunction.gettemperaturecolour(tempvalue),
-							  "Desired Temp")
 
 
 
@@ -358,7 +358,7 @@ class DefineDisplay:
 		# Display current desired temperature
 		currenttemp = boilercontroller.getdesiredtemperature()
 		self.display.drawtext(	str(currenttemp),
-								Vector.createfromvalues(self.runwaystartline - 3, -3),
+								Vector.createfromvalues(self.runwaystartline - 5, -3),
 								"Right",
 								DisplayFunction.gettemperaturecolour(currenttemp),
 								"Desired Temp")

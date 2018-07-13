@@ -26,20 +26,22 @@ def runapplication():
 	display = Display.createdisplay()
 	controls = Controller.createcontroller()
 
-	tt = Clock.getnow().gethour()
-	ss = 4
-	scheduler.addscheduleditem(Clock.createastime(tt, 50, 0), ss)
-	scheduler.addscheduleditem(Clock.createastime(tt, 100, 0), ss + 2)
-	scheduler.addscheduleditem(Clock.createastime(tt, 150, 0), ss + 4)
-	scheduler.addscheduleditem(Clock.createastime(tt, 200, 0), ss + 6)
-	scheduler.addscheduleditem(Clock.createastime(tt, 250, 0), ss + 8)
-	scheduler.addscheduleditem(Clock.createastime(tt, 300, 0), ss + 10)
-	scheduler.addscheduleditem(Clock.createastime(tt, 350, 0), ss + 12)
-	scheduler.addscheduleditem(Clock.createastime(tt, 400, 0), ss + 14)
-	scheduler.addscheduleditem(Clock.createastime(tt, 450, 0), ss + 16)
-	scheduler.addscheduleditem(Clock.createastime(tt, 500, 0), ss + 18)
-	scheduler.addscheduleditem(Clock.createastime(tt, 550, 0), ss + 20)
-	scheduler.addscheduleditem(Clock.createastime(tt, 600, 0), ss + 22)
+	tt = Clock.getnow().getvalue() + 600
+	ss = 3
+	scheduler.addscheduleditem(Clock.createastime(0, 10, tt), ss)
+	scheduler.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
+	scheduler.addscheduleditem(Clock.createastime(0, 90, tt), ss + 4)
+	scheduler.addscheduleditem(Clock.createastime(0, 130, tt), ss + 6)
+	scheduler.addscheduleditem(Clock.createastime(0, 170, tt), ss + 8)
+	scheduler.addscheduleditem(Clock.createastime(0, 210, tt), ss + 10)
+	scheduler.addscheduleditem(Clock.createastime(0, 260, tt), ss + 12)
+	scheduler.addscheduleditem(Clock.createastime(0, 310, tt), ss + 14)
+	scheduler.addscheduleditem(Clock.createastime(0, 360, tt), ss + 16)
+	scheduler.addscheduleditem(Clock.createastime(0, 410, tt), ss + 18)
+	scheduler.addscheduleditem(Clock.createastime(0, 460, tt), ss + 20)
+	scheduler.addscheduleditem(Clock.createastime(0, 520, tt), ss + 22)
+	scheduler.addscheduleditem(Clock.createastime(0, 580, tt), ss + 24)
+	scheduler.addscheduleditem(Clock.createastime(0, 640, tt), 24)
 
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()
@@ -58,7 +60,7 @@ def runapplication():
 	while controls.getquitstate() == False:
 
 		currenttime = Clock.getnow()
-
+		boilercontroller.setcurrenttemperature(((currenttime.getvalue() / 5) % 300) / 10.0)
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Process user input and resulting events       #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
