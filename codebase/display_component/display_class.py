@@ -4,6 +4,7 @@ from ..common_components.appdisplay_framework import appdisplay_module as AppDis
 #from displayactors_subcomponent import displayactors_module as DisplayActorList
 from . import display_privatefunctions as DisplayFunction
 from ..common_components.clock_datatype import clock_module as Clock
+from ..common_components.transition_datatype import transition_module as Transition
 
 
 class DefineDisplay:
@@ -29,6 +30,11 @@ class DefineDisplay:
 		# How many pixels make up an hour (36 or 48) in the runway
 		self.runwaytimescale = 36
 
+		# Height of runway (actually one pixel more!)
+		self.runwayheight = 48
+
+		# Data for capturing the animation of the desired temperature
+		self.desiredtemperature = Transition.createtransition(1000, 1000, 0)
 
 		# Sets up animation clock for next wave plaque and coins & crystals
 		#self.miscanimationclock = Scale.createfull(1000)
@@ -317,30 +323,31 @@ class DefineDisplay:
 		fractionpart = str(tempvalue - float(integervalue))
 		fractionpart = fractionpart[1:3]
 		integerpart = str(integervalue)
+		colour = DisplayFunction.gettemperaturecolour(tempvalue)
 
 		# Draw current temperature
 		self.display.drawtext(integerpart,
 							  Vector.createfromvalues(xpos, ypos),
 							  "Right",
-							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  colour,
 							  "Actual Temp")
 
 		self.display.drawtext(fractionpart,
 							  Vector.createfromvalues(xpos, ypos),
 							  "Left",
-							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  colour,
 							  "Actual Temp")
 
 		self.display.drawtext("O",
 							  Vector.createfromvalues(xpos+degreeoffset, ypos+35),
 							  "Left",
-							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  colour,
 							  "Timeline Hours")
 
 		self.display.drawtext("C",
 							  Vector.createfromvalues(xpos+degreeoffset+10, ypos+35),
 							  "Left",
-							  DisplayFunction.gettemperaturecolour(tempvalue),
+							  colour,
 							  "Timeline Temps")
 
 
@@ -354,20 +361,19 @@ class DefineDisplay:
 
  	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
-
-		# Display current desired temperature
-		currenttemp = boilercontroller.getdesiredtemperature()
-		self.display.drawtext(	str(currenttemp),
-								Vector.createfromvalues(self.runwaystartline - 5, -3),
-								"Right",
-								DisplayFunction.gettemperaturecolour(currenttemp),
-								"Desired Temp")
-
 		# The current hour
 		lasthour = currenttime.gethour()
 
 		# Number of pixels markers are shifted left
 		offsetpixels = int(self.runwaytimescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
+
+		# Display current desired temperature
+		self.drawdesiredtemperature(boilercontroller.getdesiredtemperature())
+		self.display.drawrectangle(Vector.createfromvalues(self.runwaystartline, 0),
+								Vector.createfromvalues(self.runwaystartline * 2, self.runwayheight),
+								"Black",
+								"",
+								0)
 
 		# Draw hour/half/quarter markers
 		self.drawrunwaytimings(currenttime, lasthour, offsetpixels)
@@ -377,7 +383,7 @@ class DefineDisplay:
 
 		# Draw the current time main marker
 		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
-								Vector.createfromvalues(self.runwaystartline, 48),
+								Vector.createfromvalues(self.runwaystartline, self.runwayheight),
 								"Grey",
 								1,
 								"")
@@ -389,6 +395,33 @@ class DefineDisplay:
 		#						1,
 		#						"")
 
+
+
+	# -------------------------------------------------------------------
+	# Paints the desired temperature at the top of the screen
+	# -------------------------------------------------------------------
+
+	def drawdesiredtemperature(self, latestdesiredtemperature):
+
+		transitionvalue = self.desiredtemperature.updatevalue(latestdesiredtemperature)
+
+		displayedtemperature = self.desiredtemperature.getswitchedvalue()
+
+		# Set colours and positions based on transitions
+		basecolour = DisplayFunction.gettemperaturecolour(displayedtemperature)
+		baseposition = self.runwaystartline - 5
+		if transitionvalue > 0:
+			colour = basecolour
+			position = baseposition + int(self.runwaystartline * (1.0 - self.desiredtemperature.gettransitionfraction()))
+		else:
+			colour = "mix:" + basecolour + "/" + str(-self.desiredtemperature.gettransitionfraction()) + "/Black"
+			position = baseposition
+
+		self.display.drawtext(	str(displayedtemperature),
+								Vector.createfromvalues(position, -3),
+								"Right",
+								colour,
+								"Desired Temp")
 
 
 	# -------------------------------------------------------------------
@@ -471,7 +504,7 @@ class DefineDisplay:
 
 			# Draw marker
 			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
-								 	Vector.createfromvalues(pixelposition, 48),
+								 	Vector.createfromvalues(pixelposition, self.runwayheight),
 								 	"Grey",
 								 	1,
 								 	"")
@@ -481,7 +514,7 @@ class DefineDisplay:
 
 			# Draw desired temperature number
 			self.display.drawtext(str(tempvalue),
-									Vector.createfromvalues(pixelposition + 3, 19),
+									Vector.createfromvalues(pixelposition + 3, self.runwayheight - 29),
 									"Left",
 									DisplayFunction.gettemperaturecolour(tempvalue),
 									"Timeline Temps")

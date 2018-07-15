@@ -26,7 +26,7 @@ def runapplication():
 	display = Display.createdisplay()
 	controls = Controller.createcontroller()
 
-	tt = Clock.getnow().getvalue() + 600
+	tt = Clock.getnow().getvalue() - 500
 	ss = 3
 	scheduler.addscheduleditem(Clock.createastime(0, 10, tt), ss)
 	scheduler.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
@@ -169,8 +169,8 @@ def runapplication():
 			#field.wipedefendersfromfield()
 
 		# Refresh Screen
-		if currenttime.getsecond() % 5 == 0:
-			display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
+		#if currenttime.getsecond() % 5 == 0:
+		display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #
