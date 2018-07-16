@@ -1,11 +1,12 @@
 from ..common_components.vector_datatype import vector_module as Vector
 from ..common_components.appdisplay_framework import appdisplay_module as AppDisplay
 from . import display_privatefunctions as DisplayFunction
-from ..common_components.clock_datatype import clock_module as Clock
+#from ..common_components.clock_datatype import clock_module as Clock
 from runway_subcomponent import runway_module as Runway
-from . import display_colourdata as DisplayColours
-from . import display_imagedata as DisplayImages
-from . import display_fontdata as DisplayFonts
+from board_subcomponent import board_module as Board
+from graphicdata_subcomponent import graphicdata_colours as Colours
+from graphicdata_subcomponent import graphicdata_images as Images
+from graphicdata_subcomponent import graphicdata_fonts as Fonts
 
 
 class DefineDisplay:
@@ -25,6 +26,7 @@ class DefineDisplay:
 		self.setupcolours()
 		self.setupimages()
 		self.runway = Runway.createrunway()
+		self.board = Board.createboard()
 
 
 		# Stores the list of buttons to process
@@ -39,7 +41,7 @@ class DefineDisplay:
 
 	def setupcolours(self):
 
-		colourlist = DisplayColours.getcolourpallette()
+		colourlist = Colours.getcolourpallette()
 		for colour in colourlist.keys():
 			colourdef = colourlist[colour]
 			self.display.addcolour(colour, colourdef[0], colourdef[1], colourdef[2])
@@ -52,7 +54,9 @@ class DefineDisplay:
 
 	def setupimages(self):
 
-		self.display.addimage("test", None, "test", True)
+		imagelist = Images.getimagepallette()
+		for image in imagelist:
+			self.display.addimage(image, None, image, True)
 
 
 
@@ -62,7 +66,7 @@ class DefineDisplay:
 
 	def setupfonts(self):
 
-		fontlist = DisplayFonts.getfontpallette()
+		fontlist = Fonts.getfontpallette()
 		for font in fontlist.keys():
 			fontdef = fontlist[font]
 			self.display.addfont(font, "", fontdef[0], fontdef[1])
@@ -120,18 +124,14 @@ class DefineDisplay:
 
 
 	# -------------------------------------------------------------------
-	# Paints the timeline at the top of the screen
+	# Paints the board in the center of the screen
 	# -------------------------------------------------------------------
 
 	def drawboard(self, boilercontroller):
 
-		# Draw current temperature
-		items = DisplayFunction.getcurrenttemplayout(max(0, boilercontroller.getcurrenttemperature()),
-																					Vector.createfromvalues(260, 40))
+		# Display current measured temperature
+		self.paintitems(self.board.drawcurrenttemperature(boilercontroller))
 
-		for item in items.keys():
-			itemdef = items[item]
-			self.display.drawtext(itemdef[0], itemdef[1], itemdef[2], itemdef[3], itemdef[4])
 
 
 	# -------------------------------------------------------------------
@@ -141,7 +141,7 @@ class DefineDisplay:
  	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
 		# Display current desired temperature
-		self.paintitems(self.runway.drawdesiredtemperature(boilercontroller.getdesiredtemperature()))
+		self.paintitems(self.runway.drawdesiredtemperature(boilercontroller))
 
 		# Draw upcoming desired temperatures (from schedule)
 		self.paintitems(self.runway.drawinstructions(currenttime, scheduler))

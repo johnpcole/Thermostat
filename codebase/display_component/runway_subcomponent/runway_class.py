@@ -3,6 +3,7 @@ from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.transition_datatype import transition_module as Transition
 from .. import display_privatefunctions as DisplayFunction
 
+
 class DefineRunway:
 
 	def __init__(self):
@@ -23,7 +24,7 @@ class DefineRunway:
 		self.hourbottom = 15
 
 		# Data for capturing the animation of the desired temperature
-		self.desiredtemperature = Transition.createtransition(1000, 1000, 0)
+		self.desiredtemperature = Transition.createoldnewtransition(1000, 1000, 0)
 
 
 	def getinstructionposition(self, scheduledtime, currenttime):
@@ -150,17 +151,17 @@ class DefineRunway:
 	# Paints the desired temperature at the top of the screen
 	# -------------------------------------------------------------------
 
-	def drawdesiredtemperature(self, latestdesiredtemperature):
+	def drawdesiredtemperature(self, boilercontroller):
 
 		outcome = {}
 
-		self.desiredtemperature.updatevalue(latestdesiredtemperature)
+		self.desiredtemperature.updatevalue(boilercontroller.getdesiredtemperature())
 
 		displayedtemperature = self.desiredtemperature.getswitchedvalue()
 
 		transitionfraction = self.desiredtemperature.gettransitionfraction()
 
-		position = DisplayFunction.gettransitionposition(self.startline - 5, self.startline, transitionfraction)
+		position = DisplayFunction.getonewaytransitionposition(self.startline - 5, self.startline, transitionfraction)
 
 		colour = DisplayFunction.gettransitioncolour(displayedtemperature, transitionfraction)
 

@@ -1,7 +1,12 @@
-from . import transition_class as TransitionClass
+from . import oldnewtransition_class as OldNewTransitionClass
+from . import updowntransition_class as UpDownTransitionClass
 
 
-
-def createtransition(prescalesize, postscalesize, initialvalue):
+def createoldnewtransition(prescalesize, postscalesize, initialvalue):
 	
-	return TransitionClass.DefineTransition(prescalesize, postscalesize, initialvalue)
+	return OldNewTransitionClass.DefineOldNewTransition(prescalesize, postscalesize, initialvalue)
+
+
+def createupdowntransition(prescalesize, postscalesize, initialvalue):
+
+	return UpDownTransitionClass.DefineUpDownTransition(prescalesize, postscalesize,  initialvalue)

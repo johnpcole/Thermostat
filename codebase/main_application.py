@@ -61,6 +61,10 @@ def runapplication():
 
 		currenttime = Clock.getnow()
 		boilercontroller.setcurrenttemperature(((currenttime.getvalue() / 5) % 300) / 10.0)
+		if ((currenttime.getvalue() / 15) % 2) == 0:
+			boilercontroller.turnboileron()
+		else:
+			boilercontroller.turnboileroff()
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Process user input and resulting events       #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #

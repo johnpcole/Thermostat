@@ -1,4 +1,4 @@
-class DefineTransition:
+class DefineOldNewTransition:
 
 	# ==========================================================================================
 	# Object Setup
