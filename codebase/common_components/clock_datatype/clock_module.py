@@ -46,3 +46,10 @@ def convert24hourtohuman(hour):
 		return str(12)
 	else:
 		return str(rawhour)
+
+def getfuturetimevalue(scheduledtimevalue, currenttimevalue):
+
+	if scheduledtimevalue <= currenttimevalue:
+		return (scheduledtimevalue + (24 * 3600))
+	else:
+		return scheduledtimevalue
