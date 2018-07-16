@@ -8,6 +8,7 @@ _Source_/
 _OLD RATIO_/
 database/
 *.pyc
+*.xls*
 
 # =========================
 # Windows

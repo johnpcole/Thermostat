@@ -3,7 +3,7 @@ from scheduler_component import scheduler_module as Scheduler
 from display_component import display_module as Display
 from common_components.userinterface_framework import userinterface_module as GUI
 from controls_component import controls_module as Controller
-from clock_datatype import clock_module as Clock
+from common_components.clock_datatype import clock_module as Clock
 #from game_component import game_module as Game
 #from field_component import field_module as Field
 #from defenderarmy_component import defenderarmy_module as DefenderArmy
@@ -26,13 +26,22 @@ def runapplication():
 	display = Display.createdisplay()
 	controls = Controller.createcontroller()
 
-	scheduler.addscheduleditem(Clock.createastime(3, 45, 0), 23)
-	scheduler.addscheduleditem(Clock.createastime(7, 13, 0), 19)
-	scheduler.addscheduleditem(Clock.createastime(23, 19, 10), 11)
-	scheduler.addscheduleditem(Clock.createastime(11, 23, 0), 15)
-	scheduler.addscheduleditem(Clock.createastime(17, 06, 0), 30)
-	scheduler.addscheduleditem(Clock.createastime(20, 50, 0), 20)
-	scheduler.addscheduleditem(Clock.createastime(22, 30, 0), 5)
+	tt = Clock.getnow().getvalue() - 500
+	ss = 3
+	scheduler.addscheduleditem(Clock.createastime(0, 10, tt), ss)
+	scheduler.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
+	scheduler.addscheduleditem(Clock.createastime(0, 90, tt), ss + 4)
+	scheduler.addscheduleditem(Clock.createastime(0, 130, tt), ss + 6)
+	scheduler.addscheduleditem(Clock.createastime(0, 170, tt), ss + 8)
+	scheduler.addscheduleditem(Clock.createastime(0, 210, tt), ss + 10)
+	scheduler.addscheduleditem(Clock.createastime(0, 260, tt), ss + 12)
+	scheduler.addscheduleditem(Clock.createastime(0, 310, tt), ss + 14)
+	scheduler.addscheduleditem(Clock.createastime(0, 360, tt), ss + 16)
+	scheduler.addscheduleditem(Clock.createastime(0, 410, tt), ss + 18)
+	scheduler.addscheduleditem(Clock.createastime(0, 460, tt), ss + 20)
+	scheduler.addscheduleditem(Clock.createastime(0, 520, tt), ss + 22)
+	scheduler.addscheduleditem(Clock.createastime(0, 580, tt), ss + 24)
+	scheduler.addscheduleditem(Clock.createastime(0, 640, tt), 24)
 
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()
@@ -51,7 +60,11 @@ def runapplication():
 	while controls.getquitstate() == False:
 
 		currenttime = Clock.getnow()
-
+		boilercontroller.setcurrenttemperature(((currenttime.getvalue() / 5) % 300) / 10.0)
+		if ((currenttime.getvalue() / 15) % 2) == 0:
+			boilercontroller.turnboileron()
+		else:
+			boilercontroller.turnboileroff()
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Process user input and resulting events       #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -160,8 +173,8 @@ def runapplication():
 			#field.wipedefendersfromfield()
 
 		# Refresh Screen
-		if currenttime.getsecond() % 5 == 0:
-			display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
+		#if currenttime.getsecond() % 5 == 0:
+		display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Else, if all enemies dead, start next level   #

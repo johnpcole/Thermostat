@@ -1,4 +1,4 @@
-from ..clock_datatype import clock_module as Clock
+from ..common_components.clock_datatype import clock_module as Clock
 
 
 class DefineSchedule:
@@ -11,7 +11,7 @@ class DefineSchedule:
 
 		self.scheduleditems = {}
 
-		self.lastchecked = Clock.getnow()
+		self.lastchecked = Clock.createasinteger(Clock.getnow().getvalue() + 120)
 
 	# =========================================================================================
 
@@ -131,6 +131,6 @@ class DefineSchedule:
 		outcome = -1000
 		if lasttimechecked != currenttime.getsecondlessvalue():
 			self.lastchecked = Clock.createasinteger(lasttimechecked + 60)
-			print "Updated Schedule to ", self.lastchecked.gettext()
+			print "Updated Schedule to", self.lastchecked.getsecondlesstext()
 			outcome = self.getscheduledinstruction(self.lastchecked)
 		return outcome

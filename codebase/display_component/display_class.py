@@ -1,9 +1,12 @@
-#from ..common_components.scale_datatype import scale_module as Scale
 from ..common_components.vector_datatype import vector_module as Vector
 from ..common_components.appdisplay_framework import appdisplay_module as AppDisplay
-#from displayactors_subcomponent import displayactors_module as DisplayActorList
 from . import display_privatefunctions as DisplayFunction
-from ..clock_datatype import clock_module as Clock
+#from ..common_components.clock_datatype import clock_module as Clock
+from runway_subcomponent import runway_module as Runway
+from board_subcomponent import board_module as Board
+from graphicdata_subcomponent import graphicdata_colours as Colours
+from graphicdata_subcomponent import graphicdata_images as Images
+from graphicdata_subcomponent import graphicdata_fonts as Fonts
 
 
 class DefineDisplay:
@@ -20,26 +23,11 @@ class DefineDisplay:
 		# Sets up pygame window related properties & methods and loads images, fonts & custom colours
 		self.display = AppDisplay.createwindow(self.displaysize, "Thermostat")
 		self.setupfonts()
-		self.setupcustomcolours()
+		self.setupcolours()
 		self.setupimages()
+		self.runway = Runway.createrunway()
+		self.board = Board.createboard()
 
-		# Position of current time marker in the runway
-		self.runwaystartline = 65
-
-		# How many pixels make up an hour (36 or 48) in the runway
-		self.runwaytimescale = 36
-
-
-		# Sets up animation clock for next wave plaque and coins & crystals
-		#self.miscanimationclock = Scale.createfull(1000)
-
-		# Sets up the list of actors, for efficient painting of defenders, ammo and enemies
-		#self.actorlist = DisplayActorList.createlist()
-
-		# Stores right-hand location of field for wiping overhang
-		#self.overhanglocation = Vector.createfromvalues(field.getsize().getx(), 0)
-		#self.overhangsize = Vector.createfromvalues(self.displaysize.getx() - field.getsize().getx(),
-		#																						field.getsize().gety())
 
 		# Stores the list of buttons to process
 		#self.buttonlist = control.getbuttoncollection("")
@@ -51,29 +39,12 @@ class DefineDisplay:
 	# Adds custom colours
 	# -------------------------------------------------------------------
 
-	def setupcustomcolours(self):
+	def setupcolours(self):
 
-		self.display.addcolour("5", 0, 0, 255)
-		self.display.addcolour("6", 0, 51, 255)
-		self.display.addcolour("7", 0, 102, 255)
-		self.display.addcolour("8", 0, 153, 255)
-		self.display.addcolour("9", 0, 204, 255)
-		self.display.addcolour("10", 0, 255, 255)
-		self.display.addcolour("11", 0, 255, 204)
-		self.display.addcolour("12", 0, 255, 153)
-		self.display.addcolour("13", 0, 255, 102)
-		self.display.addcolour("14", 0, 255, 51)
-		self.display.addcolour("15", 0, 255, 0)
-		self.display.addcolour("16", 51, 255, 0)
-		self.display.addcolour("17", 102, 255, 0)
-		self.display.addcolour("18", 153, 255, 0)
-		self.display.addcolour("19", 204, 255, 0)
-		self.display.addcolour("20", 255, 255, 0)
-		self.display.addcolour("21", 255, 204, 0)
-		self.display.addcolour("22", 255, 153, 0)
-		self.display.addcolour("23", 255, 102, 0)
-		self.display.addcolour("24", 255, 51, 0)
-		self.display.addcolour("25", 255, 0, 0)
+		colourlist = Colours.getcolourpallette()
+		for colour in colourlist.keys():
+			colourdef = colourlist[colour]
+			self.display.addcolour(colour, colourdef[0], colourdef[1], colourdef[2])
 
 
 
@@ -83,7 +54,9 @@ class DefineDisplay:
 
 	def setupimages(self):
 
-		self.display.addimage("test", None, "test", True)
+		imagelist = Images.getimagepallette()
+		for image in imagelist:
+			self.display.addimage(image, None, image, True)
 
 
 
@@ -93,10 +66,10 @@ class DefineDisplay:
 
 	def setupfonts(self):
 
-		self.display.addfont("Timeline Hours", "", "Font", 14)
-		self.display.addfont("Timeline Temps", "", "Font", 28)
-		self.display.addfont("Desired Temp", "", "Font", 54)
-
+		fontlist = Fonts.getfontpallette()
+		for font in fontlist.keys():
+			fontdef = fontlist[font]
+			self.display.addfont(font, "", fontdef[0], fontdef[1])
 
 
 	# ==========================================================================================
@@ -112,45 +85,18 @@ class DefineDisplay:
 
 	def refreshscreen(self, currenttime, controls, scheduler, boilercontroller):
 
+		# Draw Runway
 		self.drawrunway(currenttime, scheduler, boilercontroller)
-#
-# 		self.updatemiscanimation()
-#
-# 		if game.cycledisplay(control) == True:
-# 			self.paintdefendersandenemies(defenderarmy, enemyarmy, field, control)
-# 			self.paintstats(game)
-# 			self.paintnewwaveplaque(enemyarmy, control)
-# 			self.paintmanagedefenderplaque(control, defenderarmy)
-# 			self.paintbuttons(control)
-# 			#
+
+		# Draw Board
+		self.drawboard(boilercontroller)
+
+		# Refresh screen
 		self.display.updatescreen()
-# 			#
-# 			self.erasebuttons(control)
-# 			self.erasemanagedefenderplaque(control, field)
-# 			self.erasenewwaveplaque(control, field)
-# 			self.erasestats()
-# 			self.erasedefendersandenemies()
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Replaces image with field background
-# 	# -------------------------------------------------------------------
-#
-# 	def erase(self, position, dimensions, field):
-#
-# 		origin = field.convertpixeltoblock(position)
-# 		offsetrange = Vector.add(field.convertpixeltoblock(dimensions), Vector.createfromvalues(1, 1))
-# 		offset = Vector.createblank()
-# 		for offsetx in range(0, offsetrange.getx()):
-# 			for offsety in range(0, offsetrange.gety()):
-# 				offset.setfromvalues(offsetx, offsety)
-# 				block = Vector.add(offset, origin)
-# 				if field.issingleblockonboard(block) == True:
-# 					self.display.drawimage(field.getgroundtype(block), field.convertblocktopixel(block))
-# 				else:
-# 					self.display.drawbox(field.convertblocktopixel(block), field.getpixelblockratio(), "Black")
-#
+
+		# Blank out area
+		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 240), "Black", "", 0)
+
 #
 #
 # 	# -------------------------------------------------------------------
@@ -172,118 +118,21 @@ class DefineDisplay:
 # 				else:
 # 					if control.getbuttonhoverstate(buttonname) == True:
 # 						self.display.drawimage("Overlay - Hover", buttonlocation)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Erases the button groups
-# 	# -------------------------------------------------------------------
-#
-# 	def erasebuttons(self, control):
-#
-# 		for buttonname in self.buttonlist:
-#
-# 			if control.getbuttonstate(buttonname) != "Hidden":
-# 				self.display.drawrectangle(control.getbuttonposition(buttonname), control.getbuttonsize(buttonname),
-# 																										"Black", "", 0)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Gets a list of all defenders and ammo to paint
-# 	# -------------------------------------------------------------------
-#
-# 	def preparedefenders(self, defenderarmy, field):
-#
-# 		for defenderunit in defenderarmy.units:
-# 			self.actorlist.additem(defenderunit.getdisplayframereference(), defenderunit.getdisplaylocation(),
-# 											defenderunit.getdisplaysize(), defenderunit.getdisplayzorder(), -999, field)
-# 			if defenderunit.getammodisplaystatus() == True:
-# 				self.actorlist.additem(defenderunit.getammodisplayframereference(),
-# 										defenderunit.getammodisplaylocation(), defenderunit.getammodisplaysize(),
-# 										defenderunit.getammodisplayzorder(), -999, field)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Prepares field selection overlay(s), if necessary
-# 	# -------------------------------------------------------------------
-#
-# 	def preparefieldselection(self, control, field):
-#
-# 		displaymode = control.getfieldselectionoverlay()
-# 		if displaymode != "":
-# 			self.actorlist.additem(DisplayFunction.getfieldoverlayimagename(displaymode),
-# 															control.getselectiondisplaylocation(),
-# 															control.getselectiondisplaysize(), 100000004, -999, field)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Gets a list of all enemies to paint
-# 	# -------------------------------------------------------------------
-#
-# 	def prepareenemies(self, enemyarmy, field):
-#
-# 		for enemyunit in enemyarmy.units:
-# 			if enemyunit.getinplaystatus() == True:
-# 				self.actorlist.additem(enemyunit.getdisplayframereference(), enemyunit.getdisplaylocation(),
-# 								enemyunit.getdisplaysize(), enemyunit.getdisplayzorder(), enemyunit.gethealth(), field)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Draws defender/ammo/enemy overlay for each actor in list
-# 	# -------------------------------------------------------------------
-#
-# 	def paintactors(self):
-#
-# 		for actor in self.actorlist.actors:
-# 			self.display.drawimage(actor.actorname, actor.coordinates)
-# 			if actor.health > -1:
-# 				self.drawenemyhealth(actor.coordinates, actor.dimensions, actor.health)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Draws defender/ammo/enemy overlays
-# 	# -------------------------------------------------------------------
-#
-# 	def paintdefendersandenemies(self, defenderarmy, enemyarmy, field, control):
-#
-# 		# Get list of enemies
-# 		self.prepareenemies(enemyarmy, field)
-#
-# 		# Get list of defenders
-# 		self.preparedefenders(defenderarmy, field)
-#
-# 		# Add selection overlays
-# 		self.preparefieldselection(control, field)
-#
-# 		# Order defenders & enemies to give correct 3D view
-# 		self.actorlist.orderactors()
-#
-# 		# Paint defenders & enemies
-# 		self.paintactors()
-#
-# 		#Clear-up overhaging actors on the right of the screen
-# 		self.display.drawrectangle(self.overhanglocation, self.overhangsize, "Black", "", 0)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Erases defender/ammo/enemy overlays
-# 	# -------------------------------------------------------------------
-#
-# 	def erasedefendersandenemies(self):
-#
-# 		# Erase from field
-# 		for block in self.actorlist.blocks:
-# 			self.display.drawimage(block.blockname, block.coordinates)
-#
-# 		# Clear list of defenders & enemies
-# 		self.actorlist.clearlists()
-#
+
+
+
+
+
+	# -------------------------------------------------------------------
+	# Paints the board in the center of the screen
+	# -------------------------------------------------------------------
+
+	def drawboard(self, boilercontroller):
+
+		# Display current measured temperature
+		self.paintitems(self.board.drawcurrenttemperature(boilercontroller))
+
+
 
 	# -------------------------------------------------------------------
 	# Paints the timeline at the top of the screen
@@ -291,278 +140,44 @@ class DefineDisplay:
 
  	def drawrunway(self, currenttime, scheduler, boilercontroller):
 
-
-		# Blank out area
-		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 50), "Black", "", 0)
-
 		# Display current desired temperature
-		currenttemp = boilercontroller.getdesiredtemperature()
-		self.display.drawtext(	str(currenttemp),
-								Vector.createfromvalues(self.runwaystartline - 3, -6),
-								"Right",
-								DisplayFunction.gettemperaturecolour(currenttemp),
-								"Desired Temp")
-
-		# The current hour
-		lasthour = currenttime.gethour()
-
-		# Number of pixels markers are shifted left
-		offsetpixels = int(self.runwaytimescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
-
-		# Draw hour/half/quarter markers
-		self.drawrunwaytimings(currenttime, lasthour, offsetpixels)
+		self.paintitems(self.runway.drawdesiredtemperature(boilercontroller))
 
 		# Draw upcoming desired temperatures (from schedule)
-		self.drawrunwayinstructions(currenttime, lasthour, offsetpixels, scheduler)
+		self.paintitems(self.runway.drawinstructions(currenttime, scheduler))
 
-		# Draw the current time main marker
-		self.display.drawline(Vector.createfromvalues(self.runwaystartline, 0),
-								Vector.createfromvalues(self.runwaystartline, 48),
-								"Grey",
-								1,
-								"")
+		# Draw hour labels
+		self.paintitems(self.runway.drawtimelinenumbers(currenttime))
 
-		# Draw the runway edge
-		#self.display.drawline(Vector.createfromvalues(0, 49),
-		#						Vector.createfromvalues(480, 49),
-		#						"Grey",
-		#						1,
-		#						"")
+		# Draw hour/half/quarter markers
+		self.paintitems(self.runway.drawtimelinemarkers(currenttime))
 
 
 
 	# -------------------------------------------------------------------
-	# Paints the timeline at the top of the screen
+	# Paints stuff based on a list of draw commands
 	# -------------------------------------------------------------------
 
-	def drawrunwaytimings(self, currenttime, lasthour, offsetpixels):
+	def paintitems(self, itemlist):
 
-		# Display the current hour at the current time marker only if it's exactly on the clock
-		if currenttime.getminute() == 0:
-			self.display.drawtext(Clock.convert24hourtohuman(lasthour),
-									Vector.createfromvalues(self.runwaystartline + 3, 1),
-									"Left",
-									"Grey",
-									"Timeline Hours")
+		for item in itemlist.keys():
 
-		# Print the hour/half/quarter markers for twelve hours
-		for hourindex in range(1, 14):
+			itemdef = itemlist[item]
+			itemtype = itemdef[0]
 
-			# Position of hour marker line
-			hourmarker = self.runwaystartline + (hourindex * self.runwaytimescale) - offsetpixels
+			if itemtype == "Line":
+				self.display.drawline(itemdef[1], itemdef[2], itemdef[3], itemdef[4], itemdef[5])
 
-			# Draw hour marker line
-			self.display.drawline(Vector.createfromvalues(hourmarker, 0),
-									Vector.createfromvalues(hourmarker, 15),
-									"Grey",
-									1,
-									"")
+			elif itemtype == "Box":
+				self.display.drawrectangle(itemdef[1], itemdef[2], itemdef[3], itemdef[4], itemdef[5])
 
-			# Draw hour marker number
-			self.display.drawtext(Clock.convert24hourtohuman(hourindex + lasthour),
-									Vector.createfromvalues(hourmarker + 3, 1),
-									"Left",
-									"Grey",
-									"Timeline Hours")
+			elif itemtype == "Text":
+				self.display.drawtext(itemdef[1], itemdef[2], itemdef[3], itemdef[4], itemdef[5])
 
-			# Draw the half & quarter markers
-			for subindex in range(1, 4):
-
-				# Position of marker
-				pixelposition = hourmarker - int(subindex * self.runwaytimescale / 4)
-
-				# Only draw marker if it's to the right of the current time marker
-				if self.runwaystartline < pixelposition:
-
-					# Set height of marker lines
-					lineheight = 3 * ((subindex + 1) % 2)
-
-					# Draw the marker line
-					self.display.drawline(Vector.createfromvalues(pixelposition, 0),
-											Vector.createfromvalues(pixelposition, lineheight),
-											"Grey",
-											1,
-											"")
+			else:
+				print 1/0
 
 
-
-	# -------------------------------------------------------------------
-	# Paints the scheduled settings at the top of the screen
-	# -------------------------------------------------------------------
-
-	def drawrunwayinstructions(self, currenttime, lasthour, offsetpixels, scheduler):
-
-		# Get list of scheduled times
-		scheduledtimes = scheduler.getscheduledtimes()
-
-		# Loop over scheduled times
-		for scheduledtime in scheduledtimes:
-
-			# Get integer schedule time value
-			scheduledtimevalue = scheduledtime.getvalue()
-
-			# If the scheduled time is earlier than current time, add 24 hours so it appears in the future
-			if scheduledtimevalue < currenttime.getvalue():
-				scheduledtimevalue = scheduledtimevalue + (24 * 3600)
-
-			# Position of marker
-			houroffset = scheduledtimevalue - (3600 * lasthour)
-			pixelposition = self.runwaystartline + int(houroffset * self.runwaytimescale / 3600) - offsetpixels
-
-			# Draw marker
-			self.display.drawline(Vector.createfromvalues(pixelposition, 18),
-								 	Vector.createfromvalues(pixelposition, 48),
-								 	"Grey",
-								 	1,
-								 	"")
-
-			# Get desired temperature
-			tempvalue = scheduler.getscheduledinstruction(scheduledtime)
-
-			# Draw desired temperature number
-			self.display.drawtext(str(tempvalue),
-									Vector.createfromvalues(pixelposition + 3, 19),
-									"Left",
-									DisplayFunction.gettemperaturecolour(tempvalue),
-									"Timeline Temps")
-
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Displays the game stats such as wave, coins and crystals
-# 	# -------------------------------------------------------------------
-#
-# 	def paintstats(self, game):
-#
-# 		# Wave
-# 		self.display.drawtext("Wave " + str(game.getwave()), Vector.createfromvalues(621, 52), "Left", "Yellow", "20")
-#
-# 		# Crystals
-# 		self.display.drawimage("Crystal - " + DisplayFunction.getcrystalanimationframe(self.miscanimationclock, game),
-# 																					Vector.createfromvalues(621, 76))
-# 		self.display.drawtext(str(game.getcrystalcount()), Vector.createfromvalues(654, 82), "Left",
-# 																	DisplayFunction.getcrystalcountcolour(game), "20")
-#
-# 		# Coins
-# 		self.display.drawimage("Coin - " + DisplayFunction.getcoinanimationframe(self.miscanimationclock, game),
-# 																					Vector.createfromvalues(621, 106))
-# 		self.display.drawtext(str(game.getcoincount()), Vector.createfromvalues(654, 112), "Left",
-# 																	DisplayFunction.getcoincountcolour(game), "20")
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Displays the game stats such as wave, coins and crystals
-# 	# -------------------------------------------------------------------
-#
-# 	def erasestats(self):
-#
-# 		self.display.drawrectangle(Vector.createfromvalues(620, 50), Vector.createfromvalues(100, 100), "Black", "", 0)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Displays the new wave plaque
-# 	# -------------------------------------------------------------------
-#
-# 	def paintnewwaveplaque(self, enemyarmy, control):
-#
-# 		if control.getbetweenwavestate() == True:
-# 			self.display.drawimage("Plaque", DisplayFunction.getwaveplaqueposition(0, 0))
-# 			self.display.drawtext("Next Wave!", DisplayFunction.getwaveplaqueposition(100, 17),
-# 																							"Centre", "Yellow", "20")
-# 			self.display.drawcircle(DisplayFunction.getwaveplaqueposition(100, 97), 46, "Dirty Purple", "", 0)
-# 			self.display.drawimage(enemyarmy.getname() + " - S" +
-# 													DisplayFunction.getplaqueanimationframe(self.miscanimationclock),
-# 													DisplayFunction.getwaveplaqueposition(68, 66))
-# 			self.display.drawtext(enemyarmy.getname(), DisplayFunction.getwaveplaqueposition(100, 162),
-# 																							"Centre", "Yellow", "20")
-# 			self.display.drawtext(enemyarmy.getinitialhealth(), DisplayFunction.getwaveplaqueposition(100, 192),
-# 																							"Centre", "Yellow", "20")
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Erases the new wave plaque
-# 	# -------------------------------------------------------------------
-#
-# 	def erasenewwaveplaque(self, control, field):
-#
-# 		if control.getbetweenwavestate() == True:
-# 			self.erase(DisplayFunction.getwaveplaqueposition(0, 0), Vector.createfromvalues(210, 310), field)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Displays manage defender plaque
-# 	# -------------------------------------------------------------------
-#
-# 	def paintmanagedefenderplaque(self, control, defenderarmy):
-#
-# 		if control.getbuttonstate("Cancel") != "Hidden":
-#
-# 			overlayposition = control.getmanagedefenderoverlayposition()
-# 			overlaytitle = control.getfieldselectionoverlay() + " Defender"
-#
-# 			self.display.drawimage("Manage", DisplayFunction.getdefenderplaqueposition(overlayposition, 0, 0))
-# 			self.display.drawtext(overlaytitle, DisplayFunction.getdefenderplaqueposition(overlayposition, 100, 17),
-# 																							"Centre", "Yellow", "20")
-#
-#
-#
-#
-# 			#self.display.drawimage("Coin - 0", Vector.createfromvalues(621, 210))
-# 			#self.display.drawtext(str(defenderarmy.getdefenderupgradecost()), Vector.createfromvalues(654, 210),
-# 			#																					"Left", "Yellow", "20")
-#
-# #			self.draw.circle(Vector.createfromvalues(303, 230), 46, "Dirty Purple")
-# #			self.draw.image(enemyarmy.getname() + " - S" + self.getplaqueanimationframe(), Vector.createfromvalues(271, 199))
-# #			self.draw.text(enemyarmy.getname(), Vector.createfromvalues(303, 295), "Centre", "Yellow")
-# #			self.draw.text(enemyarmy.getinitialhealth(), Vector.createfromvalues(303, 325), "Centre", "Yellow")
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Erases the add or upgrade defender plaque
-# 	# -------------------------------------------------------------------
-#
-# 	def erasemanagedefenderplaque(self, control, field):
-#
-# 		if control.getbuttonstate("Cancel") != "Hidden":
-#
-# 			overlayposition = control.getmanagedefenderoverlayposition()
-#
-# 			self.erase(DisplayFunction.getdefenderplaqueposition(overlayposition, 0, 0),
-# 																		Vector.createfromvalues(210, 210), field)
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Paints the whole field background
-# 	# -------------------------------------------------------------------
-#
-# 	def paintwholefield(self, field):
-#
-# 		currentposition = Vector.createblank()
-# 		screenrange = field.getblocksize()
-# 		for currentpositionx in range(0, screenrange.getx()):
-# 			for currentpositiony in range(0, screenrange.gety()):
-# 				currentposition.setfromvalues(currentpositionx, currentpositiony)
-# 				self.display.drawimage(field.getgroundtype(currentposition), field.convertblocktopixel(currentposition))
-#
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Updates the misc item animation clock
-# 	# -------------------------------------------------------------------
-#
-# 	def updatemiscanimation(self):
-#
-# 		# Deplete the clock, and recharge if it is at zero
-# 		if self.miscanimationclock.deplete(1) == True:
-# 			self.miscanimationclock.recharge()
-#
 #
 #
 #
