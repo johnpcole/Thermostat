@@ -129,8 +129,14 @@ class DefineDisplay:
 
 	def drawboard(self, boilercontroller):
 
+		# Update the animation stats
+		self.board.updateboardlayout(boilercontroller)
+
 		# Display current measured temperature
 		self.paintitems(self.board.drawcurrenttemperature(boilercontroller))
+
+		# Display flame
+		self.paintitems(self.board.drawflame(boilercontroller))
 
 
 
@@ -160,7 +166,7 @@ class DefineDisplay:
 
 	def paintitems(self, itemlist):
 
-		for item in itemlist.keys():
+		for item in sorted(itemlist.keys()):
 
 			itemdef = itemlist[item]
 			itemtype = itemdef[0]
@@ -173,6 +179,9 @@ class DefineDisplay:
 
 			elif itemtype == "Text":
 				self.display.drawtext(itemdef[1], itemdef[2], itemdef[3], itemdef[4], itemdef[5])
+
+			elif itemtype == "Image":
+				self.display.drawimage(itemdef[1], itemdef[2])
 
 			else:
 				print 1/0

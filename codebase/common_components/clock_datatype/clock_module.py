@@ -27,9 +27,12 @@ def getnow():
 
 
 
-def timediff(timeone, timetwo):
+def timediff(earliertime, latertime):
 
-	return ClockClass.DefineClock(0, 0, timeone.getvalue() - timetwo.getvalue())
+	earlier = earliertime.getvalue()
+	later = latertime.getvalue()
+	sanitisedlater = getfuturetimevalue(later, earlier)
+	return ClockClass.DefineClock(0, 0, sanitisedlater - earlier)
 
 
 
@@ -47,9 +50,11 @@ def convert24hourtohuman(hour):
 	else:
 		return str(rawhour)
 
-def getfuturetimevalue(scheduledtimevalue, currenttimevalue):
 
-	if scheduledtimevalue <= currenttimevalue:
-		return (scheduledtimevalue + (24 * 3600))
+
+def getfuturetimevalue(latertime, earliertime):
+
+	if latertime <= earliertime:
+		return (latertime + (24 * 3600))
 	else:
-		return scheduledtimevalue
+		return latertime

@@ -1,3 +1,6 @@
+from ..common_components.clock_datatype import clock_module as Clock
+
+
 class DefineBoilerController:
 
 	# ==========================================================================================
@@ -6,27 +9,84 @@ class DefineBoilerController:
 
 	def __init__(self):
 
+		self.status = "Unknown"
+
 		self.boilerswitchstatus = False
+
+		self.boilerswitchbuffer = 1 # minutes
+
+		self.boilerlastontime = Clock.getnow()
+
+		self.boilerlastofftime = Clock.getnow()
 
 		self.desiredtemperature = 5.0
 
-		self.currenttemperature = 28.8
+		self.currenttemperature = 99.9
 
 	# =========================================================================================
 
-	def updateboilerswitch(self):
+	def updateboilerstatus(self):
+
+		self.updateboilerclocks()
+
+		outcome = "Unknown!"
 
 		if self.desiredtemperature > self.currenttemperature:
-			self.turnboileron()
+			# Boiler should be switched on if it's not already on AND it's been off for 5 minutes
+			if self.boilerswitchstatus == False:
+				if self.getboilerswitchtiming(False).getvalue < (self.boilerswitchbuffer * 60):
+					self.turnboileron()
+					outcome = "On - New"
+				else:
+					outcome = "On - Off Snooze"
+			else:
+				outcome = "On - Hold On"
 		else:
-			self.turnboileroff()
-		return self.getboilerstatus()
+			# Boiler should be switched off if it's not already off AND it's been on for 5 minutes
+			if self.boilerswitchstatus == True:
+				if self.getboilerswitchtiming(True).getvalue < (self.boilerswitchbuffer * 60):
+					self.turnboileroff()
+					outcome = "Off - New"
+				else:
+					outcome = "Off - On Extend"
+			else:
+				outcome = "Off - Hold Off"
+
+		self.status = outcome
+
+		return outcome
 
 	# =========================================================================================
 
-	def getboilerstatus(self):
+	def updateboilerclocks(self):
+
+		if self.boilerswitchstatus == True:
+			self.boilerlastontime = Clock.getnow()
+		else:
+			self.boilerlastofftime = Clock.getnow()
+
+	# =========================================================================================
+
+	def getboilerswitchtiming(self, mode):
+
+		currenttime = Clock.getnow()
+		if mode == True:
+			switchtime = self.boilerlastontime
+		else:
+			switchtime = self.boilerlastofftime
+		return Clock.timediff(switchtime, currenttime)
+
+	# =========================================================================================
+
+	def getboilerswitchstatus(self):
 
 		return self.boilerswitchstatus
+
+	# =========================================================================================
+
+	def getstatus(self):
+
+		return self.status
 
 	# =========================================================================================
 
@@ -61,6 +121,7 @@ class DefineBoilerController:
 	def turnboileron(self):
 
 		self.boilerswitchstatus = True
+		self.updateboilerclocks()
 		#CODE TO THROW RELAY
 
 	# =========================================================================================
@@ -68,4 +129,7 @@ class DefineBoilerController:
 	def turnboileroff(self):
 
 		self.boilerswitchstatus = False
+		self.updateboilerclocks()
 		#CODE TO THROW RELAY
+
+

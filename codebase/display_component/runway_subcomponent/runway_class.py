@@ -165,10 +165,10 @@ class DefineRunway:
 
 		colour = DisplayFunction.gettransitioncolour(displayedtemperature, transitionfraction)
 
-		outcome["Text"] = ("Text", str(displayedtemperature), Vector.createfromvalues(position, -3), "Right",
+		outcome["Desired Temp"] = ("Text", str(displayedtemperature), Vector.createfromvalues(position, -3), "Right",
 																								colour, "Desired Temp")
 
-		outcome["Background"] = ("Box", Vector.createfromvalues(self.startline, 0),
+		outcome["Screen Background"] = ("Box", Vector.createfromvalues(self.startline, 0),
 											Vector.createfromvalues(self.startline * 2, self.height), "Black", "", 0)
 
 		return outcome

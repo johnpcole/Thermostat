@@ -26,7 +26,7 @@ def runapplication():
 	display = Display.createdisplay()
 	controls = Controller.createcontroller()
 
-	tt = Clock.getnow().getvalue() - 500
+	tt = Clock.getnow().getvalue() - 100
 	ss = 3
 	scheduler.addscheduleditem(Clock.createastime(0, 10, tt), ss)
 	scheduler.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
@@ -60,11 +60,6 @@ def runapplication():
 	while controls.getquitstate() == False:
 
 		currenttime = Clock.getnow()
-		boilercontroller.setcurrenttemperature(((currenttime.getvalue() / 5) % 300) / 10.0)
-		if ((currenttime.getvalue() / 15) % 2) == 0:
-			boilercontroller.turnboileron()
-		else:
-			boilercontroller.turnboileroff()
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# Process user input and resulting events       #
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
@@ -80,6 +75,8 @@ def runapplication():
 		if newboilerinstruction != -1000:
 			boilercontroller.setdesiredtemperature(newboilerinstruction)
 			print "New Boiler Instruction", newboilerinstruction
+		boilercontroller.setcurrenttemperature(((currenttime.getvalue()) % 300) / 10.0)
+		boilercontroller.updateboilerstatus()
 		# If the field is enabled, update the selection property on the field and defender army objects
 		# If we are in add/upgrade mode, we DONT want to start changing the current selection!!!
 		#if controls.updatefieldselectionlocation(field) == True:
