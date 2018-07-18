@@ -20,30 +20,33 @@ class DefineBoard:
 
 		self.flameposition = Vector.createfromvalues(30, 71)
 
+		self.snoozeoffset = Vector.add(Vector.createfromvalues(78, 15), self.flameposition)
+
 		# Data for capturing the animation of the current temperature
 		self.boilerstate = Transition.createupdowntransition(500, 1500, False)
 
+		self.flamestate = "Hidden"
 
 
 
-	def updateboardlayout(self, boilercontroller):
+	def updateboardlayout(self, boilerstatus):
 
-		self.boilerstate.updatevalue(self.getflamemode(boilercontroller.getstatus()))
+		if (boilerstatus[:2] == "On") or (boilerstatus[-10:] == "n Override"):
+			outcome = True
+		else:
+			outcome = False
+
+		self.boilerstate.updatevalue(outcome)
+
+		self.updateflamemode(boilerstatus)
 
 
 
-	def drawcurrenttemperature(self, boilercontroller):
+	def drawcurrenttemperature(self, currenttemperature):
 
 		outcome = {}
 
-		integerpart, fractionpart, colour = self.gettemperaturecomponents(boilercontroller.getcurrenttemperature())
-
-		transitionfraction = self.boilerstate.gettransitionfraction()
-
-		positionoffset = DisplayFunction.gettwowaytransitionposition(self.offtemperatureorigin,
-																		self.ontemperatureorigin, transitionfraction)
-
-		currentposition = Vector.createfromvalues(positionoffset, self.temperaturetop)
+		integerpart, fractionpart, colour, currentposition = self.gettemperaturecomponents(currenttemperature)
 
 		# Draw current temperature
 		outcome["Integer"] = ("Text", str(integerpart), currentposition, "Right", colour, "Actual Temp")
@@ -55,27 +58,32 @@ class DefineBoard:
 
 
 
-	def drawflame(self, boilercontroller):
+	def drawflame(self, snoozetimer):
 
 		outcome = {}
 
-		transitionfraction = self.boilerstate.gettransitionfraction()
+		flamemode = self.flamestate
 
-		if transitionfraction > 0:
+		if flamemode != "Hidden":
 			outcome["Flame Base"] = ("Image", "flame_base", self.flameposition)
-		if transitionfraction > 0.2:
-			if (boilercontroller.getstatus())[-6:] == "Snooze":
-				outcome["Flame 0"] = ("Image", "flame_snooze", self.flameposition)
-			else:
-				if transitionfraction == 1.0:
-					frame = self.getflameframe()
-					outcome["Flame 2"] = ("Image", "flame_" + str(frame), self.flameposition)
-					if (boilercontroller.getstatus())[-6:] != "Extend":
-						outcome["Flame 1"] = ("Image", "flame_" + str(frame + 3), self.flameposition)
-					else:
-						outcome["Overlay Clock"] = ("Image", "flame_extend", self.flameposition)
-				else:
-					outcome["Flame 3"] = ("Image", self.getflametransition(transitionfraction), self.flameposition)
+			if flamemode == "Snooze":
+				outcome["Flame 1"] = ("Image", "flame_disable", self.flameposition)
+				outcome["Overlay Clock"] = ("Image", "flame_snooze", self.flameposition)
+				if snoozetimer < 1:
+					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
+			elif flamemode == "On":
+				frame = self.getflameframe()
+				outcome["Flame 1"] = ("Image", "flame_" + str(frame + 3), self.flameposition)
+				outcome["Flame 2"] = ("Image", "flame_" + str(frame), self.flameposition)
+			elif flamemode == "Transitioning":
+				outcome["Flame 1"] = ("Image", self.getflametransition(), self.flameposition)
+			elif flamemode == "Forced":
+				frame = self.getflameframe()
+				outcome["Flame 1"] = ("Image", "flame_" + str(frame + 1), self.flameposition)
+				outcome["Overlay Clock"] = ("Image", "flame_snooze", self.flameposition)
+				if snoozetimer < 1:
+					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
+
 		return outcome
 
 
@@ -86,16 +94,16 @@ class DefineBoard:
 		fractionpart = abs(temperature - float(integerpart))
 		colour = DisplayFunction.gettemperaturecolour(integerpart)
 
-		return integerpart, fractionpart, colour
+		transitionfraction = self.boilerstate.gettransitionfraction()
+
+		positionoffset = DisplayFunction.gettwowaytransitionposition(self.offtemperatureorigin,
+																		self.ontemperatureorigin, transitionfraction)
+
+		currentposition = Vector.createfromvalues(positionoffset, self.temperaturetop)
 
 
+		return integerpart, fractionpart, colour, currentposition
 
-	def getflamemode(self, boilerstatus):
-
-		if (boilerstatus[:2] == "On") or (boilerstatus[-6:] == "Extend"):
-			return True
-		else:
-			return False
 
 
 	def getflameframe(self):
@@ -105,6 +113,41 @@ class DefineBoard:
 			frame = 1
 		return frame
 
-	def getflametransition(self, fraction):
 
-		return ("flame_" + str(int((fraction - 0.2) * 7.49)))
+
+	def getflametransition(self):
+
+		transitionfraction = self.boilerstate.gettransitionfraction()
+
+		return ("flame_" + str(int((transitionfraction - 0.2) * 7.49)))
+
+
+
+	def updateflamemode(self, boilerstatus):
+
+		transitionfraction = self.boilerstate.gettransitionfraction()
+
+		outcome = self.flamestate
+		if transitionfraction > 0.2:
+			if boilerstatus[-10:] == "f Override":
+				outcome = "Snooze"
+			else:
+				if transitionfraction == 1.0:
+					if boilerstatus[-10:] == "n Override":
+						outcome = "Forced"
+					else:
+						outcome = "On"
+						if self.flamestate == "Snooze":
+							self.boilerstate.resettransition()
+				else:
+					if self.flamestate != "Snooze":
+						outcome = "Transitioning"
+		else:
+			if transitionfraction > 0:
+				outcome = "Off"
+			else:
+				outcome = "Hidden"
+
+		self.flamestate = outcome
+
+		return self.flamestate

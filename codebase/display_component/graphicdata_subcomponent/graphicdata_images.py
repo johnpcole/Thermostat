@@ -8,5 +8,5 @@ def getimagepallette():
 				"flame_4",
 				"flame_5",
 				"flame_snooze",
-				"flame_extend")
+				"flame_disable")
 	return images

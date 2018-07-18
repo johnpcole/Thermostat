@@ -134,15 +134,9 @@ class DefineRunway:
 	
 				# Only draw marker if it's to the right of the current time marker
 				if self.startline < pixelposition:
-
-					if subindex == 0:
-						lineheight = self.hourbottom
-					else:
-						lineheight = 3 * (subindex + 1) % 2
-
-					# Draw the marker line
 					outcome[(hourindex * 10) + subindex] = ("Line", Vector.createfromvalues(pixelposition, 0),
-													Vector.createfromvalues(pixelposition, lineheight), "Grey", 1, "")
+															Vector.createfromvalues(pixelposition,
+															self.getmarkerlineheight(subindex)), "Grey", 1, "")
 
 		return outcome
 
@@ -172,3 +166,11 @@ class DefineRunway:
 											Vector.createfromvalues(self.startline * 2, self.height), "Black", "", 0)
 
 		return outcome
+
+
+	def getmarkerlineheight(self, subindex):
+
+		if subindex == 0:
+			return self.hourbottom
+		else:
+			return  (3 * (subindex + 1) % 2)

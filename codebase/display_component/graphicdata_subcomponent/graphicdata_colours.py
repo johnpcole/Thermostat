@@ -2,6 +2,7 @@ def getcolourpallette():
 
 	colours = {}
 
+	colours["Snooze"] = (147, 147, 9)
 	colours["27"] = (178, 0, 0)
 	colours["26"] = (216, 0, 0)
 	colours["25"] = (255, 38, 38)

@@ -69,3 +69,9 @@ class DefineUpDownTransition:
 			self.transitionstate = self.transitionstate - 1
 
 		return self.transitionstate
+
+	# =========================================================================================
+
+	def resettransition(self):
+
+		self.transitionstate = 0

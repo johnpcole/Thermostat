@@ -23,38 +23,63 @@ class DefineBoilerController:
 
 		self.currenttemperature = 99.9
 
+		self.boilerswitchthreshold = 0.5
+
 	# =========================================================================================
 
 	def updateboilerstatus(self):
 
 		self.updateboilerclocks()
 
-		outcome = "Unknown!"
+		outcome = self.calculateboilerstatus()
 
-		if self.desiredtemperature > self.currenttemperature:
-			# Boiler should be switched on if it's not already on AND it's been off for 5 minutes
-			if self.boilerswitchstatus == False:
-				if self.getboilerswitchtiming(False).getvalue < (self.boilerswitchbuffer * 60):
-					self.turnboileron()
-					outcome = "On - New"
-				else:
-					outcome = "On - Off Snooze"
-			else:
-				outcome = "On - Hold On"
-		else:
-			# Boiler should be switched off if it's not already off AND it's been on for 5 minutes
-			if self.boilerswitchstatus == True:
-				if self.getboilerswitchtiming(True).getvalue < (self.boilerswitchbuffer * 60):
-					self.turnboileroff()
-					outcome = "Off - New"
-				else:
-					outcome = "Off - On Extend"
-			else:
-				outcome = "Off - Hold Off"
+		if self.status != outcome:
+			print "New Boiler Controller Status:", outcome
+
+		if outcome == "On - Switch On":
+			self.turnboileron()
+		elif outcome == "Off - Switch Off":
+			self.turnboileroff()
 
 		self.status = outcome
+		#print self.desiredtemperature, "|", self.currenttemperature, "|", self.boilerswitchstatus, "|", self.status, "|", self.getboilerswitchtiming(True).getvalue(), "|", self.getboilerswitchtiming(False).getvalue()
+		return outcome
+
+	# =========================================================================================
+
+	def calculateboilerstatus(self):
+
+		if self.desiredtemperature > self.currenttemperature:
+			perfectswitchstatus = True
+			theoreticaloutcome = "On"
+			oppositeoutcome = "Off"
+		else:
+			perfectswitchstatus = False
+			theoreticaloutcome = "Off"
+			oppositeoutcome = "On"
+
+		outcome = "Unknown"
+		if self.boilerswitchstatus == perfectswitchstatus:
+			outcome = theoreticaloutcome + " - Continue " + theoreticaloutcome
+		else:
+			if self.gettemperaturethreshold() == True:
+				if self.getmostrecentboilerswitchtimingoffset() > 0:
+					outcome = theoreticaloutcome + " - Switch " + theoreticaloutcome
+				else:
+					outcome = theoreticaloutcome + " - " + oppositeoutcome + " Override"
+			else:
+				outcome = oppositeoutcome + " - Within " + theoreticaloutcome + " Threshold"
 
 		return outcome
+
+	# =========================================================================================
+
+	def gettemperaturethreshold(self):
+
+		if abs(self.desiredtemperature - self.currenttemperature) >= self.boilerswitchthreshold:
+			return True
+		else:
+			return False
 
 	# =========================================================================================
 
@@ -74,8 +99,18 @@ class DefineBoilerController:
 			switchtime = self.boilerlastontime
 		else:
 			switchtime = self.boilerlastofftime
+
 		return Clock.timediff(switchtime, currenttime)
 
+	# =========================================================================================
+
+	def getmostrecentboilerswitchtimingoffset(self):
+
+		if self.boilerswitchstatus == False:
+			outcome = True
+		else:
+			outcome = False
+		return (self.getboilerswitchtiming(outcome).getvalue() - (self.boilerswitchbuffer * 60))
 	# =========================================================================================
 
 	def getboilerswitchstatus(self):
@@ -92,7 +127,7 @@ class DefineBoilerController:
 
 	def setdesiredtemperature(self, temp):
 
-		self.desiredtemperature = temp
+		self.desiredtemperature = float(temp)
 
 		return self.getdesiredtemperature()
 
@@ -106,7 +141,7 @@ class DefineBoilerController:
 
 	def setcurrenttemperature(self, temp):
 
-		self.currenttemperature = temp
+		self.currenttemperature = float(temp)
 
 		return self.getcurrenttemperature()
 
@@ -121,6 +156,7 @@ class DefineBoilerController:
 	def turnboileron(self):
 
 		self.boilerswitchstatus = True
+		print "Boiler switched on at", Clock.getnow().gettext()
 		self.updateboilerclocks()
 		#CODE TO THROW RELAY
 
@@ -129,6 +165,7 @@ class DefineBoilerController:
 	def turnboileroff(self):
 
 		self.boilerswitchstatus = False
+		print "Boiler switched off at", Clock.getnow().gettext()
 		self.updateboilerclocks()
 		#CODE TO THROW RELAY
 

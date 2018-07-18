@@ -42,7 +42,7 @@ def runapplication():
 	scheduler.addscheduleditem(Clock.createastime(0, 520, tt), ss + 22)
 	scheduler.addscheduleditem(Clock.createastime(0, 580, tt), ss + 24)
 	scheduler.addscheduleditem(Clock.createastime(0, 640, tt), 24)
-
+	waiter = 0
 	#field = Field.createfield()
 	#enemyarmy = EnemyArmy.createarmy()
 	#defenderarmy = DefenderArmy.createarmy(field)
@@ -74,9 +74,12 @@ def runapplication():
 		newboilerinstruction = scheduler.checkschedule(currenttime)
 		if newboilerinstruction != -1000:
 			boilercontroller.setdesiredtemperature(newboilerinstruction)
-			print "New Boiler Instruction", newboilerinstruction
+			#print "New Boiler Instruction", newboilerinstruction
 		boilercontroller.setcurrenttemperature(((currenttime.getvalue()) % 300) / 10.0)
-		boilercontroller.updateboilerstatus()
+		waiter = waiter + 1
+		if waiter > 100:
+			waiter = 0
+			boilercontroller.updateboilerstatus()
 		# If the field is enabled, update the selection property on the field and defender army objects
 		# If we are in add/upgrade mode, we DONT want to start changing the current selection!!!
 		#if controls.updatefieldselectionlocation(field) == True:

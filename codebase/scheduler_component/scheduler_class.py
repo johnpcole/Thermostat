@@ -131,6 +131,6 @@ class DefineSchedule:
 		outcome = -1000
 		if lasttimechecked != currenttime.getsecondlessvalue():
 			self.lastchecked = Clock.createasinteger(lasttimechecked + 60)
-			print "Updated Schedule to", self.lastchecked.getsecondlesstext()
+			# "Updated Schedule to", self.lastchecked.getsecondlesstext()
 			outcome = self.getscheduledinstruction(self.lastchecked)
 		return outcome

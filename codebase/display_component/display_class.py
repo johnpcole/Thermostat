@@ -130,13 +130,13 @@ class DefineDisplay:
 	def drawboard(self, boilercontroller):
 
 		# Update the animation stats
-		self.board.updateboardlayout(boilercontroller)
+		self.board.updateboardlayout(boilercontroller.getstatus())
 
 		# Display current measured temperature
-		self.paintitems(self.board.drawcurrenttemperature(boilercontroller))
+		self.paintitems(self.board.drawcurrenttemperature(boilercontroller.getcurrenttemperature()))
 
 		# Display flame
-		self.paintitems(self.board.drawflame(boilercontroller))
+		self.paintitems(self.board.drawflame(boilercontroller.getmostrecentboilerswitchtimingoffset()))
 
 
 
