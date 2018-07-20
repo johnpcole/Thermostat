@@ -15,7 +15,7 @@ class DefineDisplay:
 	# Object Setup
 	# ==========================================================================================
 
-	def __init__(self):
+	def __init__(self, controls):
 
 		# Sets up the application window size
 		self.displaysize = Vector.createfromvalues(480, 320)
@@ -28,10 +28,11 @@ class DefineDisplay:
 		self.runway = Runway.createrunway()
 		self.board = Board.createboard()
 
-
 		# Stores the list of buttons to process
-		#self.buttonlist = control.getbuttoncollection("")
-		#self.buttonlist.remove("Field")
+		self.buttons = controls.getbuttoncollection("")
+		self.buttons.remove("Start Menu")
+		self.buttons.remove("Home")
+		self.buttons.remove("Configure")
 
 
 
@@ -91,35 +92,14 @@ class DefineDisplay:
 		# Draw Board
 		self.drawboard(boilercontroller)
 
+		# Draw Buttons
+		self.paintbuttons(controls)
+
 		# Refresh screen
 		self.display.updatescreen()
 
 		# Blank out area
-		self.display.drawrectangle(Vector.createfromvalues(0, 0), Vector.createfromvalues(480, 240), "Black", "", 0)
-
-#
-#
-# 	# -------------------------------------------------------------------
-# 	# Draws the button groups
-# 	# -------------------------------------------------------------------
-#
-# 	def paintbuttons(self, control):
-#
-# 		for buttonname in self.buttonlist:
-# 			buttonstate = control.getbuttonstate(buttonname)
-#
-# 			if buttonstate != "Hidden":
-# 				buttonlocation = control.getbuttonposition(buttonname)
-# 				self.display.drawimage(buttonname, buttonlocation)
-#
-# 				if buttonstate == "Disabled":
-# 					self.display.drawimage("Overlay - Disabled", buttonlocation)
-#
-# 				else:
-# 					if control.getbuttonhoverstate(buttonname) == True:
-# 						self.display.drawimage("Overlay - Hover", buttonlocation)
-
-
+		self.display.drawrectangle(Vector.createorigin(), Vector.createfromvalues(480, 240), "Black", "", 0)
 
 
 
@@ -186,6 +166,35 @@ class DefineDisplay:
 			else:
 				print 1/0
 
+	# -------------------------------------------------------------------
+	# Paints the buttons
+	# -------------------------------------------------------------------
+
+	def paintbuttons(self, control):
+
+		if control.getbuttonstate("Start Menu") == "Hidden":
+			self.display.drawimage("start_disabled", Vector.createorigin())
+
+		for buttonname in self.buttons:
+			buttonstate = control.getbuttonstate(buttonname)
+
+			if buttonstate != "Hidden":
+				buttonlocation = control.getbuttonposition(buttonname)
+
+				if buttonname[:9] == "Set Temp ":
+					temperature = buttonname[9:]
+					textlocation = Vector.add(buttonlocation, Vector.createfromvalues(25, 5))
+					self.display.drawimage("button_outline", buttonlocation)
+					self.display.drawtext(temperature, textlocation, "Centre", temperature, "Button Temps")
+				else:
+					self.display.drawimage(buttonname, buttonlocation)
+
+				#if buttonstate == "Disabled":
+					#self.display.drawimage("start_disabled", buttonlocation)
+
+				#else:
+				#	if control.getbuttonhoverstate(buttonname) == True:
+				#		self.display.drawimage("Overlay - Hover", buttonlocation)
 
 #
 #

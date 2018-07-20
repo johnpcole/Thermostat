@@ -23,8 +23,8 @@ def runapplication():
 
 	boilercontroller = BoilerController.createboilercontroller()
 	scheduler = Scheduler.createscheduler()
-	display = Display.createdisplay()
 	controls = Controller.createcontroller()
+	display = Display.createdisplay(controls)
 
 	tt = Clock.getnow().getvalue() - 100
 	ss = 3
@@ -75,7 +75,8 @@ def runapplication():
 		if newboilerinstruction != -1000:
 			boilercontroller.setdesiredtemperature(newboilerinstruction)
 			#print "New Boiler Instruction", newboilerinstruction
-		boilercontroller.setcurrenttemperature(((currenttime.getvalue()) % 300) / 10.0)
+		timephase = abs((currenttime.getvalue() % 300) - 150)
+		boilercontroller.setcurrenttemperature(timephase / 5.0)
 		waiter = waiter + 1
 		if waiter > 100:
 			waiter = 0

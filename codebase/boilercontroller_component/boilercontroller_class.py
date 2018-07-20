@@ -13,7 +13,7 @@ class DefineBoilerController:
 
 		self.boilerswitchstatus = False
 
-		self.boilerswitchbuffer = 1 # minutes
+		self.boilerswitchbuffer = 0 # minutes
 
 		self.boilerlastontime = Clock.getnow()
 
@@ -68,7 +68,7 @@ class DefineBoilerController:
 				else:
 					outcome = theoreticaloutcome + " - " + oppositeoutcome + " Override"
 			else:
-				outcome = oppositeoutcome + " - Within " + theoreticaloutcome + " Threshold"
+				outcome = oppositeoutcome + " - Within " + theoreticaloutcome + " Ignore Tolerance"
 
 		return outcome
 

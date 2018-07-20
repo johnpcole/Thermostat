@@ -20,22 +20,37 @@ class DefineButtons:
 		self.setupbuttons()
 
 		# Manage Defender Overlay position
-		self.managedefenderoverlayposition = Vector.createblank()
+		#self.managedefenderoverlayposition = Vector.createblank()
 
 
 
 	def setupbuttons(self):
 
-		self.definebutton("Start Wave",          287, 380, 30, 30, [])
-		self.definebutton("Speed - Stop",        625, 400, 30, 30, ["Speed", "Non-Slow", "Non-Fast"])
-		self.definebutton("Speed - Slow",   625 + 40, 400, 30, 30, ["Speed", "Non-Stop", "Non-Fast"])
-		self.definebutton("Speed - Fast",   625 + 80, 400, 30, 30, ["Speed", "Non-Slow", "Non-Stop"])
-		self.definebutton("Field",                 0,   0, 100, 100, [])
-		self.definebutton("Add - Soldier",       625, 450, 30, 30, ["Manage-Defender"])
-		self.definebutton("Add - Archer",   625 + 40, 450, 30, 30, ["Manage-Defender"])
-		self.definebutton("Add - Wizard",   625 + 80, 450, 30, 30, ["Manage-Defender"])
-		self.definebutton("Cancel",        625 + 120, 450, 30, 30, ["Manage-Defender"])
-		self.definebutton("Upgrade Defender",    625, 450, 30, 30, ["Manage-Defender"])
+		self.definebutton("Start Menu",          0, 0, 480, 320, [])
+
+		for x in range(0, 5):
+			for y in range(0, 4):
+				if y == 0:
+					buttonvalue = "Set Temp " + str(4 + (x * 2))
+				else:
+					buttonvalue = "Set Temp " + str(8 + (y * 5) + x)
+				self.definebutton(buttonvalue,
+									65 + (x * 60) + (y * 20),
+									30 + (y * 70),
+									50, 50, ["Set Temp"])
+
+		#for x in range(0, 6):
+		#	for y in range(0, 4):
+		#		buttonvalue = "Set Temp " + str(3 + (y * 6) + x)
+		#		self.definebutton(buttonvalue,
+		#							35 + (x * 60) + (y * 20),
+		#							30 + (y * 70),
+		#							50, 50, ["Set Temp"])
+
+		self.definebutton("Home",          415, 15, 50, 50, ["Set Temp"])
+		self.definebutton("Configure",     15, 255, 50, 50, ["Set Temp"])
+
+
 
 
 
@@ -117,12 +132,12 @@ class DefineButtons:
 	# Update button positions
 	# -------------------------------------------------------------------
 
-	def updatemanagebuttonlocation(self, buttonname, offsetvalue):
+	#def updatemanagebuttonlocation(self, buttonname, offsetvalue):
 
-		newbuttonlocation = Vector.createfromvalues(self.managedefenderoverlayposition.getx() + offsetvalue,
-													self.managedefenderoverlayposition.gety() + 160)
-		self.inputobject.setareadimensions(buttonname, newbuttonlocation,
-																		self.inputobject.getareadimensions(buttonname))
+	#	newbuttonlocation = Vector.createfromvalues(self.managedefenderoverlayposition.getx() + offsetvalue,
+	#												self.managedefenderoverlayposition.gety() + 160)
+	#	self.inputobject.setareadimensions(buttonname, newbuttonlocation,
+	#																	self.inputobject.getareadimensions(buttonname))
 
 
 

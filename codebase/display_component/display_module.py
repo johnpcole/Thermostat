@@ -1,5 +1,5 @@
 from . import display_class as DisplayClass
 
-def createdisplay():
-	return DisplayClass.DefineDisplay()
+def createdisplay(controls):
+	return DisplayClass.DefineDisplay(controls)
 

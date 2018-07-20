@@ -72,14 +72,14 @@ class DefineBoard:
 				if snoozetimer < 1:
 					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
 			elif flamemode == "On":
-				frame = self.getflameframe()
-				outcome["Flame 1"] = ("Image", "flame_" + str(frame + 3), self.flameposition)
-				outcome["Flame 2"] = ("Image", "flame_" + str(frame), self.flameposition)
+				for flameversion in range(1,5):
+					framename, flameframe = self.getflameframe(flameversion)
+					if flameframe != "":
+						outcome[framename] = ("Image", flameframe, self.flameposition)
 			elif flamemode == "Transitioning":
 				outcome["Flame 1"] = ("Image", self.getflametransition(), self.flameposition)
 			elif flamemode == "Forced":
-				frame = self.getflameframe()
-				outcome["Flame 1"] = ("Image", "flame_" + str(frame + 1), self.flameposition)
+				outcome["Flame 1"] = ("Image", self.getflameframe(999), self.flameposition)
 				outcome["Overlay Clock"] = ("Image", "flame_snooze", self.flameposition)
 				if snoozetimer < 1:
 					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
@@ -106,20 +106,35 @@ class DefineBoard:
 
 
 
-	def getflameframe(self):
+	def getflameframe(self, flameversion):
 
-		frame = (Clock.getnow().getvalue() % 4)
-		if frame == 3:
-			frame = 1
-		return frame
+		if flameversion == 999:
+			flamemax = 10
+		else:
+			flamemax = 20
+
+		flamesize = (Clock.getnow().getvalue() + (flameversion * 5)) % flamemax
+		if flamesize < 13:
+			flamename = "a" * (13 - flamesize)
+			if (flameversion % 2) == 0:
+				direction = "L"
+			else:
+				direction = "R"
+			return ("Flame " + flamename), ("flame_" + str(flamesize) + direction)
+		else:
+			return "", ""
 
 
 
 	def getflametransition(self):
 
 		transitionfraction = self.boilerstate.gettransitionfraction()
-
-		return ("flame_" + str(int((transitionfraction - 0.2) * 7.49)))
+		flamesize = int((transitionfraction - 0.2) * 16.24)
+		if (Clock.getnow().getvalue() % 2) == 0:
+			direction = "L"
+		else:
+			direction = "R"
+		return ("flame_" + str(flamesize) + direction)
 
 
 

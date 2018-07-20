@@ -44,6 +44,8 @@ class DefineController(Buttons.DefineButtons):
 		self.useraction = Enumeration.createenum(["None", "Temp-Up", "Temp-Down",
 														"Lock-On", "Lock-Off"], "None")
 
+		# Get buttons in the correct state
+		self.quitmainmenu()
 
 
 	# ==========================================================================================
@@ -71,25 +73,81 @@ class DefineController(Buttons.DefineButtons):
 				if self.inputobject.getcurrentmouseareastate() == "Enabled":
 					clickedbutton = self.inputobject.getcurrentmousearea()
 
-					# If StartWave button is pressed, clear the between waves state
-					if clickedbutton == "Start Wave":
-						self.playnextlevel()
+					if clickedbutton == "Start Menu":
+						self.showmainmenu()
 
 					# If Fast/Slow/Stop button is pressed, set game state
-					elif clickedbutton[:8] == "Speed - ":
-						self.setgamespeed(clickedbutton[8:])
+					elif clickedbutton[:9] == "Set Temp ":
+						self.setdesiredtemp(int(clickedbutton[9:]))
 
 					# If Add Soldier/Archer button is pressed, complete the add defender action
-					elif (clickedbutton[:6] == "Add - ") or (clickedbutton == "Upgrade Defender"):
-						self.useraction.set(clickedbutton)
+					#elif (clickedbutton[:6] == "Add - ") or (clickedbutton == "Upgrade Defender"):
+					#	self.useraction.set(clickedbutton)
 
-					# If Cancel Soldier/Archer button is pressed, cancel defender add state
-					elif clickedbutton == "Cancel":
-						self.cancelmanagedefender()
+					elif clickedbutton == "Home":
+						self.quitmainmenu()
+
+					elif clickedbutton == "Configure":
+						self.showconfiguremenu()
 
 					# If the field is clicked, invoke field click
-					elif clickedbutton == "Field":
-						self.useraction.set("Click Field")
+					#elif clickedbutton == "Field":
+					#	self.useraction.set("Click Field")
+
+
+
+	# -------------------------------------------------------------------
+	# Shows the main menu
+	# -------------------------------------------------------------------
+
+	def showmainmenu(self):
+
+		# Set Start Menu to Hidden
+		self.updatebutton("Start Menu", "Hidden")
+
+		# Set main menu buttons to displayed and enabled
+		self.updatebutton("Set Temp", "Enabled")
+
+
+
+	# -------------------------------------------------------------------
+	# Quits the main menu
+	# -------------------------------------------------------------------
+
+	def quitmainmenu(self):
+
+		# Set Start Menu to Enabled
+		self.updatebutton("Start Menu", "Enabled")
+
+		# Set main menu buttons to hidden
+		self.updatebutton("Set Temp", "Hidden")
+
+
+
+	# -------------------------------------------------------------------
+	# Shows the configuration menu
+	# -------------------------------------------------------------------
+
+	def showconfiguremenu(self):
+
+		# Set main menu buttons to hidden
+		self.updatebutton("Set Temp", "Hidden")
+		self.quitmainmenu()
+
+		print "Showing configuration menu"
+
+
+
+	# -------------------------------------------------------------------
+	# Sets the desired temperature
+	# -------------------------------------------------------------------
+
+	def setdesiredtemp(self, desiredtemp):
+
+		self.quitmainmenu()
+
+		print "Temp set to", desiredtemp
+
 
 
 	#
@@ -140,21 +198,6 @@ class DefineController(Buttons.DefineButtons):
 	# 			self.updatemanagedefenderbuttons(self.fieldhovermode.displaycurrent(), game, defenderarmy)
 	#
 	#
-	#
-	# # -------------------------------------------------------------------
-	# # Resets Add/Upgrade Defender Mode
-	# # -------------------------------------------------------------------
-	#
-	# def cancelmanagedefender(self):
-	#
-	# 	# Update button states
-	# 	self.setgamespeed("Stop")
-	#
-	# 	# Reset buttons to Hidden
-	# 	self.updatebutton("Manage-Defender", "Hidden")
-	#
-	# 	# Restores field selection mode
-	# 	self.updatebutton("Field", "Enabled")
 	#
 	#
 	#
