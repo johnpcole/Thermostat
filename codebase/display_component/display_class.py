@@ -4,10 +4,10 @@ from . import display_privatefunctions as DisplayFunction
 #from ..common_components.clock_datatype import clock_module as Clock
 from runway_subcomponent import runway_module as Runway
 from board_subcomponent import board_module as Board
+from buttons_subcomponent import buttons_module as Buttons
 from graphicdata_subcomponent import graphicdata_colours as Colours
 from graphicdata_subcomponent import graphicdata_images as Images
 from graphicdata_subcomponent import graphicdata_fonts as Fonts
-
 
 class DefineDisplay:
 
@@ -27,12 +27,8 @@ class DefineDisplay:
 		self.setupimages()
 		self.runway = Runway.createrunway()
 		self.board = Board.createboard()
+		self.buttons = Buttons.createbuttons(controls)
 
-		# Stores the list of buttons to process
-		self.buttons = controls.getbuttoncollection("")
-		self.buttons.remove("Start Menu")
-		self.buttons.remove("Home")
-		self.buttons.remove("Configure")
 
 
 
@@ -93,7 +89,7 @@ class DefineDisplay:
 		self.drawboard(boilercontroller)
 
 		# Draw Buttons
-		self.paintbuttons(controls)
+		self.drawbuttons(controls, boilercontroller)
 
 		# Refresh screen
 		self.display.updatescreen()
@@ -170,31 +166,13 @@ class DefineDisplay:
 	# Paints the buttons
 	# -------------------------------------------------------------------
 
-	def paintbuttons(self, control):
+	def drawbuttons(self, controls, boilercontroller):
 
-		if control.getbuttonstate("Start Menu") == "Hidden":
-			self.display.drawimage("start_disabled", Vector.createorigin())
+		# Semi transparent background if the start button is hidden - implies other buttons are displayed
+		self.paintitems(self.buttons.drawmodaloverlay(controls))
 
-		for buttonname in self.buttons:
-			buttonstate = control.getbuttonstate(buttonname)
-
-			if buttonstate != "Hidden":
-				buttonlocation = control.getbuttonposition(buttonname)
-
-				if buttonname[:9] == "Set Temp ":
-					temperature = buttonname[9:]
-					textlocation = Vector.add(buttonlocation, Vector.createfromvalues(25, 5))
-					self.display.drawimage("button_outline", buttonlocation)
-					self.display.drawtext(temperature, textlocation, "Centre", temperature, "Button Temps")
-				else:
-					self.display.drawimage(buttonname, buttonlocation)
-
-				#if buttonstate == "Disabled":
-					#self.display.drawimage("start_disabled", buttonlocation)
-
-				#else:
-				#	if control.getbuttonhoverstate(buttonname) == True:
-				#		self.display.drawimage("Overlay - Hover", buttonlocation)
+		# The Start Menu
+		self.paintitems(self.buttons.drawstartmenu(controls, boilercontroller))
 
 #
 #

@@ -19,36 +19,20 @@ class DefineButtons:
 		self.area = {}
 		self.setupbuttons()
 
-		# Manage Defender Overlay position
-		#self.managedefenderoverlayposition = Vector.createblank()
-
 
 
 	def setupbuttons(self):
 
-		self.definebutton("Start Menu",          0, 0, 480, 320, [])
-
-		for x in range(0, 5):
-			for y in range(0, 4):
-				if y == 0:
-					buttonvalue = "Set Temp " + str(4 + (x * 2))
-				else:
-					buttonvalue = "Set Temp " + str(8 + (y * 5) + x)
-				self.definebutton(buttonvalue,
-									65 + (x * 60) + (y * 20),
-									30 + (y * 70),
-									50, 50, ["Set Temp"])
-
-		#for x in range(0, 6):
-		#	for y in range(0, 4):
-		#		buttonvalue = "Set Temp " + str(3 + (y * 6) + x)
-		#		self.definebutton(buttonvalue,
-		#							35 + (x * 60) + (y * 20),
-		#							30 + (y * 70),
-		#							50, 50, ["Set Temp"])
-
-		self.definebutton("Home",          415, 15, 50, 50, ["Set Temp"])
-		self.definebutton("Configure",     15, 255, 50, 50, ["Set Temp"])
+		self.definebutton("Start Menu",           0,   0, 480, 320, [])
+		self.definebutton("Temp Slider",          0,  30, 480,  80, ["Set Temp"])
+		self.definebutton("Override Next",       30, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Override 30",        104, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Override 60",        178, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Override 120",       252, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Override 180",       326, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Override Lock",      400, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Temp Cancel",         15, 255,  50,  50, ["Set Temp"])
+		self.definebutton("Temp Commit",        415, 255,  50,  50, ["Set Temp"])
 
 
 
@@ -67,55 +51,6 @@ class DefineButtons:
 	# Perform Actions
 	# ==========================================================================================
 
-
-
-	# -------------------------------------------------------------------
-	# Update Manage Defender Overlay fauxbutton
-	# -------------------------------------------------------------------
-
-	# def updatemanagedefenderoverlaylocation(self, newlocation):
-	#
-	# 	self.managedefenderoverlayposition.setfromvector(newlocation)
-	#
-	#
-	#
-	# # -------------------------------------------------------------------
-	# # Update Add/Upgrade/Cancel buttons
-	# # -------------------------------------------------------------------
-	#
-	# def updatemanagedefenderbuttons(self, managemode, game, defenderarmy):
-	#
-	# 	if managemode == "Add":
-	# 		buttonlist = ["Soldier", "Archer", "Wizard", "Cancel"]
-	# 	elif managemode == "Upgrade":
-	# 		buttonlist = ["Upgrade", "Cancel"]
-	# 	else:
-	# 		buttonlist = ["Cancel"]
-	# 		assert managemode == "Upgrade", "Unrecognised field-hover-mode"
-	#
-	# 	buttonoffset = -30
-	#
-	# 	for buttontype in buttonlist:
-	#
-	# 		if buttontype == "Cancel":
-	# 			buttonname = buttontype
-	# 			buttoncost = -999
-	# 		elif buttontype == "Upgrade":
-	# 			buttonname = "Upgrade Defender"
-	# 			buttoncost = defenderarmy.getdefenderupgradecost()
-	# 		else:
-	# 			buttonname = "Add - " + buttontype
-	# 			buttoncost = defenderarmy.getnewdefendercost(buttontype)
-	#
-	# 		buttonoffset = buttonoffset + 40
-	# 		self.updatemanagebuttonlocation(buttonname, buttonoffset)
-	#
-	# 		if buttoncost > game.getcoincount():
-	# 			newstate = "Disabled"
-	# 		else:
-	# 			newstate = "Enabled"
-	# 		self.inputobject.setareastate(buttonname, newstate)
-	#
 
 
 	# -------------------------------------------------------------------
@@ -201,11 +136,3 @@ class DefineButtons:
 
 
 
-	# # -------------------------------------------------------------------
-	# # Returns the manage defender overlay position
-	# # -------------------------------------------------------------------
-	#
-	# def getmanagedefenderoverlayposition(self):
-	#
-	# 	return self.managedefenderoverlayposition
-	#

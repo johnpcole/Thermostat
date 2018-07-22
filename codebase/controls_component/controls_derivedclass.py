@@ -1,5 +1,5 @@
-#from ..common_components.vector_datatype import vector_module as Vector
-from ..common_components.enumeration_datatype import enumeration_module as Enumeration
+from ..common_components.vector_datatype import vector_module as Vector
+#from ..common_components.enumeration_datatype import enumeration_module as Enumeration
 from . import buttons_baseclass as Buttons
 
 
@@ -40,9 +40,15 @@ class DefineController(Buttons.DefineButtons):
 		# Specifies what would happen if the user clicked at the current field hover location
 		#self.fieldhovermode = Enumeration.createenum(["Disabled", "Add", "Upgrade", "Unknown"], "Disabled")
 
+		# Specifies whether the temp slider is being dragged
+		self.temperaturesliderstate = False
+		self.temperatureslidervalue = -999
+
+		# Mouse location
+		self.mouselocation = Vector.createblank()
+
 		# Specifies what the user has done this cycle
-		self.useraction = Enumeration.createenum(["None", "Temp-Up", "Temp-Down",
-														"Lock-On", "Lock-Off"], "None")
+		self.useraction = "None"
 
 		# Get buttons in the correct state
 		self.quitmainmenu()
@@ -60,39 +66,76 @@ class DefineController(Buttons.DefineButtons):
 	# Returns number of coins to spend, for any costly actions performed
 	# -------------------------------------------------------------------
 
-	def processinput(self):
+	def processinput(self, boilercontroller):
 
 		# Loop over all events logged in this cycle and update all mouse properties
 		self.inputobject.processinputs()
 
 		# Default to no user action being specified
-		self.useraction.set("None")
+		self.useraction = "None"
 
 		if self.inputobject.getmouseaction() == True:
-			if self.inputobject.getmouseclickaction() == -1:
-				if self.inputobject.getcurrentmouseareastate() == "Enabled":
-					clickedbutton = self.inputobject.getcurrentmousearea()
 
-					if clickedbutton == "Start Menu":
-						self.showmainmenu()
+			self.updateslider("Position")
 
-					# If Fast/Slow/Stop button is pressed, set game state
-					elif clickedbutton[:9] == "Set Temp ":
-						self.setdesiredtemp(int(clickedbutton[9:]))
+			clickedbutton = self.getmouseaction()
 
-					# If Add Soldier/Archer button is pressed, complete the add defender action
-					#elif (clickedbutton[:6] == "Add - ") or (clickedbutton == "Upgrade Defender"):
-					#	self.useraction.set(clickedbutton)
+			if clickedbutton[-11:] == "Temp Slider":
+				self.updateslider(clickedbutton)
 
-					elif clickedbutton == "Home":
-						self.quitmainmenu()
+			elif clickedbutton == "Release: Start Menu":
+				self.showmainmenu(boilercontroller)
 
-					elif clickedbutton == "Configure":
-						self.showconfiguremenu()
+			elif clickedbutton == "Release: Temp Slider":
+				self.updateslider("Release")
 
-					# If the field is clicked, invoke field click
-					#elif clickedbutton == "Field":
-					#	self.useraction.set("Click Field")
+			elif clickedbutton == "Release: Temp Cancel":
+				self.quitmainmenu()
+
+			elif clickedbutton == "Release: Temp Commit":
+				self.setdesiredtemp()
+
+
+
+	# -------------------------------------------------------------------
+	# Updates the slider on the main menu
+	# -------------------------------------------------------------------
+
+	def getmouseaction(self):
+
+		outcome = ""
+		if self.inputobject.getcurrentmouseareastate() == "Enabled":
+			clickedbutton = self.inputobject.getcurrentmousearea()
+			if self.inputobject.getmouseclickaction() == 1:
+				outcome = "Click: " + clickedbutton
+			elif self.inputobject.getmouseclickaction() == -1:
+				outcome = "Release: " + clickedbutton
+			else:
+				outcome = "Hover: " + clickedbutton
+		return outcome
+
+
+
+	# -------------------------------------------------------------------
+	# Updates the slider on the main menu
+	# -------------------------------------------------------------------
+
+	def updateslider(self, mode):
+
+		if mode == "Click: Temp Slider":
+			self.temperaturesliderstate = True
+			self.mouselocation = self.inputobject.getmouselocation()
+		elif mode == "Release: Temp Slider":
+			self.temperaturesliderstate = False
+
+		if self.temperaturesliderstate == True:
+			if self.inputobject.getcurrentmousearea() == "Temp Slider":
+				newmouse = self.inputobject.getmouselocation()
+				sliderchange = (newmouse.getx() - self.mouselocation.getx()) * 5
+				self.mouselocation = newmouse
+				self.temperatureslidervalue = min(2700, max(300, self.temperatureslidervalue + sliderchange))
+			else:
+				self.temperaturesliderstate = False
 
 
 
@@ -100,13 +143,16 @@ class DefineController(Buttons.DefineButtons):
 	# Shows the main menu
 	# -------------------------------------------------------------------
 
-	def showmainmenu(self):
+	def showmainmenu(self, boilercontroller):
 
 		# Set Start Menu to Hidden
 		self.updatebutton("Start Menu", "Hidden")
 
 		# Set main menu buttons to displayed and enabled
 		self.updatebutton("Set Temp", "Enabled")
+
+		# Set the slider value to be the current boiler temperature
+		self.temperatureslidervalue = boilercontroller.getdesiredtemperature() * 100
 
 
 
@@ -128,13 +174,13 @@ class DefineController(Buttons.DefineButtons):
 	# Shows the configuration menu
 	# -------------------------------------------------------------------
 
-	def showconfiguremenu(self):
+	#def showconfiguremenu(self):
 
 		# Set main menu buttons to hidden
-		self.updatebutton("Set Temp", "Hidden")
-		self.quitmainmenu()
+	#	self.updatebutton("Set Temp", "Hidden")
+	#	self.quitmainmenu()
 
-		print "Showing configuration menu"
+	#	print "Showing configuration menu"
 
 
 
@@ -142,15 +188,28 @@ class DefineController(Buttons.DefineButtons):
 	# Sets the desired temperature
 	# -------------------------------------------------------------------
 
-	def setdesiredtemp(self, desiredtemp):
+	def setdesiredtemp(self):
 
 		self.quitmainmenu()
 
-		print "Temp set to", desiredtemp
+		self.useraction = "Set Temp = " + str(int(self.temperatureslidervalue / 100))
+
+		print self.useraction
 
 
 
-	#
+	# -------------------------------------------------------------------
+	# Update mouse position
+	# -------------------------------------------------------------------
+
+	def updatemouseposition(self):
+
+		newlocation = Vector.createfromvector(self.inputobject.getmouselocation())
+		positionchange = Vector.subtract(newlocation, self.mouselocation)
+		self.mouselocation = Vector.createfromvector(newlocation)
+
+		return positionchange
+
 	# # -------------------------------------------------------------------
 	# # Sets game to fast or slow or stop mode
 	# # -------------------------------------------------------------------
@@ -395,3 +454,11 @@ class DefineController(Buttons.DefineButtons):
 
 		return self.inputobject.getquitstate()
 
+
+	# -------------------------------------------------------------------
+	# Returns the current UNCOMMITTED desired temperature on the slider
+	# -------------------------------------------------------------------
+
+	def getslidervalue(self):
+
+		return int(self.temperatureslidervalue / 100)

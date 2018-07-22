@@ -30,5 +30,6 @@ def getimagepallette():
 				"flame_snooze",
 				"flame_disable",
 				"start_disabled",
+				"slider_outline",
 				"button_outline")
 	return images

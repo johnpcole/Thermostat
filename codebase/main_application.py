@@ -65,7 +65,7 @@ def runapplication():
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 		# Process any input events (mouse clicks, mouse moves)
-		controls.processinput()
+		controls.processinput(boilercontroller)
 
 		# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 		# User moves mouse over field or clicks field           #
