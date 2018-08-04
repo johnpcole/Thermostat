@@ -29,6 +29,7 @@ def getimagepallette():
 				"flame_12L",
 				"flame_snooze",
 				"flame_disable",
+				"egg_timer",
 				"start_disabled",
 				"slider_outline",
 				"button_outline")

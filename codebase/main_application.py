@@ -8,7 +8,7 @@ from common_components.clock_datatype import clock_module as Clock
 #from field_component import field_module as Field
 #from defenderarmy_component import defenderarmy_module as DefenderArmy
 #from enemyarmy_component import enemyarmy_module as EnemyArmy
-
+from common_components.meteo_framework import meteo_module as Meteo
 
 
 def runapplication():
@@ -47,6 +47,9 @@ def runapplication():
 	#enemyarmy = EnemyArmy.createarmy()
 	#defenderarmy = DefenderArmy.createarmy(field)
 	#game = Game.creategame()
+	meteolocation = Meteo.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
+	print meteolocation.getsuntimes(1, 1, 2018)
+
 
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 	# Paint field and Start level 1                 #

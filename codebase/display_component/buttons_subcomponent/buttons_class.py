@@ -16,12 +16,11 @@ class DefineButtons:
 
 		self.fillresize = Vector.createfromvalues(-2, -2)
 
-		self.sliderposition = Vector.createfromvalues(40, 31)
+		self.sliderposition = Vector.createfromvalues(40, 25)
 
 		self.slidersize = Vector.createfromvalues(400, 78)
 
 		self.sliderstepsize = Vector.createfromvalues(self.slidersize.getx() / 25, 0)
-
 		self.slidertextoffset = Vector.createfromvalues(0, 19)
 
 		self.slidercurrenttextoffset = Vector.createfromvalues(0, 33)
@@ -44,35 +43,40 @@ class DefineButtons:
 
 		for buttonname in self.startmenubuttons:
 			if control.getbuttonstate(buttonname) != "Hidden":
-				buttonlocation = control.getbuttonposition(buttonname)
 
 				if buttonname == "Temp Slider":
+
+					outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(self.sliderposition, Vector.createfromvalues(0, -1)))
 
 					for temperature in range(3, 28):
 
 						temp, boxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(temperature, control.getslidervalue())
 
-						outcome["Slide Background " + temp] = ("Box", boxposition, boxsize, temp, "", 0)
+						outcome["Slider Background " + temp] = ("Box", boxposition, boxsize, temp, "", 0)
 
 						if (temperature == control.getslidervalue()) or (temperature == int(boilercontroller.getdesiredtemperature())):
-							outcome["Slide Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
-							#outcome["Slide Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
+							outcome["Slider Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
+							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
+
+						if temperature == 3:
+							outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(boxposition, Vector.createfromvalues(0, -1)))
 
 
 
 				else:
+					buttonlocation = control.getbuttonposition(buttonname)
+					buttonsize = control.getbuttonsize(buttonname)
 					buttonoverlaylocation = Vector.add(buttonlocation, self.filloffset)
-					buttonoverlaysize = Vector.add(control.getbuttonsize(buttonname), self.fillresize)
+					buttonoverlaysize = Vector.add(buttonsize, self.fillresize)
 
-					if buttonname[:9] == "Set Temp ":
-						temperature = buttonname[9:]
+					if buttonname[:9] == "Override ":
+						timing = buttonname[9:]
 						textlocation = Vector.add(buttonlocation, self.textoffset)
-						outcome[buttonname + " Logo"] = ("Text", temperature, textlocation, "Centre", "Black", "Button Temps")
+						outcome[buttonname + " Logo"] = ("Image", "egg_timer", buttonlocation)
+						outcome[buttonname + " Text"] = ("Text", timing, textlocation, "Left", "Black", "Snooze")
 
-					else:
-						temperature = "Dark Grey"
 
-					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, temperature, "", 0)
+					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, "Dark Grey", "", 0)
 					outcome[buttonname + "Outline"] = ("Image", "button_outline", buttonlocation)
 
 		return outcome

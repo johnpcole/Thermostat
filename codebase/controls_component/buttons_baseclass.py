@@ -24,13 +24,13 @@ class DefineButtons:
 	def setupbuttons(self):
 
 		self.definebutton("Start Menu",           0,   0, 480, 320, [])
-		self.definebutton("Temp Slider",          0,  30, 480,  80, ["Set Temp"])
-		self.definebutton("Override Next",       30, 170,  50,  50, ["Set Temp"])
-		self.definebutton("Override 30",        104, 170,  50,  50, ["Set Temp"])
-		self.definebutton("Override 60",        178, 170,  50,  50, ["Set Temp"])
-		self.definebutton("Override 120",       252, 170,  50,  50, ["Set Temp"])
-		self.definebutton("Override 180",       326, 170,  50,  50, ["Set Temp"])
-		self.definebutton("Override Lock",      400, 170,  50,  50, ["Set Temp"])
+		self.definebutton("Temp Slider",         24, 24,  432,  80, ["Set Temp"])
+		self.definebutton("Override Next",       30, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 30",        104, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 60",        178, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 120",       252, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 180",       326, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override Lock",      400, 150,  50,  50, ["Set Temp"])
 		self.definebutton("Temp Cancel",         15, 255,  50,  50, ["Set Temp"])
 		self.definebutton("Temp Commit",        415, 255,  50,  50, ["Set Temp"])
 
