@@ -37,7 +37,7 @@ class DefineButtons:
 
 
 
-	def drawstartmenu(self, control, boilercontroller):
+	def drawstartmenu(self, control, currentdesiredtemperature):
 
 		outcome = {}
 
@@ -54,7 +54,7 @@ class DefineButtons:
 
 						outcome["Slider Background " + temp] = ("Box", boxposition, boxsize, temp, "", 0)
 
-						if (temperature == control.getslidervalue()) or (temperature == int(boilercontroller.getdesiredtemperature())):
+						if (temperature == control.getslidervalue()) or (temperature == int(currentdesiredtemperature)):
 							outcome["Slider Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
 							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
 
