@@ -1,5 +1,7 @@
 from ..common_components.vector_datatype import vector_module as Vector
+from ..common_components.enumeration_datatype import enumeration_module as Enumeration
 from . import buttons_baseclass as Buttons
+from tempselector_subcomponent import tempselector_module as TempSelector
 
 
 class DefineController(Buttons.DefineButtons):
@@ -17,9 +19,8 @@ class DefineController(Buttons.DefineButtons):
 		# Specifies whether the user has requested to close the application in this cycle
 		self.quitstate = False
 
-		# Specifies whether the temp slider is being dragged
-		self.temperaturesliderstate = False
-		self.temperatureslidervalue = -999
+		# Temperature Selector (Slider and option buttons combination)
+		self.temperatureselector = TempSelector.createselector()
 
 		# Mouse location
 		self.mouselocation = Vector.createblank()
@@ -53,18 +54,17 @@ class DefineController(Buttons.DefineButtons):
 
 		if self.inputobject.getmouseaction() == True:
 
-			self.updateslider("Position")
+			clickedbutton = self.getdetailedmouseaction()
 
-			clickedbutton = self.getmouseaction()
+			mousechange = self.updatemouseposition()
 
-			if clickedbutton[-11:] == "Temp Slider":
-				self.updateslider(clickedbutton)
+			self.temperatureselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
 
-			elif clickedbutton == "Release: Start Menu":
+			if clickedbutton == "Release: Start Menu":
 				self.showmainmenu(currentdesiredtemperature)
 
-			elif clickedbutton == "Release: Temp Slider":
-				self.updateslider("Release")
+			elif clickedbutton[:17] == "Release: Override":
+				self.temperatureselector.updatebuttonselection(clickedbutton[18:])
 
 			elif clickedbutton == "Release: Temp Cancel":
 				self.quitmainmenu()
@@ -72,13 +72,14 @@ class DefineController(Buttons.DefineButtons):
 			elif clickedbutton == "Release: Temp Commit":
 				self.setdesiredtemp()
 
+		return self.useraction
 
 
 	# -------------------------------------------------------------------
 	# Updates the slider on the main menu
 	# -------------------------------------------------------------------
 
-	def getmouseaction(self):
+	def getdetailedmouseaction(self):
 
 		outcome = ""
 		if self.inputobject.getcurrentmouseareastate() == "Enabled":
@@ -90,29 +91,6 @@ class DefineController(Buttons.DefineButtons):
 			else:
 				outcome = "Hover: " + clickedbutton
 		return outcome
-
-
-
-	# -------------------------------------------------------------------
-	# Updates the slider on the main menu
-	# -------------------------------------------------------------------
-
-	def updateslider(self, mode):
-
-		if mode == "Click: Temp Slider":
-			self.temperaturesliderstate = True
-			self.mouselocation = self.inputobject.getmouselocation()
-		elif mode == "Release: Temp Slider":
-			self.temperaturesliderstate = False
-
-		if self.temperaturesliderstate == True:
-			if self.inputobject.getcurrentmousearea() == "Temp Slider":
-				newmouse = self.inputobject.getmouselocation()
-				sliderchange = (newmouse.getx() - self.mouselocation.getx()) * 5
-				self.mouselocation = newmouse
-				self.temperatureslidervalue = min(2700, max(300, self.temperatureslidervalue + sliderchange))
-			else:
-				self.temperaturesliderstate = False
 
 
 
@@ -129,7 +107,7 @@ class DefineController(Buttons.DefineButtons):
 		self.updatebutton("Set Temp", "Enabled")
 
 		# Set the slider value to be the current boiler temperature
-		self.temperatureslidervalue = currentdesiredtemperature * 100
+		self.temperatureselector.resetcontrols(currentdesiredtemperature)
 
 
 
@@ -169,7 +147,7 @@ class DefineController(Buttons.DefineButtons):
 
 		self.quitmainmenu()
 
-		self.useraction = "Set Temp = " + str(int(self.temperatureslidervalue / 100))
+		self.useraction = "Set Temp = " + str(self.temperatureselector.getslidervalue()) + " : " + self.temperatureselector.getselectedtime()
 
 		print self.useraction
 
@@ -204,4 +182,4 @@ class DefineController(Buttons.DefineButtons):
 
 	def getslidervalue(self):
 
-		return int(self.temperatureslidervalue / 100)
+		return self.temperatureselector.getslidervalue()

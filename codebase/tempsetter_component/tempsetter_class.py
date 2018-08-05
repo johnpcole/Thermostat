@@ -13,7 +13,7 @@ class DefineSetter:
 
 	# =========================================================================================
 
-	def updatedesiredtemperature(self, scheduledtemperature):
+	def updatedesiredtemperature(self, scheduledtemperature, overrideinstruction):
 
 		self.desiredtemperature = scheduledtemperature
 

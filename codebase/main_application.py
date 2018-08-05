@@ -47,13 +47,13 @@ def runapplication():
 		scheduledtemperature = schedule.getcurrentinstruction(currenttime)
 
 		# Process any input events (mouse clicks, mouse moves)
-		controls.processinput(scheduledtemperature)
+		useraction = controls.processinput(scheduledtemperature)
 
 		# Get the current temperature
 		thermometer.updatethermometer()
 
 		# Get the desired temperature
-		tempsetter.updatedesiredtemperature(scheduledtemperature)
+		tempsetter.updatedesiredtemperature(scheduledtemperature, useraction)
 
 		# Determine whether the boiler needs to be switched on/off
 		thermostat.updatethermostatstatus(thermometer.gettemperature(),
