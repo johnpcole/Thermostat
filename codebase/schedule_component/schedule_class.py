@@ -153,7 +153,7 @@ class DefineSchedule:
 					outcome = scheduledtime
 			if outcome == -1000:
 				outcome = scheduledtime
-			return self.getscheduledinstruction(outcome)
+			return self.scheduleditems[outcome]
 		else:
 			return -1000
 

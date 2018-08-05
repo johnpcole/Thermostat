@@ -80,16 +80,16 @@ class DefineDisplay:
 	# removes embellishments from the field ready for the next cycle
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, currenttime, controls, scheduler, boilercontroller):
+	def refreshscreen(self, currenttime, controls, schedule, boilerswitch, thermostat, tempsetter, thermometer):
 
 		# Draw Runway
-		self.drawrunway(currenttime, scheduler, boilercontroller)
+		self.drawrunway(currenttime, schedule, tempsetter)
 
 		# Draw Board
-		self.drawboard(boilercontroller)
+		self.drawboard(boilerswitch, thermostat, thermometer)
 
 		# Draw Buttons
-		self.drawbuttons(controls, boilercontroller)
+		self.drawbuttons(controls, tempsetter)
 
 		# Refresh screen
 		self.display.updatescreen()
@@ -103,16 +103,16 @@ class DefineDisplay:
 	# Paints the board in the center of the screen
 	# -------------------------------------------------------------------
 
-	def drawboard(self, boilercontroller):
+	def drawboard(self, boilerswitch, thermostat, thermometer):
 
 		# Update the animation stats
-		self.board.updateboardlayout(boilercontroller.getstatus())
+		self.board.updateboardlayout(boilerswitch.getswitchstatus(), thermostat.getstatus())
 
 		# Display current measured temperature
-		self.paintitems(self.board.drawcurrenttemperature(boilercontroller.getcurrenttemperature()))
+		self.paintitems(self.board.drawcurrenttemperature(thermometer.gettemperature()))
 
 		# Display flame
-		self.paintitems(self.board.drawflame(boilercontroller.getmostrecentboilerswitchtimingoffset()))
+		self.paintitems(self.board.drawflame(boilerswitch.getcurrentbufferstate()))
 
 
 
@@ -120,13 +120,13 @@ class DefineDisplay:
 	# Paints the timeline at the top of the screen
 	# -------------------------------------------------------------------
 
- 	def drawrunway(self, currenttime, scheduler, boilercontroller):
+ 	def drawrunway(self, currenttime, schedule, tempsetter):
 
 		# Display current desired temperature
-		self.paintitems(self.runway.drawdesiredtemperature(boilercontroller))
+		self.paintitems(self.runway.drawdesiredtemperature(tempsetter.gettemperature()))
 
 		# Draw upcoming desired temperatures (from schedule)
-		self.paintitems(self.runway.drawinstructions(currenttime, scheduler))
+		self.paintitems(self.runway.drawinstructions(currenttime, schedule))
 
 		# Draw hour labels
 		self.paintitems(self.runway.drawtimelinenumbers(currenttime))
@@ -166,18 +166,11 @@ class DefineDisplay:
 	# Paints the buttons
 	# -------------------------------------------------------------------
 
-	def drawbuttons(self, controls, boilercontroller):
+	def drawbuttons(self, controls, tempsetter):
 
 		# Semi transparent background if the start button is hidden - implies other buttons are displayed
 		self.paintitems(self.buttons.drawmodaloverlay(controls))
 
 		# The Start Menu
-		self.paintitems(self.buttons.drawstartmenu(controls, boilercontroller))
+		self.paintitems(self.buttons.drawstartmenu(controls, tempsetter.gettemperature()))
 
-#
-#
-#
-# 	# ==========================================================================================
-# 	# Get Information
-# 	# ==========================================================================================
-#

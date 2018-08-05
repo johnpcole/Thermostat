@@ -53,12 +53,12 @@ class DefineRunway:
 	# Paints the scheduled settings at the top of the screen
 	# -------------------------------------------------------------------
 
-	def drawinstructions(self, currenttime, scheduler):
+	def drawinstructions(self, currenttime, schedule):
 
 		outcome = {}
 
 		# Get list of scheduled times
-		scheduledtimes = scheduler.getscheduledtimes()
+		scheduledtimes = schedule.getscheduledtimes()
 
 		index = 0
 
@@ -72,7 +72,7 @@ class DefineRunway:
 			outcome[index] = ("Line", positioning["Marker Top"], positioning["Marker Bottom"], "Grey", 1, "")
 
 			# Get desired temperature
-			temperature = scheduler.getscheduledinstruction(scheduledtime)
+			temperature = schedule.getscheduledinstruction(scheduledtime)
 
 			# Draw desired temperature number
 			outcome[index + 1] = ("Text", str(temperature), positioning["Marker Text"], "Left",
@@ -145,11 +145,11 @@ class DefineRunway:
 	# Paints the desired temperature at the top of the screen
 	# -------------------------------------------------------------------
 
-	def drawdesiredtemperature(self, boilercontroller):
+	def drawdesiredtemperature(self, desiredtemperature):
 
 		outcome = {}
 
-		self.desiredtemperature.updatevalue(boilercontroller.getdesiredtemperature())
+		self.desiredtemperature.updatevalue(desiredtemperature)
 
 		displayedtemperature = self.desiredtemperature.getswitchedvalue()
 
@@ -166,6 +166,7 @@ class DefineRunway:
 											Vector.createfromvalues(self.startline * 2, self.height), "Black", "", 0)
 
 		return outcome
+
 
 
 	def getmarkerlineheight(self, subindex):

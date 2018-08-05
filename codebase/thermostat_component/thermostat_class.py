@@ -17,9 +17,9 @@ class DefineThermostat:
 	def updatethermostatstatus(self, currenttemperature, desiredtemperature):
 
 		if currenttemperature >= (desiredtemperature + self.switchthreshold):
-			self.calculatedboilerstate = True
-		elif currenttemperature <= (desiredtemperature - self.switchthreshold):
 			self.calculatedboilerstate = False
+		elif currenttemperature <= (desiredtemperature - self.switchthreshold):
+			self.calculatedboilerstate = True
 		# else:
 			# Leave the boiler as it is
 

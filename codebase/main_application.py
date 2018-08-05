@@ -4,12 +4,13 @@ from schedule_component import schedule_module as Schedule
 from tempsetter_component import tempsetter_module as TempSetter
 from thermometer_component import thermometer_module as Thermometer
 
+from meteo_component import meteo_module as Meteo
+
 from display_component import display_module as Display
 from controls_component import controls_module as Controller
 
 from common_components.userinterface_framework import userinterface_module as GUI
 from common_components.clock_datatype import clock_module as Clock
-from common_components.meteo_framework import meteo_module as Meteo
 
 
 def runapplication():
@@ -55,13 +56,20 @@ def runapplication():
 		tempsetter.updatedesiredtemperature(scheduledtemperature)
 
 		# Determine whether the boiler needs to be switched on/off
-		thermostat.updatethermostatstatus(thermometer.gettemperature(), tempsetter.gettemperature())
+		thermostat.updatethermostatstatus(thermometer.gettemperature(),
+											tempsetter.gettemperature())
 
 		# Update the boiler switch based on the thermostat outcome
 		boilerswitch.updateboilerstatus(thermostat.getstatus())
 
 		# Refresh Screen
-		display.refreshscreen(currenttime, controls, scheduler, boilercontroller)
+		display.refreshscreen(currenttime,
+								controls,
+								schedule,
+								boilerswitch,
+								thermostat,
+								tempsetter,
+								thermometer)
 
 
 

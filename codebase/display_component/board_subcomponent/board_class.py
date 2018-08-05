@@ -29,16 +29,16 @@ class DefineBoard:
 
 
 
-	def updateboardlayout(self, boilerstatus):
+	def updateboardlayout(self, boilerswitchstatus, thermostatstatus):
 
-		if (boilerstatus[:2] == "On") or (boilerstatus[-10:] == "n Override"):
+		if (boilerswitchstatus == True) or (thermostatstatus == True):
 			outcome = True
 		else:
 			outcome = False
 
 		self.boilerstate.updatevalue(outcome)
 
-		self.updateflamemode(boilerstatus)
+		self.updateflamemode(boilerswitchstatus, thermostatstatus)
 
 
 
@@ -69,8 +69,8 @@ class DefineBoard:
 			if flamemode == "Snooze":
 				outcome["Flame 1"] = ("Image", "flame_disable", self.flameposition)
 				outcome["Overlay Clock"] = ("Image", "flame_snooze", self.flameposition)
-				if snoozetimer < 1:
-					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
+				if snoozetimer > 0:
+					outcome["Overlay Text"] = ("Text", str(snoozetimer), self.snoozeoffset, "Centre", "Snooze", "Snooze")
 			elif flamemode == "On":
 				for flameversion in range(1,5):
 					framename, flameframe = self.getflameframe(flameversion)
@@ -81,8 +81,8 @@ class DefineBoard:
 			elif flamemode == "Forced":
 				outcome["Flame 1"] = ("Image", self.getflameframe(999), self.flameposition)
 				outcome["Overlay Clock"] = ("Image", "flame_snooze", self.flameposition)
-				if snoozetimer < 1:
-					outcome["Overlay Text"] = ("Text", str(abs(snoozetimer)), self.snoozeoffset, "Centre", "Snooze", "Snooze")
+				if snoozetimer > 0:
+					outcome["Overlay Text"] = ("Text", str(snoozetimer), self.snoozeoffset, "Centre", "Snooze", "Snooze")
 
 		return outcome
 
@@ -138,17 +138,17 @@ class DefineBoard:
 
 
 
-	def updateflamemode(self, boilerstatus):
+	def updateflamemode(self, boilerswitchstatus, thermostatstatus):
 
 		transitionfraction = self.boilerstate.gettransitionfraction()
 
 		outcome = self.flamestate
 		if transitionfraction > 0.2:
-			if boilerstatus[-10:] == "f Override":
+			if (boilerswitchstatus == False) and (thermostatstatus == True):
 				outcome = "Snooze"
 			else:
 				if transitionfraction == 1.0:
-					if boilerstatus[-10:] == "n Override":
+					if (boilerswitchstatus == True) and (thermostatstatus == False):
 						outcome = "Forced"
 					else:
 						outcome = "On"

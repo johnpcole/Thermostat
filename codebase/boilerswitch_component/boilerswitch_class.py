@@ -11,7 +11,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = False
 
-		self.switchreliefbuffer = 20 # seconds
+		self.switchreliefbuffer = 120 # seconds
 
 		self.lastontime = SwitchTiming.createswitchtiming()
 
