@@ -11,7 +11,24 @@ class DefineSchedule:
 
 		self.scheduleditems = {}
 
-		self.lastchecked = Clock.createasinteger(Clock.getnow().getvalue() + 120)
+		tt = Clock.getnow().getvalue() - 100
+		ss = 3
+		self.addscheduleditem(Clock.createastime(0, 10, tt), ss)
+		self.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
+		self.addscheduleditem(Clock.createastime(0, 90, tt), ss + 4)
+		self.addscheduleditem(Clock.createastime(0, 130, tt), ss + 6)
+		self.addscheduleditem(Clock.createastime(0, 170, tt), ss + 8)
+		self.addscheduleditem(Clock.createastime(0, 210, tt), ss + 10)
+		self.addscheduleditem(Clock.createastime(0, 260, tt), ss + 12)
+		self.addscheduleditem(Clock.createastime(0, 310, tt), ss + 14)
+		self.addscheduleditem(Clock.createastime(0, 360, tt), ss + 16)
+		self.addscheduleditem(Clock.createastime(0, 410, tt), ss + 18)
+		self.addscheduleditem(Clock.createastime(0, 460, tt), ss + 20)
+		self.addscheduleditem(Clock.createastime(0, 520, tt), ss + 22)
+		self.addscheduleditem(Clock.createastime(0, 580, tt), ss + 24)
+		self.addscheduleditem(Clock.createastime(0, 640, tt), 24)
+
+
 
 	# =========================================================================================
 
@@ -125,12 +142,18 @@ class DefineSchedule:
 
 	# =========================================================================================
 
-	def checkschedule(self, currenttime):
+	def getcurrentinstruction(self, currenttime):
 
-		lasttimechecked = self.lastchecked.getsecondlessvalue()
-		outcome = -1000
-		if lasttimechecked != currenttime.getsecondlessvalue():
-			self.lastchecked = Clock.createasinteger(lasttimechecked + 60)
-			# "Updated Schedule to", self.lastchecked.getsecondlesstext()
-			outcome = self.getscheduledinstruction(self.lastchecked)
-		return outcome
+		sortedlist = self.getscheduledtimevalues()
+		if len(sortedlist) > 0:
+			outcome = -1000
+			currenttimevalue = currenttime.getsecondlessvalue()
+			for scheduledtime in sortedlist:
+				if scheduledtime <= currenttimevalue:
+					outcome = scheduledtime
+			if outcome == -1000:
+				outcome = scheduledtime
+			return self.getscheduledinstruction(outcome)
+		else:
+			return -1000
+

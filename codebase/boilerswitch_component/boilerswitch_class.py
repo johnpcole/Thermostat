@@ -9,9 +9,7 @@ class DefineBoilerSwitch:
 
 	def __init__(self):
 
-		self.actualswitchstatus = False
-
-		self.desiredswitchstatus = False
+		self.switchstatus = False
 
 		self.switchreliefbuffer = 20 # seconds
 
@@ -27,18 +25,18 @@ class DefineBoilerSwitch:
 	# Updates the boiler switch
 	# -------------------------------------------------------------------
 
-	def updateboilerstatus(self):
+	def updateboilerstatus(self, desiredswitchstatus):
 
 		self.updateboilerclocks()
 
-		if self.actualswitchstatus != self.desiredswitchstatus:
+		if self.switchstatus != desiredswitchstatus:
 			if self.getcurrentbufferstate() == 0:
-				if self.desiredswitchstatus == True:
+				if desiredswitchstatus == True:
 					self.turnboileron()
 				else:
 					self.turnboileroff()
 
-		return self.actualswitchstatus
+		return self.switchstatus
 
 
 
@@ -49,7 +47,7 @@ class DefineBoilerSwitch:
 
 	def getcurrentbufferstate(self):
 
-		if self.actualswitchstatus == False:
+		if self.switchstatus == False:
 			lastswitchedseconds = self.lastontime.getsecondssincelastswitched()
 		else:
 			lastswitchedseconds = self.lastofftime.getsecondssincelastswitched()
@@ -63,7 +61,7 @@ class DefineBoilerSwitch:
 
 	def updateboilerclocks(self):
 
-		if self.actualswitchstatus == True:
+		if self.switchstatus == True:
 			self.lastontime.updateswitchedtime()
 		else:
 			self.lastofftime.updateswitchedtime()
@@ -76,7 +74,7 @@ class DefineBoilerSwitch:
 
 	def turnboileron(self):
 
-		self.actualswitchstatus = True
+		self.switchstatus = True
 		self.updateboilerclocks()
 		print "Boiler switched on at", self.lastontime.getlastswitchedtime().gettext()
 		#CODE TO THROW RELAY
@@ -89,19 +87,10 @@ class DefineBoilerSwitch:
 
 	def turnboileroff(self):
 
-		self.actualswitchstatus = False
+		self.switchstatus = False
 		self.updateboilerclocks()
 		print "Boiler switched off at", self.lastofftime.getlastswitchedtime().gettext()
 		#CODE TO THROW RELAY
-
-
-	# =========================================================================================
-
-	def setdesiredswitchstatus(self, desiredstatus):
-
-		self.desiredswitchstatus = desiredstatus
-
-		return self.desiredswitchstatus
 
 
 
@@ -109,8 +98,8 @@ class DefineBoilerSwitch:
 	# Get Information
 	# ==========================================================================================
 
-	def getactualswitchstatus(self):
+	def getswitchstatus(self):
 
-		return self.actualswitchstatus
+		return self.switchstatus
 
 	# =========================================================================================
