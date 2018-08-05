@@ -1,13 +1,10 @@
-from boilercontroller_component import boilercontroller_module as BoilerController
+from boilerswitch_component import boilerswitch_module as BoilerSwitch
+from thermostat_component import thermostat_module as Thermostat
 from scheduler_component import scheduler_module as Scheduler
 from display_component import display_module as Display
 from common_components.userinterface_framework import userinterface_module as GUI
 from controls_component import controls_module as Controller
 from common_components.clock_datatype import clock_module as Clock
-#from game_component import game_module as Game
-#from field_component import field_module as Field
-#from defenderarmy_component import defenderarmy_module as DefenderArmy
-#from enemyarmy_component import enemyarmy_module as EnemyArmy
 from common_components.meteo_framework import meteo_module as Meteo
 
 
@@ -21,7 +18,8 @@ def runapplication():
 	# Define objects used to drive application     #
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-	boilercontroller = BoilerController.createboilercontroller()
+	boilerswitch = BoilerSwitch.createboilerswitch()
+	thermostat = Thermostat.createthermostat()
 	scheduler = Scheduler.createscheduler()
 	controls = Controller.createcontroller()
 	display = Display.createdisplay(controls)
@@ -76,14 +74,16 @@ def runapplication():
 
 		newboilerinstruction = scheduler.checkschedule(currenttime)
 		if newboilerinstruction != -1000:
-			boilercontroller.setdesiredtemperature(newboilerinstruction)
+			thermostat.setdesiredtemperature(newboilerinstruction)
 			#print "New Boiler Instruction", newboilerinstruction
 		timephase = abs((currenttime.getvalue() % 300) - 150)
-		boilercontroller.setcurrenttemperature(timephase / 5.0)
+		thermostat.setcurrenttemperature(timephase / 5.0)
 		waiter = waiter + 1
 		if waiter > 100:
 			waiter = 0
-			boilercontroller.updateboilerstatus()
+			thermostat.updatethermostatstatus()
+			boilerswitch.setdesiredswitchstatus(thermostat.getstatus())
+			boilerswitch.updateboilerstatus()
 		# If the field is enabled, update the selection property on the field and defender army objects
 		# If we are in add/upgrade mode, we DONT want to start changing the current selection!!!
 		#if controls.updatefieldselectionlocation(field) == True:
