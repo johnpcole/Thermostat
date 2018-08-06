@@ -24,7 +24,11 @@ class DefineRunway:
 		self.hourbottom = 15
 
 		# Data for capturing the animation of the desired temperature
-		self.desiredtemperature = Transition.createoldnewtransition(1000, 1000, 0)
+		self.desiredtemperature = Transition.createoldnewtransition(500, 1000, 0)
+
+		# Dimensions of blanking out background for desired temperature
+		self.backgroundstart = Vector.createfromvalues(self.startline, 0)
+		self.backgroundend = Vector.createfromvalues(self.startline * 2, self.height)
 
 
 	def getinstructionposition(self, scheduledtime, currenttime):
@@ -33,7 +37,7 @@ class DefineRunway:
 
 		# Position of marker
 		houroffset = Clock.getfuturetimevalue(scheduledtime.getvalue(), currenttime.getvalue()) - (3600 * currenttime.gethour())
-		pixelposition = self.startline + int(houroffset * self.timescale / 3600) - self.getmarkeroffsets(currenttime)
+		pixelposition = self.startline + int(houroffset * self.timescale / 3600) - self.calculatemarkeroffsets(currenttime)
 
 		# Draw marker & Temp
 		outcome["Marker Top"] = Vector.createfromvalues(pixelposition, 18)
@@ -43,10 +47,6 @@ class DefineRunway:
 		return outcome
 
 
-	def getmarkeroffsets(self, currenttime):
-
-		# Number of pixels markers are shifted left
-		return int(self.timescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
 
 
 	# -------------------------------------------------------------------
@@ -101,13 +101,13 @@ class DefineRunway:
 			if (currenttime.getminute() == 0) or (hourindex > 0):
 
 				# Position of hour marker line
-				hourmarker = self.startline + (hourindex * self.timescale) - self.getmarkeroffsets(currenttime)
+				hourmarker = self.calculatemarkerposition(currenttime, hourindex, 0)
 
 				# Draw hour marker number
 				outcome[hourindex] = ("Text", Clock.convert24hourtohuman(hourindex + lasthour),
 										Vector.createfromvalues(hourmarker + 3, 1), "Left", "Grey", "Timeline Hours")
 
-		outcome["Zero"] = ("Line", Vector.createfromvalues(self.startline, 0),
+		outcome["Zero"] = ("Line", self.backgroundstart,
 												Vector.createfromvalues(self.startline, self.height), "Grey", 1, "")
 
 		return outcome
@@ -123,20 +123,17 @@ class DefineRunway:
 		outcome = {}
 	
 		for hourindex in range(1, 14):
-	
-			# Position of hour marker line
-			hourmarker = self.startline + (hourindex * self.timescale) - self.getmarkeroffsets(currenttime)
 
 			for subindex in range(0, 4):
 	
 				# Position of marker
-				pixelposition = hourmarker - int(subindex * self.timescale / 4)
+				pixelposition = self.calculatemarkerposition(currenttime, hourindex, subindex)
 	
 				# Only draw marker if it's to the right of the current time marker
 				if self.startline < pixelposition:
 					outcome[(hourindex * 10) + subindex] = ("Line", Vector.createfromvalues(pixelposition, 0),
 															Vector.createfromvalues(pixelposition,
-															self.getmarkerlineheight(subindex)), "Grey", 1, "")
+															self.calculatemarkerlineheight(subindex)), "Grey", 1, "")
 
 		return outcome
 
@@ -151,27 +148,53 @@ class DefineRunway:
 
 		self.desiredtemperature.updatevalue(desiredtemperature)
 
-		displayedtemperature = self.desiredtemperature.getswitchedvalue()
+		displayedtemperature, transitionfraction, position, colour = self.calculatedesiredtempmetrics()
 
-		transitionfraction = self.desiredtemperature.gettransitionfraction()
-
-		position = DisplayFunction.getonewaytransitionposition(self.startline - 5, self.startline, transitionfraction)
-
-		colour = DisplayFunction.gettransitioncolour(displayedtemperature, transitionfraction)
-
-		outcome["Desired Temp"] = ("Text", str(displayedtemperature), Vector.createfromvalues(position, -3), "Right",
+		outcome["Desired Temp"] = ("Text", str(displayedtemperature), position, "Right",
 																								colour, "Desired Temp")
 
-		outcome["Screen Background"] = ("Box", Vector.createfromvalues(self.startline, 0),
-											Vector.createfromvalues(self.startline * 2, self.height), "Black", "", 0)
+		outcome["Screen Background"] = ("Box", self.backgroundstart, self.backgroundend, "Black", "", 0)
 
 		return outcome
 
 
 
-	def getmarkerlineheight(self, subindex):
+	def calculatemarkeroffsets(self, currenttime):
+
+		# Number of pixels markers are shifted left
+		return int(self.timescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
+
+
+
+	def calculatemarkerlineheight(self, subindex):
 
 		if subindex == 0:
 			return self.hourbottom
 		else:
 			return  (3 * (subindex + 1) % 2)
+
+
+
+	def calculatedesiredtempmetrics(self):
+
+		displayedtemperature = self.desiredtemperature.getswitchedvalue()
+
+		transitionfraction = self.desiredtemperature.gettransitionfraction()
+
+		positionalong = DisplayFunction.getonewaytransitionposition(self.startline - 5, self.startline, transitionfraction)
+		position = Vector.createfromvalues(positionalong, -3)
+
+		colour = DisplayFunction.gettransitioncolour(displayedtemperature, transitionfraction)
+
+		return displayedtemperature, transitionfraction, position, colour
+
+
+
+	def calculatemarkerposition(self, currenttime, hourindex, subindex):
+
+		hourmarker = self.startline + (hourindex * self.timescale) - self.calculatemarkeroffsets(currenttime)
+
+		if subindex > 0:
+			return (hourmarker - int(subindex * self.timescale / 4))
+		else:
+			return hourmarker

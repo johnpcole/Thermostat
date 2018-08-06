@@ -41,19 +41,22 @@ def runapplication():
 
 	while controls.getquitstate() == False:
 
-		currenttime = Clock.getnow()
-
-		# Get scheduled desired temperature
-		scheduledtemperature = schedule.getcurrentinstruction(currenttime)
-
-		# Process any input events (mouse clicks, mouse moves)
-		useraction = controls.processinput(scheduledtemperature)
+		currenttime = Clock.getsecondlessnow()
 
 		# Get the current temperature
 		thermometer.updatethermometer()
 
+		# Process any input events (mouse clicks, mouse moves)
+		useraction = controls.processinput(tempsetter.gettemperature())
+
+		# If a temperature override was set, apply this
+		if useraction.get("Override Temperature") == True:
+			tempsetter.setoverridetemperature(controls.gettempselectordata(),
+												currenttime)
+
 		# Get the desired temperature
-		tempsetter.updatedesiredtemperature(scheduledtemperature, useraction)
+		tempsetter.updatedesiredtemperature(schedule.getcurrentinstruction(currenttime),
+												currenttime)
 
 		# Determine whether the boiler needs to be switched on/off
 		thermostat.updatethermostatstatus(thermometer.gettemperature(),

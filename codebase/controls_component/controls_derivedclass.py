@@ -26,7 +26,7 @@ class DefineController(Buttons.DefineButtons):
 		self.mouselocation = Vector.createblank()
 
 		# Specifies what the user has done this cycle
-		self.useraction = "None"
+		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
 
 		# Get buttons in the correct state
 		self.quitmainmenu()
@@ -50,7 +50,7 @@ class DefineController(Buttons.DefineButtons):
 		self.inputobject.processinputs()
 
 		# Default to no user action being specified
-		self.useraction = "None"
+		self.useraction.set("None")
 
 		if self.inputobject.getmouseaction() == True:
 
@@ -147,9 +147,7 @@ class DefineController(Buttons.DefineButtons):
 
 		self.quitmainmenu()
 
-		self.useraction = "Set Temp = " + str(self.temperatureselector.getslidervalue()) + " : " + self.temperatureselector.getselectedtime()
-
-		print self.useraction
+		self.useraction.set("Override Temperature")
 
 
 
@@ -180,6 +178,6 @@ class DefineController(Buttons.DefineButtons):
 	# Returns the current UNCOMMITTED desired temperature on the slider
 	# -------------------------------------------------------------------
 
-	def getslidervalue(self):
+	def gettempselectordata(self):
 
-		return self.temperatureselector.getslidervalue()
+		return self.temperatureselector

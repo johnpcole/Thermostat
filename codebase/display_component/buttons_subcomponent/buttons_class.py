@@ -25,13 +25,20 @@ class DefineButtons:
 
 		self.slidercurrenttextoffset = Vector.createfromvalues(0, 33)
 
+		self.origin = Vector.createfromvalues(0, 0)
+
+		self.slideroutlineoffset = Vector.createfromvalues(-1, -1)
+		self.sliderendreduction = Vector.createfromvalues(-1, 0)
+		self.sliderendshift = Vector.createfromvalues(1, 0)
+
+
 
 	def drawmodaloverlay(self, control):
 
 		outcome = {}
 
 		if control.getbuttonstate("Start Menu") == "Hidden":
-			outcome["Background Overlay"] = ("Image", "start_disabled", Vector.createorigin())
+			outcome["Background Overlay"] = ("Image", "start_disabled", self.origin)
 
 		return outcome
 
@@ -41,43 +48,35 @@ class DefineButtons:
 
 		outcome = {}
 
+		selectordata = control.gettempselectordata()
+		slidervalue = selectordata.getslidervalue()
+		selectorvalue = selectordata.getselectedtime()
+
 		for buttonname in self.startmenubuttons:
 			if control.getbuttonstate(buttonname) != "Hidden":
 
 				if buttonname == "Temp Slider":
 
-					outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(self.sliderposition, Vector.createfromvalues(0, -1)))
-
 					for temperature in range(3, 28):
 
-						temp, boxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(temperature, control.getslidervalue())
+						temp, boxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(temperature, slidervalue)
 
 						outcome["Slider Background " + temp] = ("Box", boxposition, boxsize, temp, "", 0)
 
-						if (temperature == control.getslidervalue()) or (temperature == int(currentdesiredtemperature)):
+						if (temperature == slidervalue) or (temperature == int(currentdesiredtemperature)):
 							outcome["Slider Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
 							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
 
 						if temperature == 3:
-							outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(boxposition, Vector.createfromvalues(0, -1)))
-
-
+							outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(boxposition, self.slideroutlineoffset))
 
 				else:
-					buttonlocation = control.getbuttonposition(buttonname)
-					buttonsize = control.getbuttonsize(buttonname)
-					buttonoverlaylocation = Vector.add(buttonlocation, self.filloffset)
-					buttonoverlaysize = Vector.add(buttonsize, self.fillresize)
 
-					if buttonname[:9] == "Override ":
-						timing = buttonname[9:]
-						textlocation = Vector.add(buttonlocation, self.textoffset)
-						outcome[buttonname + " Logo"] = ("Image", "egg_timer", buttonlocation)
-						outcome[buttonname + " Text"] = ("Text", timing, textlocation, "Left", "Black", "Snooze")
+					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
 
-
-					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, "Dark Grey", "", 0)
-					outcome[buttonname + "Outline"] = ("Image", "button_outline", buttonlocation)
+					outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)
+					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, buttoncolour, "", 0)
+					outcome[buttonname + " Outline"] = ("Image", "button_outline", buttonlocation)
 
 		return outcome
 
@@ -95,9 +94,11 @@ class DefineButtons:
 		else:
 			boxwidth = self.sliderstepsize
 
+
 		boxsize = Vector.createfromvalues(boxwidth.getx(), self.slidersize.gety())
 		boxposition = Vector.add(self.sliderposition, self.sliderstepsize.getscaled(step))
 		centreoffset = Vector.add(boxposition, boxwidth.getscaled(0.5))
+
 
 		if displaytemp == selectedtemp:
 			boxcentre = Vector.add(centreoffset, self.slidertextoffset)
@@ -106,6 +107,31 @@ class DefineButtons:
 			boxcentre = Vector.add(centreoffset, self.slidercurrenttextoffset)
 			font = "Snooze"
 
+		if (displaytemp == 27) or (displaytemp == 3):
+			boxsize = Vector.add(boxsize, self.sliderendreduction)
+
+		if displaytemp == 3:
+			boxposition = Vector.add(boxposition, self.sliderendshift)
+
 		return str(displaytemp), boxposition, boxsize, boxcentre, font
 
+
+
+	def calcbuttonmetrics(self, control, buttonname, selectorvalue):
+
+		buttonlocation = control.getbuttonposition(buttonname)
+		buttonsize = control.getbuttonsize(buttonname)
+		buttonoverlaylocation = Vector.add(buttonlocation, self.filloffset)
+		buttonoverlaysize = Vector.add(buttonsize, self.fillresize)
+		buttoncolour = "Grey"
+
+		if buttonname[:9] == "Override ":
+			timing = buttonname[9:]
+			imagename = "timer_" + timing
+			if selectorvalue == timing:
+				buttoncolour = "Selected"
+		else:
+			imagename = "c" + buttonname[6:]
+
+		return buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour
 

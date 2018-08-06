@@ -27,6 +27,13 @@ def getnow():
 
 
 
+def getsecondlessnow():
+
+	currentdatetime = str(PythonDateTime.datetime.now())
+	return ClockClass.DefineClock(int(currentdatetime[11:13]), int(currentdatetime[14:16]), 0)
+
+
+
 def timediff(earliertime, latertime):
 
 	earlier = earliertime.getvalue()
@@ -39,6 +46,15 @@ def timediff(earliertime, latertime):
 def timeadd(timeone, timetwo):
 
 	return ClockClass.DefineClock(0, 0, timeone.getvalue() + timetwo.getvalue())
+
+
+
+def isequal(timeone, timetwo):
+
+	if timeone.getvalue() == timetwo.getvalue():
+		return True
+	else:
+		return False
 
 
 

@@ -19,6 +19,7 @@ class DefineDisplay:
 
 		# Sets up the application window size
 		self.displaysize = Vector.createfromvalues(480, 320)
+		self.origin = Vector.createfromvalues(0, 0)
 
 		# Sets up pygame window related properties & methods and loads images, fonts & custom colours
 		self.display = AppDisplay.createwindow(self.displaysize, "Thermostat")
@@ -52,8 +53,9 @@ class DefineDisplay:
 	def setupimages(self):
 
 		imagelist = Images.getimagepallette()
-		for image in imagelist:
-			self.display.addimage(image, None, image, True)
+		for image in imagelist.keys():
+			imagelocation = imagelist[image]
+			self.display.addimage(image, imagelocation, image, True)
 
 
 
@@ -95,7 +97,7 @@ class DefineDisplay:
 		self.display.updatescreen()
 
 		# Blank out area
-		self.display.drawrectangle(Vector.createorigin(), Vector.createfromvalues(480, 240), "Black", "", 0)
+		self.display.drawrectangle(self.origin, self.displaysize, "Black", "", 0)
 
 
 
@@ -137,6 +139,20 @@ class DefineDisplay:
 
 
 	# -------------------------------------------------------------------
+	# Paints the buttons
+	# -------------------------------------------------------------------
+
+	def drawbuttons(self, controls, tempsetter):
+
+		# Semi transparent background if the start button is hidden - implies other buttons are displayed
+		self.paintitems(self.buttons.drawmodaloverlay(controls))
+
+		# The Start Menu
+		self.paintitems(self.buttons.drawstartmenu(controls, tempsetter.gettemperature()))
+
+
+
+	# -------------------------------------------------------------------
 	# Paints stuff based on a list of draw commands
 	# -------------------------------------------------------------------
 
@@ -161,16 +177,4 @@ class DefineDisplay:
 
 			else:
 				print 1/0
-
-	# -------------------------------------------------------------------
-	# Paints the buttons
-	# -------------------------------------------------------------------
-
-	def drawbuttons(self, controls, tempsetter):
-
-		# Semi transparent background if the start button is hidden - implies other buttons are displayed
-		self.paintitems(self.buttons.drawmodaloverlay(controls))
-
-		# The Start Menu
-		self.paintitems(self.buttons.drawstartmenu(controls, tempsetter.gettemperature()))
 
