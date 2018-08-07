@@ -1,17 +1,12 @@
-from boilerswitch_component import boilerswitch_module as BoilerSwitch
-from thermostat_component import thermostat_module as Thermostat
-from schedule_component import schedule_module as Schedule
-from tempsetter_component import tempsetter_module as TempSetter
-from thermometer_component import thermometer_module as Thermometer
+from boilercontroller_components import boilercontroller_module as BoilerController
 
-from meteo_component import meteo_module as Meteo
+#from miscellaneous_components.meteo_component import meteo_module as Meteo
 
-from display_component import display_module as Display
-from controls_component import controls_module as Controller
+from userinterface_components import userinterface_module as UserInterface
 
 from common_components.userinterface_framework import userinterface_module as GUI
-from common_components.clock_datatype import clock_module as Clock
 
+from .common_components.clock_datatype import clock_module as Clock
 
 def runapplication():
 
@@ -23,56 +18,36 @@ def runapplication():
 	# Define objects used to drive application     #
 	# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
 
-	boilerswitch = BoilerSwitch.createboilerswitch()
-	thermostat = Thermostat.createthermostat()
-	schedule = Schedule.createschedule()
-	tempsetter = TempSetter.createsetter()
-	thermometer = Thermometer.createthermometer()
+	boilercontroller = BoilerController.createboilercontroller()
 
-	controls = Controller.createcontroller()
-	display = Display.createdisplay(controls)
+	userinterface = UserInterface.createuserinterface()
 
-	meteolocation = Meteo.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
-	print meteolocation.getsuntimes(1, 1, 2018)
+
+	#meteolocation = Meteo.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
+	#print meteolocation.getsuntimes(1, 1, 2018)
 
 
 	# ===============================================================================================================
 	# ===============================================================================================================
 
-	while controls.getquitstate() == False:
+	while userinterface.getquitstate() == False:
 
+		# Get current time as hours & minutes only
 		currenttime = Clock.getsecondlessnow()
 
-		# Get the current temperature
-		thermometer.updatethermometer()
-
 		# Process any input events (mouse clicks, mouse moves)
-		useraction = controls.processinput(tempsetter.gettemperature())
+		useraction = userinterface.processinputs(boilercontroller)
 
 		# If a temperature override was set, apply this
 		if useraction.get("Override Temperature") == True:
-			tempsetter.setoverridetemperature(controls.gettempselectordata(),
-												currenttime)
+			boilercontroller.setoverridetemperature(userinterface, currenttime)
 
-		# Get the desired temperature
-		tempsetter.updatedesiredtemperature(schedule.getcurrentinstruction(currenttime),
-												currenttime)
-
-		# Determine whether the boiler needs to be switched on/off
-		thermostat.updatethermostatstatus(thermometer.gettemperature(),
-											tempsetter.gettemperature())
-
-		# Update the boiler switch based on the thermostat outcome
-		boilerswitch.updateboilerstatus(thermostat.getstatus())
+		# Update the boiler controller with latest current & desired temperatures,
+		# and switch on/off the boilder accordingly
+		boilercontroller.updateboilercontroller(currenttime)
 
 		# Refresh Screen
-		display.refreshscreen(currenttime,
-								controls,
-								schedule,
-								boilerswitch,
-								thermostat,
-								tempsetter,
-								thermometer)
+		userinterface.refreshscreen(boilercontroller, currenttime)
 
 
 
