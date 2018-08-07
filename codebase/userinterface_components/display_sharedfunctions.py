@@ -14,6 +14,20 @@ def gettemperaturecolour(temp):
 
 
 # -------------------------------------------------------------------
+# Returns the colour of stuff that can be active or not
+# -------------------------------------------------------------------
+
+def getactivecolour(colour, activestate):
+
+	if activestate == True:
+		return colour
+	else:
+		return("mix:" + colour + "/0.1/Black")
+
+
+
+
+# -------------------------------------------------------------------
 # Returns the colour of the temperature for desired temp
 # -------------------------------------------------------------------
 

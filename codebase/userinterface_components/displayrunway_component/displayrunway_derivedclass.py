@@ -67,17 +67,17 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 			# Get desired temperature
 			temperature = schedule.gettemp(scheduledtimevalue)
 			textsize = displayobject.calculatetextsize(str(temperature), "Timeline Temps")
+			isactive = schedule.getactive(scheduledtimevalue)
 
 			# Get position of marker & text
 			markertop, markerbottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize)
 
 			# Draw marker
-			outcome["Instruction Line" + label] = ("Line", markertop, markerbottom, "Grey", 1, "")
+			outcome["Instruction Line" + label] = ("Line", markertop, markerbottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
 
 			# Draw desired temperature number
-			if schedule.getactive(scheduledtimevalue) == True:
-				outcome["Instruction Text Foreground" + label] = ("Text", str(temperature), markertext, "Left",
-													DisplayFunction.gettemperaturecolour(temperature), "Timeline Temps")
+			outcome["Instruction Foreground" + label] = ("Text", str(temperature), markertext, "Left",
+										DisplayFunction.getactivecolour(DisplayFunction.gettemperaturecolour(temperature), isactive), "Timeline Temps")
 
 			# Draw desired temperature number blanking background
 			#outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Dark Grey", "", 0)
