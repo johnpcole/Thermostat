@@ -31,12 +31,12 @@ class DefineRunwayMetrics:
 		self.backgroundend = Vector.createfromvalues(self.startline * 2, self.height)
 
 		# Dimensions of blanking out background for future desired temperatures
-		self.futurebackgroundpositionoffset = Vector.createfromvalues(-2, 5)
-		self.futurebackgroundsizeoffset = Vector.createfromvalues(4, -9)
+		self.futurebackgroundbuffer = 5
+		self.futurebackgroundsize = Vector.createfromvalues(40, self.height - self.instructionmiddle)
 
 
 
-	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize, lastpixelposition):
+	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize, lastpixelposition, textoverwrite):
 
 		# Position of marker
 		houroffset = scheduledtimevalue - (3600 * currenttime.gethour())
@@ -50,22 +50,17 @@ class DefineRunwayMetrics:
 		marker2bottom = Vector.createfromvalues(pixelposition, self.height)
 		markertext = Vector.add(marker2bottom, self.textoffset)
 
-		# Work out the effective box the text sits on
-		blankingposition = Vector.add(self.futurebackgroundpositionoffset, markertext)
-		blankingsize = Vector.add(self.futurebackgroundsizeoffset, textsize)
+		gapfromprevious = pixelposition - lastpixelposition
 
-		gapfromprevious = blankingposition.getx() - lastpixelposition
-
-		if gapfromprevious < 5:
-			offsetter = Vector.createfromvalues(5 - gapfromprevious, 0)
+		if (gapfromprevious < self.futurebackgroundbuffer) and (textoverwrite == False):
+			offsetter = Vector.createfromvalues(self.futurebackgroundbuffer - gapfromprevious, 0)
 			markertext = Vector.add(markertext, offsetter)
-			blankingposition = Vector.add(blankingposition, offsetter)
 			marker2top = Vector.add(marker2top, offsetter)
 			marker2bottom = Vector.add(marker2bottom, offsetter)
 
-		newlastpixelposition = blankingposition.getx() + blankingsize.getx()
+		newlastpixelposition = markertext.getx() + textsize.getx()
 
-		return markertop, markerbottom, marker2top, marker2bottom, markertext, blankingposition, blankingsize, newlastpixelposition
+		return markertop, markerbottom, marker2top, marker2bottom, markertext, newlastpixelposition
 
 
 

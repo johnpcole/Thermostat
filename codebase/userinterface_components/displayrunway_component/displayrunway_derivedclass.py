@@ -59,33 +59,42 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		index = 1000
 
+		previousactive = False
+
 		# Loop over scheduled times
 		for scheduledtimevalue in schedule.gettimings():
-
-			label = " " + str(index)
 
 			# Get desired temperature
 			temperature = schedule.gettemp(scheduledtimevalue)
 			textsize = displayobject.calculatetextsize(str(temperature), "Timeline Temps")
 			isactive = schedule.getactive(scheduledtimevalue)
 
-			# Get position of marker & text
-			markertop, markerbottom, marker2top, marker2bottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize, lastpixel)
+			# Work out whether to overwrite text or not
+			if isactive != previousactive:
+				textoverwrite = True
+			else:
+				textoverwrite = False
 
+			label = str(index) + " "
+
+			# Get position of marker & text
+			markertop, markerbottom, marker2top, marker2bottom, markertext, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize, lastpixel, textoverwrite)
 
 			# Draw marker
-			outcome["Instruction Line Upper" + label] = ("Line", markertop, markerbottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
-			outcome["Instruction Line Join" + label] = ("Line", markerbottom, marker2top, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
-			outcome["Instruction Line Lower" + label] = ("Line", marker2top, marker2bottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome[label + "Instruction Line Upper"] = ("Line", markertop, markerbottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome[label + "Instruction Line Join"] = ("Line", markerbottom, marker2top, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome[label + "Instruction Line Lower"] = ("Line", marker2top, marker2bottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
 
 			# Draw desired temperature number
-			outcome["Instruction Text Foreground" + label] = ("Text", str(temperature), markertext, "Left",
+			outcome[label + "Instruction Foreground"] = ("Text", str(temperature), markertext, "Left",
 										DisplayFunction.getactivecolour(DisplayFunction.gettemperaturecolour(temperature), isactive), "Timeline Temps")
 
 			# Draw desired temperature number blanking background
-			outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Black", "", 0)
+			if textoverwrite == True:
+				outcome[label + "Instruction Background"] = ("Box", marker2top, self.futurebackgroundsize, "Black", "Black", 3)
 
 			index = index + 1
+			previousactive = isactive
 
 		return outcome
 
