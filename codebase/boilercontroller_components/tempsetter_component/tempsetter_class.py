@@ -65,3 +65,19 @@ class DefineSetter:
 
 		return self.desiredtemperature
 
+
+
+	# =========================================================================================
+
+	def getoverridemode(self):
+
+		return self.overridemode
+
+
+
+	# =========================================================================================
+
+	def getoverridetime(self):
+
+		return self.overrideexpire
+

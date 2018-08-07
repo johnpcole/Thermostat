@@ -32,10 +32,10 @@ class DefineRunwayMetrics:
 
 
 
-	def calculateinstructionmetrics(self, scheduledtime, currenttime, textsize):
+	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize):
 
 		# Position of marker
-		houroffset = Clock.getfuturetimevalue(scheduledtime.getvalue(), currenttime.getvalue()) - (3600 * currenttime.gethour())
+		houroffset = scheduledtimevalue - (3600 * currenttime.gethour())
 		pixelposition = self.startline + int(houroffset * self.timescale / 3600) - self.calculatemarkeroffsets(
 			currenttime)
 

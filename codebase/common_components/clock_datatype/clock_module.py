@@ -68,9 +68,9 @@ def convert24hourtohuman(hour):
 
 
 
-def getfuturetimevalue(latertime, earliertime):
+def getfuturetimevalue(latertimevalue, earliertimevalue):
 
-	if latertime <= earliertime:
-		return (latertime + (24 * 3600))
+	if latertimevalue <= earliertimevalue:
+		return (latertimevalue + (24 * 3600))
 	else:
-		return latertime
+		return latertimevalue

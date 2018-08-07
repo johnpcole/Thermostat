@@ -128,3 +128,30 @@ class DefineBoilerController:
 		return self.boilerswitch.getcurrentbufferstate()
 
 
+
+	# -------------------------------------------------------------------
+	# Gets overridemode
+	# -------------------------------------------------------------------
+
+	def getoverridemode(self):
+
+		return self.tempsetter.getoverridemode()
+
+
+	# -------------------------------------------------------------------
+	# Gets overridetime
+	# -------------------------------------------------------------------
+
+	def getoverridetime(self):
+
+		return self.tempsetter.getoverridetime()
+
+
+	# -------------------------------------------------------------------
+	# Gets overridereturntemp
+	# -------------------------------------------------------------------
+
+	def getoverridereturntemperature(self):
+
+		return self.schedule.getcurrentinstruction(self.tempsetter.getoverridetime())
+

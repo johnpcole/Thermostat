@@ -3,7 +3,7 @@ from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.transition_datatype import transition_module as Transition
 from .. import display_sharedfunctions as DisplayFunction
 from . import runwaymetrics_baseclass as Metrics
-
+from schedulebuilder_subcomponent import schedulebuilder_module as ScheduleBuilder
 
 
 class DefineRunway(Metrics.DefineRunwayMetrics):
@@ -19,7 +19,6 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		# The current runway display definition
 		self.artefacts = {}
 
-
 	# -------------------------------------------------------------------
 	# Build the Runway
 	# -------------------------------------------------------------------
@@ -33,7 +32,8 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway A"))
 
 		# Draw upcoming desired temperatures (from schedule)
-		newitems = self.drawinstructions(currenttime, boilercontroller.getschedule(), displayobject)
+		displayedschedule = ScheduleBuilder.createschedulebuilder(boilercontroller, currenttime)
+		newitems = self.drawinstructions(currenttime, displayedschedule, displayobject)
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway B"))
 
 		# Draw hour labels
@@ -57,32 +57,30 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		currentlastpixel = -999
 
-		# Get list of scheduled times
-		scheduledtimes = schedule.getscheduledtimes()
-
 		index = 1000
 
 		# Loop over scheduled times
-		for scheduledtime in scheduledtimes:
+		for scheduledtimevalue in schedule.gettimings():
 
 			label = " " + str(index)
 
 			# Get desired temperature
-			temperature = schedule.getscheduledinstruction(scheduledtime)
+			temperature = schedule.gettemp(scheduledtimevalue)
 			textsize = displayobject.calculatetextsize(str(temperature), "Timeline Temps")
 
 			# Get position of marker & text
-			markertop, markerbottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtime, currenttime, textsize)
+			markertop, markerbottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize)
 
 			# Draw marker
 			outcome["Instruction Line" + label] = ("Line", markertop, markerbottom, "Grey", 1, "")
 
 			# Draw desired temperature number
-			outcome["Instruction Text Foreground" + label] = ("Text", str(temperature), markertext, "Left",
+			if schedule.getactive(scheduledtimevalue) == True:
+				outcome["Instruction Text Foreground" + label] = ("Text", str(temperature), markertext, "Left",
 													DisplayFunction.gettemperaturecolour(temperature), "Timeline Temps")
 
 			# Draw desired temperature number blanking background
-			outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Dark Grey", "", 0)
+			#outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Dark Grey", "", 0)
 
 			index = index + 1
 
