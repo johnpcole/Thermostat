@@ -27,15 +27,34 @@ def getnow():
 
 
 
-def timediff(timeone, timetwo):
+def getsecondlessnow():
 
-	return ClockClass.DefineClock(0, 0, timeone.getvalue() - timetwo.getvalue())
+	currentdatetime = str(PythonDateTime.datetime.now())
+	return ClockClass.DefineClock(int(currentdatetime[11:13]), int(currentdatetime[14:16]), 0)
+
+
+
+def timediff(earliertime, latertime):
+
+	earlier = earliertime.getvalue()
+	later = latertime.getvalue()
+	sanitisedlater = getfuturetimevalue(later, earlier)
+	return ClockClass.DefineClock(0, 0, sanitisedlater - earlier)
 
 
 
 def timeadd(timeone, timetwo):
 
 	return ClockClass.DefineClock(0, 0, timeone.getvalue() + timetwo.getvalue())
+
+
+
+def isequal(timeone, timetwo):
+
+	if timeone.getvalue() == timetwo.getvalue():
+		return True
+	else:
+		return False
 
 
 
@@ -47,9 +66,11 @@ def convert24hourtohuman(hour):
 	else:
 		return str(rawhour)
 
-def getfuturetimevalue(scheduledtimevalue, currenttimevalue):
 
-	if scheduledtimevalue <= currenttimevalue:
-		return (scheduledtimevalue + (24 * 3600))
+
+def getfuturetimevalue(latertimevalue, earliertimevalue):
+
+	if latertimevalue <= earliertimevalue:
+		return (latertimevalue + (24 * 3600))
 	else:
-		return scheduledtimevalue
+		return latertimevalue

@@ -75,3 +75,9 @@ class DefineOldNewTransition:
 			self.oldvalue = self.newvalue
 
 		return self.transitionstate
+
+	# =========================================================================================
+
+	def resettransition(self):
+
+		self.transitionstate = 0
