@@ -55,7 +55,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome = {}
 
-		currentlastpixel = -999
+		lastpixel = -999
 
 		index = 1000
 
@@ -70,17 +70,20 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 			isactive = schedule.getactive(scheduledtimevalue)
 
 			# Get position of marker & text
-			markertop, markerbottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize)
+			markertop, markerbottom, marker2top, marker2bottom, markertext, blankingposition, blankingsize, lastpixel = self.calculateinstructionmetrics(scheduledtimevalue, currenttime, textsize, lastpixel)
+
 
 			# Draw marker
-			outcome["Instruction Line" + label] = ("Line", markertop, markerbottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome["Instruction Line Upper" + label] = ("Line", markertop, markerbottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome["Instruction Line Join" + label] = ("Line", markerbottom, marker2top, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
+			outcome["Instruction Line Lower" + label] = ("Line", marker2top, marker2bottom, DisplayFunction.getactivecolour("Grey", isactive), 1, "")
 
 			# Draw desired temperature number
-			outcome["Instruction Foreground" + label] = ("Text", str(temperature), markertext, "Left",
+			outcome["Instruction Text Foreground" + label] = ("Text", str(temperature), markertext, "Left",
 										DisplayFunction.getactivecolour(DisplayFunction.gettemperaturecolour(temperature), isactive), "Timeline Temps")
 
 			# Draw desired temperature number blanking background
-			#outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Dark Grey", "", 0)
+			outcome["Instruction Text Background" + label] = ("Box", blankingposition, blankingsize, "Black", "", 0)
 
 			index = index + 1
 

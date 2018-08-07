@@ -18,21 +18,25 @@ class DefineRunwayMetrics:
 
 		# Position of top of desired temp markers
 		self.instructiontop = 18
+		self.instructionmiddle = 22
 
 		# Position of bottom of hour markers
 		self.hourbottom = 15
+
+		# relative offset of future desired temp text
+		self.textoffset = Vector.createfromvalues(3, -29)
 
 		# Dimensions of blanking out background for desired temperature
 		self.backgroundstart = Vector.createfromvalues(self.startline, 0)
 		self.backgroundend = Vector.createfromvalues(self.startline * 2, self.height)
 
 		# Dimensions of blanking out background for future desired temperatures
-		self.futurebackgroundpositionoffset = Vector.createfromvalues(-2, 3)
-		self.futurebackgroundsizeoffset = Vector.createfromvalues(4, -7)
+		self.futurebackgroundpositionoffset = Vector.createfromvalues(-2, 5)
+		self.futurebackgroundsizeoffset = Vector.createfromvalues(4, -9)
 
 
 
-	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize):
+	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize, lastpixelposition):
 
 		# Position of marker
 		houroffset = scheduledtimevalue - (3600 * currenttime.gethour())
@@ -40,18 +44,28 @@ class DefineRunwayMetrics:
 			currenttime)
 
 		# Marker & Text metrics
-		markertop = Vector.createfromvalues(pixelposition, 18)
-		markerbottom = Vector.createfromvalues(pixelposition, self.height)
-		markertext = Vector.createfromvalues(pixelposition + 3, self.height - 29)
+		markertop = Vector.createfromvalues(pixelposition, self.instructiontop)
+		markerbottom = Vector.createfromvalues(pixelposition, self.instructionmiddle)
+		marker2top = Vector.createfromvalues(pixelposition, self.instructionmiddle)
+		marker2bottom = Vector.createfromvalues(pixelposition, self.height)
+		markertext = Vector.add(marker2bottom, self.textoffset)
 
 		# Work out the effective box the text sits on
 		blankingposition = Vector.add(self.futurebackgroundpositionoffset, markertext)
 		blankingsize = Vector.add(self.futurebackgroundsizeoffset, textsize)
-		lastpixel = blankingposition.getx() + blankingsize.getx()
 
+		gapfromprevious = blankingposition.getx() - lastpixelposition
 
+		if gapfromprevious < 5:
+			offsetter = Vector.createfromvalues(5 - gapfromprevious, 0)
+			markertext = Vector.add(markertext, offsetter)
+			blankingposition = Vector.add(blankingposition, offsetter)
+			marker2top = Vector.add(marker2top, offsetter)
+			marker2bottom = Vector.add(marker2bottom, offsetter)
 
-		return markertop, markerbottom, markertext, blankingposition, blankingsize, lastpixel
+		newlastpixelposition = blankingposition.getx() + blankingsize.getx()
+
+		return markertop, markerbottom, marker2top, marker2bottom, markertext, blankingposition, blankingsize, newlastpixelposition
 
 
 

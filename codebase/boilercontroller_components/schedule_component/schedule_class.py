@@ -14,9 +14,6 @@ class DefineSchedule:
 		tt = Clock.getnow().getvalue() - 100
 		ss = 3
 		self.addscheduleditem(Clock.createastime(0, 10, tt), ss)
-
-		self.addscheduleditem(Clock.createastime(0, 30, tt), ss + 2)
-
 		self.addscheduleditem(Clock.createastime(0, 50, tt), ss + 2)
 		self.addscheduleditem(Clock.createastime(0, 90, tt), ss + 4)
 		self.addscheduleditem(Clock.createastime(0, 130, tt), ss + 6)
