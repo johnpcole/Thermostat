@@ -44,5 +44,7 @@ def getimagepallette():
 	images["button_outline"] = "buttons"
 	images["cancel"] = "buttons"
 	images["commit"] = "buttons"
+	images["configure"] = "buttons"
+	images["return"] = "buttons"
 
 	return images

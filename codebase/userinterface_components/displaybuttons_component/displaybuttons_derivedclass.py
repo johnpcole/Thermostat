@@ -16,6 +16,9 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 		# The list of start menu buttons
 		self.startmenubuttons = controls.getbuttoncollection("Set Temp")
 
+		# The list of configure schedule buttons
+		self.configuremenubuttons = controls.getbuttoncollection("Schedule Config")
+
 		# The current buttons display definition
 		self.artefacts = {}
 
@@ -28,13 +31,17 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 		self.artefacts = {}
 
-		# Display current desired temperature
+		# Display the blanking out overlay
 		newitems = self.drawmodaloverlay(usercontrols)
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons A"))
 
-		# Draw upcoming desired temperatures (from schedule)
+		# Draw the main menu buttons
 		newitems = self.drawstartmenu(usercontrols, boilercontroller.getcurrentdesiredtemperature())
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons B"))
+
+		# Draw the configuration menu buttons
+		newitems = self.drawconfiguremenu(usercontrols)
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons C"))
 
 		return self.artefacts
 
@@ -66,7 +73,7 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 					for temperature in range(3, 28):
 
-						temp, boxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(temperature, slidervalue)
+						temp, boxposition, boxsize, boxcentre, boxfont = self.calctempslidermetrics(temperature, slidervalue)
 
 						outcome["Slider Background " + temp] = ("Box", boxposition, boxsize, temp, "", 0)
 
@@ -77,9 +84,61 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 						if temperature == 3:
 							outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(boxposition, self.slideroutlineoffset))
 
+					outcome["Options Link"] = ("Line", Vector.createfromvalues(30, 175), Vector.createfromvalues(450, 175), "White", 1, "")
+
+
 				else:
 
 					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
+
+					outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)
+					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, buttoncolour, "", 0)
+					outcome[buttonname + " Outline"] = ("Image", "button_outline", buttonlocation)
+
+		return outcome
+
+
+
+	def drawconfiguremenu(self, control):
+
+		outcome = {}
+
+		selectordata = control.gettimelineselectordata()
+		slidervalue = selectordata.getslidervalue()
+
+		for buttonname in self.configuremenubuttons:
+			if control.getbuttonstate(buttonname) != "Hidden":
+
+				if buttonname == "Timeline Slider":
+
+					outcome["Slider Outline"] = ("Image", "slider_outline", self.timesliderposition)
+
+					for hourindex in range(0, 25):
+
+						markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour, zoom = self.calctimeslidermetrics(hourindex, slidervalue)
+
+						outcome["Slider Hour Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
+						if fontsize != "Hide":
+							outcome["Slider Hour Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
+
+						if zoom == True:
+							for subindex in range(-1, 6):
+
+								submarkertop, submarkerbottom, indexer = self.calctimeslidersubmetrics(subindex, markertop)
+
+								outcome["Sub Marker " + indexer] = ("Line", submarkertop, submarkerbottom, "White", 1, "")
+
+
+						#if (temperature == slidervalue) or (temperature == int(currentdesiredtemperature)):
+						#	outcome["Slider Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
+							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
+
+					#outcome["Options Link"] = ("Line", Vector.createfromvalues(30, 175), Vector.createfromvalues(450, 175), "White", 1, "")
+
+
+				else:
+
+					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 
 					outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)
 					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, buttoncolour, "", 0)

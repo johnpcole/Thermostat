@@ -1,4 +1,3 @@
-from ....common_components.enumeration_datatype import enumeration_module as Enumeration
 
 
 class DefineSelector():
@@ -16,15 +15,12 @@ class DefineSelector():
 		# Specifies the temp slider position
 		self.slidervalue = -999
 
-		# Specifies which override button is currently selected
-		self.selectedtime = Enumeration.createenum(["Next", "30", "60", "120", "180", "Lock"], "Next")
-
 		# Specifies the minimum and maximum values
-		self.minimum = 300
-		self.maximum = 2700
+		self.minimum = 0
+		self.maximum = ((24 * 60) - 1) * 60
 
 		# Specifies the slider granularity / speed
-		self.speed = 5
+		self.speed = 60 * 3
 
 
 	# ==========================================================================================
@@ -34,18 +30,18 @@ class DefineSelector():
 
 
 	# -------------------------------------------------------------------
-	# Updates the slider on the main menu
+	# Updates the slider on the configure menu
 	# -------------------------------------------------------------------
 
 	def updateslider(self, mode, mousepositionchange, newmousearea):
 
-		if mode == "Click: Temp Slider":
+		if mode == "Click: Timeline Slider":
 			self.sliderstate = True
-		elif mode == "Release: Temp Slider":
+		elif mode == "Release: Timeline Slider":
 			self.sliderstate = False
 
 		if self.sliderstate == True:
-			if newmousearea == "Temp Slider":
+			if newmousearea == "Timeline Slider":
 				sliderchange = mousepositionchange.getx() * self.speed
 				self.slidervalue = min(self.maximum, max(self.minimum, self.slidervalue + sliderchange))
 			else:
@@ -57,39 +53,19 @@ class DefineSelector():
 	# Updates the slider on the main menu
 	# -------------------------------------------------------------------
 
-	def updatebuttonselection(self, selecteditem):
+	def resetcontrols(self):
 
-		self.selectedtime.set(selecteditem)
+		# Set the slider value to be the current time
+		self.slidervalue = 12 * 60 * 60
 
-
-
-	# -------------------------------------------------------------------
-	# Updates the slider on the main menu
-	# -------------------------------------------------------------------
-
-	def resetcontrols(self, currentdesiredtemperature):
-
-		# Set the slider value to be the current boiler temperature
-		self.slidervalue = currentdesiredtemperature * 100
-
-		# Set the override to next button
-		self.selectedtime.set("Next")
 
 
 	# -------------------------------------------------------------------
-	# Returns the current UNCOMMITTED desired temperature on the slider
+	# Returns the current UNCOMMITTED desired time on the slider
 	# -------------------------------------------------------------------
 
 	def getslidervalue(self):
 
-		return int(self.slidervalue / 100)
+		return (60 * int(self.slidervalue / 60))
 
 
-
-	# -------------------------------------------------------------------
-	# Returns the current UNCOMMITTED desired time
-	# -------------------------------------------------------------------
-
-	def getselectedtime(self):
-
-		return self.selectedtime.displaycurrent()

@@ -22,6 +22,8 @@ def runapplication():
 
 	userinterface = UserInterface.createuserinterface()
 
+	previousmeasuretime = Clock.getnow()
+	cyclemeasure = 0
 
 	#meteolocation = Meteo.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
 	#print meteolocation.getsuntimes(1, 1, 2018)
@@ -31,6 +33,13 @@ def runapplication():
 	# ===============================================================================================================
 
 	while userinterface.getquitstate() == False:
+
+		currentmeasuretime = Clock.getnow()
+		cyclemeasure = cyclemeasure + 1
+		if currentmeasuretime.getvalue() != previousmeasuretime.getvalue():
+			print "Cycles last second =", cyclemeasure
+			cyclemeasure = 0
+		previousmeasuretime = currentmeasuretime
 
 		# Get current time as hours & minutes only
 		currenttime = Clock.getsecondlessnow()
