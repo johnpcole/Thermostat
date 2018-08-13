@@ -37,11 +37,8 @@ class DefineButtonMetrics:
 
 		self.timeslidersize = Vector.createfromvalues(432, 80)
 
-		stepsize = 16
-		zoomstepsize = 40
-
-		self.timesliderstepsize = Vector.createfromvalues(stepsize, 0)
-		self.timesliderzoomstepsize = Vector.createfromvalues(zoomstepsize, 0)
+		self.timeslidernormstepsize = Vector.createfromvalues(16, 0)
+		self.timesliderzoomstepsize = Vector.createfromvalues(40, 0)
 
 		self.timesliderhourlineheight = Vector.createfromvalues(0, 15)
 		self.timesliderzoomlineheight = Vector.createfromvalues(0, 20)
@@ -50,40 +47,35 @@ class DefineButtonMetrics:
 		self.timesliderhourtextoffset = Vector.createfromvalues(2, 1)
 		self.timesliderzoomtextoffset = Vector.createfromvalues(2, 5)
 
-		self.timesliderzoomfirstmarkeroffset = Vector.createfromvalues((zoomstepsize/4)-(stepsize/4), 0)
-		self.timesliderzoomsecondmarkeroffset = Vector.subtract(self.timesliderzoomstepsize, Vector.createfromvalues(stepsize, 0))
-		self.timesliderpostzoomoffset = Vector.createfromvalues((6*zoomstepsize/4)-(6*stepsize/4), 0)
-
-		self.timesliderzoomsubstepsize = Vector.createfromvalues(zoomstepsize/4, 0)
-
 		self.timeslidermajorsubmarkheight = Vector.createfromvalues(0, 4)
 		self.timesliderminorsubmarkheight = Vector.createfromvalues(0, 2)
 
 
-	def calctimeslidermetrics(self, hourindex, slidervalue):
+	def calctimeslidermetrics(self, hourindex, subindex, slidervalue):
 
-		equivalentsliderhour = int(slidervalue / 3600)
+		sliderhour = int(slidervalue / 3600)
+		sliderminutes = sliderhour * 60
+		instructionminutes = (hourindex * 60) + (subindex * 15)
 
-		boxposition = Vector.add(self.timesliderposition, self.timesliderstepsize.getscaled(hourindex))
+		boxposition = Vector.add(self.timesliderposition, self.calctimeslideroffset(instructionminutes, sliderminutes))
 		fontsize = "Snooze"
 		textoffset = self.timesliderhourtextoffset
 		lineheight = self.timesliderhourlineheight
 		colour = "Grey"
-		zoom = False
-		if (hourindex == equivalentsliderhour) or (hourindex == equivalentsliderhour + 1):
-			boxposition = Vector.add(boxposition, self.timesliderzoomfirstmarkeroffset)
+		if (hourindex == sliderhour) or (hourindex == sliderhour + 1):
 			fontsize = "Timeline Hours"
 			textoffset = self.timesliderzoomtextoffset
 			lineheight = self.timesliderzoomlineheight
 			colour = "White"
-			if hourindex == equivalentsliderhour + 1:
-				boxposition = Vector.add(boxposition, self.timesliderzoomsecondmarkeroffset)
-			else:
-				zoom = True
-		elif hourindex > equivalentsliderhour + 1:
-			boxposition = Vector.add(boxposition, self.timesliderpostzoomoffset)
+		else:
 			if hourindex == 24:
 				fontsize = "Hide"
+		if subindex != 0:
+			fontsize = "Hide"
+			if (subindex % 2) == 0:
+				lineheight = self.timeslidermajorsubmarkheight
+			else:
+				lineheight = self.timesliderminorsubmarkheight
 
 		markertop = Vector.add(boxposition, self.timeslidermarkeroffset)
 		markerbottom = Vector.add(markertop, lineheight)
@@ -92,55 +84,41 @@ class DefineButtonMetrics:
 			sanitisedhour = 12
 		hourlabelposition = Vector.add(markertop, textoffset)
 
-		return markertop, markerbottom, hourlabelposition, str(sanitisedhour), str(hourindex), fontsize, colour, zoom
+		return markertop, markerbottom, hourlabelposition, str(sanitisedhour), str(instructionminutes), fontsize, colour
 
 
 
-	def calctimeslidersubmetrics(self, subindex, hourmarkertopposition):
+	def calculatemarkrange(self, hourindex, slidervalue):
 
-		submarkertop = Vector.add(hourmarkertopposition, self.timesliderzoomsubstepsize.getscaled(subindex))
-
-		if (subindex % 2) == 0:
-			height = self.timeslidermajorsubmarkheight
+		sliderhour = int(slidervalue / 3600)
+		if hourindex == sliderhour:
+			minval = -1
+			maxval = 4
+		elif hourindex == sliderhour + 1:
+			minval = 0
+			maxval = 2
 		else:
-			height = self.timesliderminorsubmarkheight
+			minval = 0
+			maxval = 1
 
-		submarkerbottom = Vector.add(submarkertop, height)
-
-		return submarkertop, submarkerbottom, str(subindex + 1000)
-
-
-	def calctimesliderinstructionmetrics(self, instructiontime, slidervalue):
-
-		equivalentsliderminutes = 60 * (int(slidervalue / 3600))
-		instructionmins = int(instructiontime.getvalue() / 60)
+		return minval, maxval
 
 
 
+	def calctimeslideroffset(self, instructiontimeminutes, slidervalueminutes):
 
+		zoomstartminutes = slidervalueminutes - 15
+		zoomendminutes = zoomstartminutes + 90
 
+		partoneminutes = min(instructiontimeminutes, zoomstartminutes)
+		parttwominutes = min(90, max(0, instructiontimeminutes - zoomstartminutes))
+		partthreeminutes = max(0, instructiontimeminutes - zoomendminutes)
 
+		normoffset = self.timeslidernormstepsize.getscaled(partoneminutes + partthreeminutes)
+		zoomoffset = self.timesliderzoomstepsize.getscaled(parttwominutes)
+		overalloffset = Vector.add(normoffset, zoomoffset)
 
-
-
-
-
-
-
-
-
-
-
-		if (instructionmins > equivalentsliderminutes - 15):
-			if (instructionmins < equivalentsliderminutes + 75):
-				x = postzoomcalcs
-			else:
-				x = zoomcalcs
-		else:
-			x = prezoomcalcs
-
-
-
+		return overalloffset.getscaled(1.0/60.0)
 
 
 

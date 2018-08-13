@@ -115,18 +115,16 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 					for hourindex in range(0, 25):
 
-						markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour, zoom = self.calctimeslidermetrics(hourindex, slidervalue)
+						rangemin, rangemax = self.calculatemarkrange(hourindex, slidervalue)
 
-						outcome["Slider Hour Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
-						if fontsize != "Hide":
-							outcome["Slider Hour Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
+						for subindex in range(rangemin, rangemax):
 
-						if zoom == True:
-							for subindex in range(-1, 6):
+							markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour = self.calctimeslidermetrics(hourindex, subindex, slidervalue)
 
-								submarkertop, submarkerbottom, indexer = self.calctimeslidersubmetrics(subindex, markertop)
+							outcome["Slider Time Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
+							if fontsize != "Hide":
+								outcome["Slider Time Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
 
-								outcome["Sub Marker " + indexer] = ("Line", submarkertop, submarkerbottom, "White", 1, "")
 
 
 						#if (temperature == slidervalue) or (temperature == int(currentdesiredtemperature)):
