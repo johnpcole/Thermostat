@@ -48,7 +48,7 @@ class DefineController(Buttons.DefineButtons):
 	# Returns number of coins to spend, for any costly actions performed
 	# -------------------------------------------------------------------
 
-	def processinput(self, currentdesiredtemperature):
+	def processinput(self, currentdesiredtemperature, schedule):
 
 		# Loop over all events logged in this cycle and update all mouse properties
 		self.inputobject.processinputs()
@@ -66,6 +66,7 @@ class DefineController(Buttons.DefineButtons):
 
 			self.timelineselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
 
+			self.updateconfiguremenu(schedule)
 
 			if clickedbutton == "Release: Start Menu":
 				self.showmainmenu(currentdesiredtemperature)
@@ -77,7 +78,7 @@ class DefineController(Buttons.DefineButtons):
 				self.temperatureselector.updatebuttonselection(clickedbutton[18:])
 
 			elif (clickedbutton == "Release: Temp Cancel") or (clickedbutton == "Release: Exit"):
-				self.quitmainmenu()
+				self.quitmenus()
 
 			elif clickedbutton == "Release: Temp Commit":
 				self.setdesiredtemp()
@@ -128,10 +129,10 @@ class DefineController(Buttons.DefineButtons):
 	# Quits the main menu
 	# -------------------------------------------------------------------
 
-	def quitmainmenu(self):
+	def quitmenus(self):
 
 		# Set Configuration Menu to Hidden
-		self.updatebutton("Schedule Config", "Hidden")
+		self.updatebutton("Schedule Group", "Hidden")
 
 		# Set main menu buttons to hidden
 		self.updatebutton("Set Temp", "Hidden")
@@ -162,12 +163,32 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
+	# Updates the configuration menu
+	# -------------------------------------------------------------------
+
+	def updateconfiguremenu(self, schedule):
+
+		self.updatebutton("Schedule Reset", "Hidden")
+
+		if self.getbuttonstate("Timeline Slider") == "Enabled":
+			buttoncount = self.timelineselector.updatebuttonmeanings(schedule)
+
+			if buttoncount == 1:
+				self.updatebutton("Schedule 1", "Enabled")
+			elif buttoncount == 2:
+				self.updatebutton("Schedule 2", "Enabled")
+			elif buttoncount > 2:
+				self.updatebutton("Schedule 3", "Enabled")
+
+
+
+	# -------------------------------------------------------------------
 	# Sets the desired temperature
 	# -------------------------------------------------------------------
 
 	def setdesiredtemp(self):
 
-		self.quitmainmenu()
+		self.quitmenus()
 
 		self.useraction.set("Override Temperature")
 

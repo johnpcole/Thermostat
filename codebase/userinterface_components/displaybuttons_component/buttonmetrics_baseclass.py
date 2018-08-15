@@ -40,9 +40,13 @@ class DefineButtonMetrics:
 		self.timeslidernormstepsize = Vector.createfromvalues(16, 0)
 		self.timesliderzoomstepsize = Vector.createfromvalues(40, 0)
 
+
+		# Timeline Slider - Timings
+
 		self.timesliderhourlineheight = Vector.createfromvalues(0, 15)
-		self.timesliderzoomlineheight = Vector.createfromvalues(0, 20)
-		self.timeslidermarkeroffset = Vector.createfromvalues(5, 3)
+		self.timesliderzoomlineheight = Vector.createfromvalues(0, 30)
+		self.timeslidermarkeroffset = Vector.createfromvalues(5, 6)
+		self.timesliderzoommarkeroffset = Vector.createfromvalues(5, 3)
 
 		self.timesliderhourtextoffset = Vector.createfromvalues(2, 1)
 		self.timesliderzoomtextoffset = Vector.createfromvalues(2, 5)
@@ -50,10 +54,17 @@ class DefineButtonMetrics:
 		self.timeslidermajorsubmarkheight = Vector.createfromvalues(0, 4)
 		self.timesliderminorsubmarkheight = Vector.createfromvalues(0, 2)
 
+		# Timeline Slider - Temperatures
 
-	def calctimeslidermetrics(self, hourindex, subindex, slidervalue):
+		self.timeslidertempmarkeroffset = Vector.createfromvalues(5, 24)
+		self.timeslidertempmarkeroneheight = Vector.createfromvalues(0, 10)
+		self.timeslidertempmarkertwoheight = Vector.createfromvalues(0, 30)
 
-		sliderhour = int(slidervalue / 3600)
+		self.tempslidertemptextoffset = Vector.createfromvalues(0, 19)
+
+
+	def calctimeslidertimemetrics(self, hourindex, subindex, sliderhour):
+
 		sliderminutes = sliderhour * 60
 		instructionminutes = (hourindex * 60) + (subindex * 15)
 
@@ -61,12 +72,14 @@ class DefineButtonMetrics:
 		fontsize = "Snooze"
 		textoffset = self.timesliderhourtextoffset
 		lineheight = self.timesliderhourlineheight
+		lineoffset = self.timeslidermarkeroffset
 		colour = "Grey"
 		if (hourindex == sliderhour) or (hourindex == sliderhour + 1):
 			fontsize = "Timeline Hours"
 			textoffset = self.timesliderzoomtextoffset
 			lineheight = self.timesliderzoomlineheight
 			colour = "White"
+			lineoffset = self.timesliderzoommarkeroffset
 		else:
 			if hourindex == 24:
 				fontsize = "Hide"
@@ -77,7 +90,7 @@ class DefineButtonMetrics:
 			else:
 				lineheight = self.timesliderminorsubmarkheight
 
-		markertop = Vector.add(boxposition, self.timeslidermarkeroffset)
+		markertop = Vector.add(boxposition, lineoffset)
 		markerbottom = Vector.add(markertop, lineheight)
 		sanitisedhour = hourindex % 12
 		if sanitisedhour == 0:
@@ -88,15 +101,42 @@ class DefineButtonMetrics:
 
 
 
-	def calculatemarkrange(self, hourindex, slidervalue):
+	def calctimeslidertempmetrics(self, instructiontime, instructiontemp, sliderhour):
 
-		sliderhour = int(slidervalue / 3600)
-		if hourindex == sliderhour:
-			minval = -1
+		sliderminutes = 60 * sliderhour
+		instructionminutes = int(instructiontime / 60)
+
+		boxposition = Vector.add(self.timesliderposition, self.calctimeslideroffset(instructionminutes, sliderminutes))
+
+		marker1top = Vector.add(boxposition, self.timeslidertempmarkeroffset)
+		marker1bottom = Vector.add(marker1top, self.timeslidertempmarkeroneheight)
+		marker2top = marker1bottom
+		marker2bottom = Vector.add(marker2top, self.timeslidertempmarkertwoheight)
+
+		labelposition = Vector.createorigin()
+		templabel = str(instructiontemp)
+		indexer = str(instructiontime)
+		fontsize = "Snooze"
+		colour = "Grey"
+
+		return marker1top, marker2bottom, labelposition, templabel, indexer, fontsize, colour
+
+
+
+	def calculatemarkrange(self, hourindex, sliderhourvalue):
+
+		if hourindex == sliderhourvalue:
+			if hourindex == 0:
+				minval = 0
+			else:
+				minval = -1
 			maxval = 4
-		elif hourindex == sliderhour + 1:
+		elif hourindex == sliderhourvalue + 1:
 			minval = 0
-			maxval = 2
+			if hourindex == 24:
+				maxval = 1
+			else:
+				maxval = 2
 		else:
 			minval = 0
 			maxval = 1
@@ -164,6 +204,7 @@ class DefineButtonMetrics:
 		buttonoverlaylocation = Vector.add(buttonlocation, self.filloffset)
 		buttonoverlaysize = Vector.add(buttonsize, self.fillresize)
 		buttoncolour = "Grey"
+		buttonoutline = "button_outline"
 
 		if buttonname[:9] == "Override ":
 			timing = buttonname[9:]
@@ -174,9 +215,12 @@ class DefineButtonMetrics:
 			imagename = "c" + buttonname[6:]
 		elif buttonname == "Exit":
 			imagename = "return"
+		elif buttonname[:16] == "Schedule Select ":
+			buttonoutline = "large_button_outline"
+			imagename = "Hide"
 		else:
 			imagename = "configure"
 
-		return buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour
+		return buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour, buttonoutline
 
 

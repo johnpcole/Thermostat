@@ -39,7 +39,7 @@ class DefineUserInterface:
 
 	def processinputs(self, boilercontroller):
 
-		return self.controls.processinput(boilercontroller.getcurrentdesiredtemperature())
+		return self.controls.processinput(boilercontroller.getcurrentdesiredtemperature(), boilercontroller.getschedule())
 
 
 	# -------------------------------------------------------------------

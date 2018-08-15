@@ -1,3 +1,4 @@
+from schedulebutton_subcomponent import schedulebutton_module as ScheduleButton
 
 
 class DefineSelector():
@@ -21,6 +22,14 @@ class DefineSelector():
 
 		# Specifies the slider granularity / speed
 		self.speed = 60 * 3
+
+		# Specifies the scheduled instructions for the three buttons
+		self.buttonmeaning = {}
+		self.buttonmeaning[1] = ScheduleButton.createbutton()
+		self.buttonmeaning[2] = ScheduleButton.createbutton()
+		self.buttonmeaning[3] = ScheduleButton.createbutton()
+		self.buttoncount = 0
+
 
 
 	# ==========================================================================================
@@ -50,6 +59,29 @@ class DefineSelector():
 
 
 	# -------------------------------------------------------------------
+	# Updates the slider buttons on the configure menu
+	# -------------------------------------------------------------------
+
+	def updatebuttonmeanings(self, schedule):
+
+		selectedhour = self.getsliderhourvalue()
+		rangemin = selectedhour * 3600
+		rangemax = rangemin + 3600
+
+		buttoncount = 0
+		for time in schedule.getscheduledtimes():
+			timevalue = time.getvalue()
+			if (timevalue >= rangemin) and (timevalue < rangemax):
+				buttoncount = buttoncount + 1
+				if buttoncount < 4:
+					self.buttonmeaning[buttoncount].updatebutton(time, schedule.getscheduledinstruction(time))
+
+		self.buttoncount = buttoncount
+		return buttoncount
+
+
+
+	# -------------------------------------------------------------------
 	# Updates the slider on the main menu
 	# -------------------------------------------------------------------
 
@@ -57,6 +89,7 @@ class DefineSelector():
 
 		# Set the slider value to be the current time
 		self.slidervalue = 12 * 60 * 60
+		self.buttoncount = 0
 
 
 
@@ -64,8 +97,16 @@ class DefineSelector():
 	# Returns the current UNCOMMITTED desired time on the slider
 	# -------------------------------------------------------------------
 
-	def getslidervalue(self):
+	def getsliderhourvalue(self):
 
-		return (60 * int(self.slidervalue / 60))
+		return int(self.slidervalue / 3600)
 
 
+
+	# -------------------------------------------------------------------
+	# Returns the current button definition
+	# -------------------------------------------------------------------
+
+	def getbuttonmeaning(self, buttonindex):
+
+		return self.buttonmeaning[buttonindex].gettime(), self.buttonmeaning[buttonindex].gettemp()

@@ -39,11 +39,17 @@ class DefineButtons:
 		self.definebutton("Temp Commit",        406, 246,  50,  50, ["Set Temp"])
 
 		# Configuration Menu Areas
-		self.definebutton("Timeline Slider",     24,  24, 432,  80, ["Schedule Config"])
-		self.definebutton("Add Instruction",     24, 246,  50,  50, ["Schedule Config"])
-		self.definebutton("Delete Instruction", 406, 150,  50,  50, ["Schedule Config"])
-		self.definebutton("Exit",               333, 246,  50,  50, ["Schedule Config"])
+		self.definebutton("Timeline Slider",     24,  24, 432,  80, ["Schedule Config", "Schedule Group"])
+		self.definebutton("Schedule Select A",   24, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select B",  190, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select C",  356, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select D",  107, 130, 100,  80, ["Schedule 2", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select E",  273, 130, 100,  80, ["Schedule 2", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select F",  190, 130, 100,  80, ["Schedule 1", "Schedule Reset", "Schedule Group"])
 
+		#self.definebutton("Add Instruction",     24, 246,  50,  50, ["Schedule Config", "Schedule Group"])
+		#self.definebutton("Delete Instruction", 406, 150,  50,  50, ["Schedule Config", "Schedule Group"])
+		self.definebutton("Exit",               333, 246,  50,  50, ["Schedule Config", "Schedule Group"])
 
 
 
