@@ -1,6 +1,6 @@
-#from urllib2 import urlopen as GetWebPage
-#from urllib2 import Request as GenerateWebRequest
-#from urllib2 import URLError as WebError
+from urllib2 import urlopen as GetWebPage
+from urllib2 import Request as GenerateWebRequest
+from urllib2 import URLError as WebError
 from ....common_components.clock_datatype import clock_module as Clock
 from ....common_components.datetime_datatypes import datetime_module as DateTime
 from ....common_components.datetime_datatypes import duration_module as Duration
@@ -55,7 +55,7 @@ class DefineScraper:
 					sunset = self.sanitisetime(dataline[(index + 5):(index + 9)])
 
 		else:
-			print "Could not access Sunrise/Sunset times from internet"
+			print "Could not extract Sunrise/Sunset times from internet scrape"
 
 		return sunrise, sunset
 
@@ -71,62 +71,27 @@ class DefineScraper:
 		if (specifiedyear != self.lastsuccessfulyear) or (Duration.iswithinlimit(timesincelastupdate, self.resultagebuffer) == False):
 
 			url = self.buildurl(specifiedyear)
+			webresponse = ""
 
 			while tries < self.webcalltries:
 				try:
-					#webrequest = GenerateWebRequest(r'file:///C:/tester.html')
-					#webresponse = GetWebPage(webrequest).read(20000)
-					#astrorawdata = webresponse.split("\n")
-					tries = tries + 1
-					#print "Attempting data mocking, ", tries, " of ", self.webcalltries
-					meteorawdata = []
-					meteorawdata.append("01  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("02  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("03  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("04  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("05  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("06  0757 1649  0702 1745  0600 1833  0452 1925  0405 2011  0355 2031  0425 2008  0513 1910  0603 1800  0653 1655  0746 1609  0815 1606")
-					meteorawdata.append("07  0756 1651  0700 1747  0557 1835  0450 1927  0404 2012  0355 2031  0427 2006  0515 1908  0604 1757  0655 1653  0747 1608  0815 1607")
-					meteorawdata.append("08  0754 1653  0658 1749  0555 1837  0448 1928  0403 2013  0356 2031  0428 2005  0516 1906  0606 1755  0656 1651  0749 1607  0816 1608")
-					meteorawdata.append("09  0754 1653  0658 1749  0555 1837  0448 1928  0403 2013  0356 2031  0428 2005  0516 1906  0606 1755  0656 1651  0749 1607  0816 1608")
-					meteorawdata.append("10  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("11  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("12  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("13  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("14  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("15  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("16  0757 1649  0702 1745  0600 1833  0452 1925  0405 2011  0355 2031  0425 2008  0513 1910  0603 1800  0653 1655  0746 1609  0815 1606")
-					meteorawdata.append("17  0756 1651  0700 1747  0557 1835  0450 1927  0404 2012  0355 2031  0427 2006  0515 1908  0604 1757  0655 1653  0747 1608  0815 1607")
-					meteorawdata.append("18  0754 1653  0658 1749  0555 1837  0448 1928  0403 2013  0356 2031  0428 2005  0516 1906  0606 1755  0656 1651  0749 1607  0816 1608")
-					meteorawdata.append("19  0754 1653  0658 1749  0555 1837  0448 1928  0403 2013  0356 2031  0428 2005  0516 1906  0606 1755  0656 1651  0749 1607  0816 1608")
-					meteorawdata.append("20  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("21  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("22  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("23  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("24  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("25  0758 1647  0704 1743  0602 1832  0454 1923  0406 2009  0354 2031  0424 2009  0512 1912  0601 1802  0651 1657  0744 1610  0815 1606")
-					meteorawdata.append("26  0757 1649  0702 1745  0600 1833  0452 1925  0405 2011  0355 2031  0425 2008  0513 1910  0603 1800  0653 1655  0746 1609  0815 1606")
-					meteorawdata.append("27  0756 1651  0700 1747  0557 1835  0450 1927  0404 2012  0355 2031  0427 2006  0515 1908  0604 1757  0655 1653  0747 1608  0815 1607")
-					meteorawdata.append("28  0754 1653  0658 1749  0555 1837  0448 1928  0403 2013  0356 2031  0428 2005  0516 1906  0606 1755  0656 1651  0749 1607  0816 1608")
-					meteorawdata.append("29  0753 1654             0553 1838  0446 1930  0402 2014  0356 2031  0429 2003  0518 1903  0607 1753  0658 1649  0750 1606  0816 1609")
-					meteorawdata.append("30  0752 1656             0551 1840  0444 1932  0401 2016  0357 2031  0431 2002  0519 1901  0609 1751  0700 1647  0752 1606  0816 1610")
-					meteorawdata.append("31  0750 1658             0548 1842             0400 2017             0432 2000  0521 1859             0702 1645             0816 1611")
+					webrequest = GenerateWebRequest(url)
+					webresponse = GetWebPage(webrequest).read(20000)
 					tries = 99999
-				except:
-					print "Failed to mock data"
-				#except WebError as errorobject:
-					#print errorobject.reason
+				except WebError as errorobject:
+					tries = tries + 1
+					#print "Error accessing website: ", errorobject.reason
 
 			if tries == 99999:
-				print "Webcall Success"
-				self.lastwebresult = meteorawdata # astrodata
+				print "Access to website data Succeeded"
+				self.lastwebresult = webresponse.split("\n")
 				self.lastsuccessfulwebcall = DateTime.createfromobject(currentdatetime)
 				self.lastsuccessfulyear = specifiedyear
 			else:
-				print "Webcall Failed"
+				print "Access to website data Failed"
 
 		else:
-			print "Relying on local cached data"
+			print "Relying on local cached data (Still fresh)"
 
 
 
