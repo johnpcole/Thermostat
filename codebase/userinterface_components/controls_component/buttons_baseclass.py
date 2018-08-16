@@ -23,18 +23,33 @@ class DefineButtons:
 
 	def setupbuttons(self):
 
+		# Main Screen Areas
 		self.definebutton("Start Menu",           0,   0, 480, 320, [])
-		self.definebutton("Temp Slider",         24, 24,  432,  80, ["Set Temp"])
-		self.definebutton("Override Next",       30, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Override 30",        104, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Override 60",        178, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Override 120",       252, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Override 180",       326, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Override Lock",      400, 150,  50,  50, ["Set Temp"])
-		self.definebutton("Temp Cancel",         15, 255,  50,  50, ["Set Temp"])
-		self.definebutton("Temp Commit",        415, 255,  50,  50, ["Set Temp"])
 
+		# Start Menu Areas
+		self.definebutton("Temp Slider",         24,  24, 432,  80, ["Set Temp"])
+		self.definebutton("Override Next",       24, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 30",        106, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 60",        179, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 120",       251, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override 180",       324, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Override Lock",      406, 150,  50,  50, ["Set Temp"])
+		self.definebutton("Configure Schedule",  24, 246,  50,  50, ["Set Temp"])
+		self.definebutton("Temp Cancel",        333, 246,  50,  50, ["Set Temp"])
+		self.definebutton("Temp Commit",        406, 246,  50,  50, ["Set Temp"])
 
+		# Configuration Menu Areas
+		self.definebutton("Timeline Slider",     24,  24, 432,  80, ["Schedule Config", "Schedule Group"])
+		self.definebutton("Schedule Select A",   24, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select B",  190, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select C",  356, 130, 100,  80, ["Schedule 3", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select D",  107, 130, 100,  80, ["Schedule 2", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select E",  273, 130, 100,  80, ["Schedule 2", "Schedule Reset", "Schedule Group"])
+		self.definebutton("Schedule Select F",  190, 130, 100,  80, ["Schedule 1", "Schedule Reset", "Schedule Group"])
+
+		#self.definebutton("Add Instruction",     24, 246,  50,  50, ["Schedule Config", "Schedule Group"])
+		#self.definebutton("Delete Instruction", 406, 150,  50,  50, ["Schedule Config", "Schedule Group"])
+		self.definebutton("Exit",               333, 246,  50,  50, ["Schedule Config", "Schedule Group"])
 
 
 

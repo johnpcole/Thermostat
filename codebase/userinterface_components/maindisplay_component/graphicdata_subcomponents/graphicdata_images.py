@@ -42,7 +42,10 @@ def getimagepallette():
 	images["timer_180"] = "buttons"
 	images["timer_Lock"] = "buttons"
 	images["button_outline"] = "buttons"
+	images["large_button_outline"] = "buttons"
 	images["cancel"] = "buttons"
 	images["commit"] = "buttons"
+	images["configure"] = "buttons"
+	images["return"] = "buttons"
 
 	return images

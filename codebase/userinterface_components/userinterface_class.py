@@ -39,17 +39,17 @@ class DefineUserInterface:
 
 	def processinputs(self, boilercontroller):
 
-		return self.controls.processinput(boilercontroller.getcurrentdesiredtemperature())
+		return self.controls.processinput(boilercontroller.getcurrentdesiredtemperature(), boilercontroller.getschedule())
 
 
 	# -------------------------------------------------------------------
 	# Refreshes the screen
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, boilercontroller, currenttime):
+	def refreshscreen(self, boilercontroller, currenttime, astrodata):
 
 		# Display the runway
-		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller, currenttime, self.maindisplay))
+		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller, currenttime, self.maindisplay, astrodata))
 
 		# Display the board
 		self.maindisplay.paintitems(self.displayboard.buildboard(boilercontroller))

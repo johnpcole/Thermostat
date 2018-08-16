@@ -1,6 +1,6 @@
 from boilercontroller_components import boilercontroller_module as BoilerController
 
-#from miscellaneous_components.meteo_component import meteo_module as Meteo
+from miscellaneous_components.astro_component import astro_module as Astro
 
 from userinterface_components import userinterface_module as UserInterface
 
@@ -22,15 +22,23 @@ def runapplication():
 
 	userinterface = UserInterface.createuserinterface()
 
+	previousmeasuretime = Clock.getnow()
+	cyclemeasure = 0
 
-	#meteolocation = Meteo.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
-	#print meteolocation.getsuntimes(1, 1, 2018)
+	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
 
 
 	# ===============================================================================================================
 	# ===============================================================================================================
 
 	while userinterface.getquitstate() == False:
+
+		currentmeasuretime = Clock.getnow()
+		cyclemeasure = cyclemeasure + 1
+		if currentmeasuretime.getvalue() != previousmeasuretime.getvalue():
+			#print "Cycles last second =", cyclemeasure
+			cyclemeasure = 0
+		previousmeasuretime = currentmeasuretime
 
 		# Get current time as hours & minutes only
 		currenttime = Clock.getsecondlessnow()
@@ -46,8 +54,11 @@ def runapplication():
 		# and switch on/off the boilder accordingly
 		boilercontroller.updateboilercontroller(currenttime)
 
+		# Update sunrise/sunset data
+		astrodata.updateastrotimes()
+
 		# Refresh Screen
-		userinterface.refreshscreen(boilercontroller, currenttime)
+		userinterface.refreshscreen(boilercontroller, currenttime, astrodata)
 
 
 

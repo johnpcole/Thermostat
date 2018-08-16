@@ -34,14 +34,19 @@ class DefineRunwayMetrics:
 		self.futurebackgroundbuffer = 5
 		self.futurebackgroundsize = Vector.createfromvalues(40, self.height - self.instructionmiddle)
 
+		# Position of hour text
+		self.hourtextoffset = Vector.createfromvalues(3, 1)
+
+		# Position of daylight bars
+		self.astrotop = 0
+		self.astrobottom = 2
+
 
 
 	def calculateinstructionmetrics(self, scheduledtimevalue, currenttime, textsize, lastpixelposition, textoverwrite):
 
 		# Position of marker
-		houroffset = scheduledtimevalue - (3600 * currenttime.gethour())
-		pixelposition = self.startline + int(houroffset * self.timescale / 3600) - self.calculatemarkeroffsets(
-			currenttime)
+		pixelposition = self.calculaterunwayitemoffset(scheduledtimevalue, currenttime, True)
 
 		# Marker & Text metrics
 		markertop = Vector.createfromvalues(pixelposition, self.instructiontop)
@@ -64,22 +69,6 @@ class DefineRunwayMetrics:
 
 
 
-	def calculatemarkeroffsets(self, currenttime):
-
-		# Number of pixels markers are shifted left
-		return int(self.timescale * ((currenttime.getminute() * 60) + currenttime.getsecond()) / 3600)
-
-
-
-	def calculatemarkerlineheight(self, subindex):
-
-		if subindex == 0:
-			return self.hourbottom
-		else:
-			return (3 * (subindex + 1) % 2)
-
-
-
 	def calculatedesiredtempmetrics(self, desiredtemperature):
 
 		displayedtemperature = desiredtemperature.getswitchedvalue()
@@ -96,11 +85,66 @@ class DefineRunwayMetrics:
 
 
 
-	def calculatemarkerposition(self, currenttime, hourindex, subindex):
+	def calculatetimemarkermetrics(self, currenttime, hourindex, subindex):
 
-		hourmarker = self.startline + (hourindex * self.timescale) - self.calculatemarkeroffsets(currenttime)
+		instructiontimevalue = (hourindex * 3600) - (subindex * 900)
+		pixelposition = self.calculaterunwayitemoffset(instructiontimevalue, currenttime, True)
 
-		if subindex > 0:
-			return (hourmarker - int(subindex * self.timescale / 4))
+		if subindex == 0:
+			height = self.hourbottom
 		else:
-			return hourmarker
+			height = 3 * (subindex + 1) % 2
+
+		markertop = Vector.createfromvalues(pixelposition, 0)
+		markerbottom = Vector.createfromvalues(pixelposition, height)
+		textposition = Vector.add(markertop, self.hourtextoffset)
+		textlabel = Clock.convert24hourtohuman(hourindex)
+
+		instructionlabel = str(1000 + (hourindex * 10) + subindex)
+
+		return markertop, markerbottom, textposition, textlabel, instructionlabel
+
+
+
+	def calculaterunwayitemoffset(self, instructiontimevalue, currenttime, futuremode):
+
+		if futuremode == True:
+			visualinstructiontimevalue = Clock.getfuturetimevalue(instructiontimevalue, currenttime.getvalue())
+		else:
+			visualinstructiontimevalue = instructiontimevalue
+		visualinstructionoffset = visualinstructiontimevalue - currenttime.getvalue()
+		return self.startline + int((self.timescale * visualinstructionoffset) / 3600)
+
+
+
+	def calculateastrometrics(self, astroobject, currenttime):
+
+		if astroobject.gettomorrow() == True:
+			timevalueadd = 24 * 3600
+			suffix = "2"
+		else:
+			timevalueadd = 0
+			suffix = "1"
+
+		pixelstart = self.calculaterunwayitemoffset(astroobject.getstarttime().getvalue() + timevalueadd, currenttime, False)
+		pixelend = self.calculaterunwayitemoffset(astroobject.getendtime().getvalue() + timevalueadd, currenttime, False)
+
+		blockposition = Vector.createfromvalues(pixelstart, self.astrotop)
+		blocksize = Vector.createfromvalues(pixelend - pixelstart, self.astrobottom)
+
+		blocktype = astroobject.gettype()
+		blockcolour = "Sky " + blocktype
+
+		if blocktype == "Day":
+			blocklabel = "D" + suffix
+		elif blocktype == "Civ":
+			blocklabel = "C" + suffix
+		elif blocktype == "Nau":
+			blocklabel = "B" + suffix
+		elif blocktype == "Ast":
+			blocklabel = "A" + suffix
+		else:
+			blocklabel = "Z" + suffix
+
+		return blockposition, blocksize, blockcolour, blocklabel
+

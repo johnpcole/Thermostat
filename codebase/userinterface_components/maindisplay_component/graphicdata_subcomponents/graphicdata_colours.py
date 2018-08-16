@@ -29,5 +29,10 @@ def getcolourpallette():
 	colours["5"] = (38, 38, 255)
 	colours["4"] = (0, 0, 216)
 	colours["3"] = (0, 0, 178)
+	colours["Sky Day"] = (100, 240, 255)
+	colours["Sky Civ"] = (75, 180, 205)
+	colours["Sky Nau"] = (50, 120, 155)
+	colours["Sky Ast"] = (25, 60, 105)
+	colours["Sky Nig"] = (0, 0, 55)
 
 	return colours

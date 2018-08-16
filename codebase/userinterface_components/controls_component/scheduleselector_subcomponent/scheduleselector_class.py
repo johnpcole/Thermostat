@@ -1,4 +1,4 @@
-from ....common_components.enumeration_datatype import enumeration_module as Enumeration
+from schedulebutton_subcomponent import schedulebutton_module as ScheduleButton
 
 
 class DefineSelector():
@@ -16,15 +16,20 @@ class DefineSelector():
 		# Specifies the temp slider position
 		self.slidervalue = -999
 
-		# Specifies which override button is currently selected
-		self.selectedtime = Enumeration.createenum(["Next", "30", "60", "120", "180", "Lock"], "Next")
-
 		# Specifies the minimum and maximum values
-		self.minimum = 300
-		self.maximum = 2700
+		self.minimum = 0
+		self.maximum = ((24 * 60) - 1) * 60
 
 		# Specifies the slider granularity / speed
-		self.speed = 5
+		self.speed = 60 * 3
+
+		# Specifies the scheduled instructions for the three buttons
+		self.buttonmeaning = {}
+		self.buttonmeaning[1] = ScheduleButton.createbutton()
+		self.buttonmeaning[2] = ScheduleButton.createbutton()
+		self.buttonmeaning[3] = ScheduleButton.createbutton()
+		self.buttoncount = 0
+
 
 
 	# ==========================================================================================
@@ -34,18 +39,18 @@ class DefineSelector():
 
 
 	# -------------------------------------------------------------------
-	# Updates the slider on the main menu
+	# Updates the slider on the configure menu
 	# -------------------------------------------------------------------
 
 	def updateslider(self, mode, mousepositionchange, newmousearea):
 
-		if mode == "Click: Temp Slider":
+		if mode == "Click: Timeline Slider":
 			self.sliderstate = True
-		elif mode == "Release: Temp Slider":
+		elif mode == "Release: Timeline Slider":
 			self.sliderstate = False
 
 		if self.sliderstate == True:
-			if newmousearea == "Temp Slider":
+			if newmousearea == "Timeline Slider":
 				sliderchange = mousepositionchange.getx() * self.speed
 				self.slidervalue = min(self.maximum, max(self.minimum, self.slidervalue + sliderchange))
 			else:
@@ -54,42 +59,54 @@ class DefineSelector():
 
 
 	# -------------------------------------------------------------------
+	# Updates the slider buttons on the configure menu
+	# -------------------------------------------------------------------
+
+	def updatebuttonmeanings(self, schedule):
+
+		selectedhour = self.getsliderhourvalue()
+		rangemin = selectedhour * 3600
+		rangemax = rangemin + 3600
+
+		buttoncount = 0
+		for time in schedule.getscheduledtimes():
+			timevalue = time.getvalue()
+			if (timevalue >= rangemin) and (timevalue < rangemax):
+				buttoncount = buttoncount + 1
+				if buttoncount < 4:
+					self.buttonmeaning[buttoncount].updatebutton(time, schedule.getscheduledinstruction(time))
+
+		self.buttoncount = buttoncount
+		return buttoncount
+
+
+
+	# -------------------------------------------------------------------
 	# Updates the slider on the main menu
 	# -------------------------------------------------------------------
 
-	def updatebuttonselection(self, selecteditem):
+	def resetcontrols(self):
 
-		self.selectedtime.set(selecteditem)
-
-
-
-	# -------------------------------------------------------------------
-	# Updates the slider on the main menu
-	# -------------------------------------------------------------------
-
-	def resetcontrols(self, currentdesiredtemperature):
-
-		# Set the slider value to be the current boiler temperature
-		self.slidervalue = currentdesiredtemperature * 100
-
-		# Set the override to next button
-		self.selectedtime.set("Next")
-
-
-	# -------------------------------------------------------------------
-	# Returns the current UNCOMMITTED desired temperature on the slider
-	# -------------------------------------------------------------------
-
-	def getslidervalue(self):
-
-		return int(self.slidervalue / 100)
+		# Set the slider value to be the current time
+		self.slidervalue = 12 * 60 * 60
+		self.buttoncount = 0
 
 
 
 	# -------------------------------------------------------------------
-	# Returns the current UNCOMMITTED desired time
+	# Returns the current UNCOMMITTED desired time on the slider
 	# -------------------------------------------------------------------
 
-	def getselectedtime(self):
+	def getsliderhourvalue(self):
 
-		return self.selectedtime.displaycurrent()
+		return int(self.slidervalue / 3600)
+
+
+
+	# -------------------------------------------------------------------
+	# Returns the current button definition
+	# -------------------------------------------------------------------
+
+	def getbuttonmeaning(self, buttonindex):
+
+		return self.buttonmeaning[buttonindex].gettime(), self.buttonmeaning[buttonindex].gettemp()
