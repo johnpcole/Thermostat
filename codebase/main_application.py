@@ -55,10 +55,10 @@ def runapplication():
 		boilercontroller.updateboilercontroller(currenttime)
 
 		# Update sunrise/sunset data
-		astrodata.updatesuntimes()
+		astrodata.updateastrotimes()
 
 		# Refresh Screen
-		userinterface.refreshscreen(boilercontroller, currenttime)
+		userinterface.refreshscreen(boilercontroller, currenttime, astrodata)
 
 
 

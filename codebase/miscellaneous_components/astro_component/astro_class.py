@@ -1,6 +1,8 @@
 from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.datetime_datatypes import datetime_module as DateTime
 from webscraper_subcomponent import webscraper_module as WebScraper
+from . import astro_privatefunctions as AstroFunction
+from astroitem_subcomponent import astroitem_module as AstroItem
 
 
 
@@ -10,57 +12,48 @@ class DefineAstro:
 
 		self.todaydatetime = DateTime.createfromsextuplet(1, 1, 2000, 0, 0, 0)
 
-		self.todaysunrise = Clock.createasinteger(0)
-
-		self.todaysunset = Clock.createasinteger(0)
-
-		self.tomorrowsunrise = Clock.createasinteger(0)
-
-		self.tomorrowsunset = Clock.createasinteger(0)
+		self.astrolibrary = []
 
 		self.webscraper = WebScraper.createscraper(locationname, longitude, latitude, timeshift)
 
 
 
-	def updatesuntimes(self):
-		
-		nowday, nowmonth, nowyear, dummy1, dummy2, dummy3 = DateTime.getnow().getsextuplet()
-		lastday, lastmonth, lastyear, dummy1, dummy2, dummy3 = self.todaydatetime.getsextuplet()
+	def updateastrotimes(self):
 
-		if (nowday != lastday) or (nowmonth != lastmonth) or (nowyear != lastyear):
+		nowday, nowmonth, nowyear, tomday, tommonth, tomyear, differenceflag = AstroFunction.calculatedatevalues(self.todaydatetime)
+
+		if differenceflag == True:
+
+			self.astrolibrary = []
 
 			self.todaydatetime = DateTime.createfromsextuplet(nowday, nowmonth, nowyear, 0, 0, 0)
 
-			self.todaysunrise, self.todaysunset = self.webscraper.getsuntimes(nowday, nowmonth, nowyear)
+			for datamode in ("Day", "Nau", "Civ", "Ast"):
 
-			tomorrowdatetime = DateTime.createfromsextuplet(nowday, nowmonth, nowyear, 0, 0, 0)
-			tomorrowdatetime.adjustdays(1)
-			tomday, tommonth, tomyear, dummy1, dummy2, dummy3 = tomorrowdatetime.getsextuplet()
+				starttime, endtime = self.webscraper.getastrotimes(nowday, nowmonth, nowyear, datamode)
+				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, False))
 
-			self.tomorrowsunrise, self.tomorrowsunset = self.webscraper.getsuntimes(tomday, tommonth, tomyear)
-
-			print "Updated Sunrise/set times: ", self.todaydatetime.getiso(),\
-													self.todaysunrise.gettext(),\
-													self.todaysunset.gettext(), \
-													self.tomorrowsunrise.gettext(), \
-													self.tomorrowsunset.gettext()
+				starttime, endtime = self.webscraper.getastrotimes(tomday, tommonth, tomyear, datamode)
+				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, True))
 
 		#else:
 			#print "Not updating sunrise/set times"
 
 
-	def getcurrentsuntimes(self, currenttime):
 
-		baselinevalue = currenttime.getvalue()
+	def getlibrary(self):
 
-		if baselinevalue > (self.todaysunrise - 120):
-			sunrise = Clock.createasclock(self.tomorrowsunrise)
-		else:
-			sunrise = Clock.createasclock(self.todaysunrise)
+		outcome = []
 
-		if baselinevalue > (self.todaysunset - 120):
-			sunset = Clock.createasclock(self.todaysunset)
-		else:
-			sunset = Clock.createasclock(self.todaysunset)
+		todayflag, tomorrowflag = AstroFunction.calculatefilter(self.todaydatetime)
 
-		return sunrise, sunset
+		for item in self.astrolibrary:
+
+			if item.gettomorrow() == False:
+				if todayflag == True:
+					outcome.append(item)
+			else:
+				if tomorrowflag == True:
+					outcome.append(item)
+
+		return outcome

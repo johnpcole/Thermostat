@@ -23,7 +23,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 	# Build the Runway
 	# -------------------------------------------------------------------
 
-	def buildrunway(self, boilercontroller, currenttime, displayobject):
+	def buildrunway(self, boilercontroller, currenttime, displayobject, astrodata):
 
 		self.artefacts = {}
 
@@ -36,13 +36,13 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		newitems = self.drawinstructions(currenttime, displayedschedule, displayobject)
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway B"))
 
-		# Draw hour labels
-		newitems = self.drawtimelinenumbers(currenttime)
+		# Draw hour/half/quarter markers & labels
+		newitems = self.drawtimelineitems(currenttime)
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
 
-		# Draw hour/half/quarter markers
-		newitems = self.drawtimelinemarkers(currenttime)
-		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway D"))
+		# Draw astro
+		newitems = self.drawastrodata(currenttime, astrodata.getlibrary())
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
 
 		return self.artefacts
 
@@ -101,59 +101,42 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 
 	# -------------------------------------------------------------------
-	# Paints the timeline hour labels at the top of the screen
+	# Paints the timeline hour/half/quarter items at the top of the screen
 	# -------------------------------------------------------------------
 
-	def drawtimelinenumbers(self, currenttime):
+	def drawtimelineitems(self, currenttime):
 
 		outcome = {}
-
-		lasthour = currenttime.gethour()
-
-		# Print the hour labels
-		for hourindex in range(0, 14):
-
-			# Display the current hour at the current time marker only if it's exactly on the clock
-			if (currenttime.getminute() == 0) or (hourindex > 0):
-
-				# Position of hour marker line
-				hourmarker = self.calculatemarkerposition(currenttime, hourindex, 0)
-
-				# Draw hour marker number
-				outcome["Timeline Hour Text " + str(1000 + hourindex)] = ("Text",
-										Clock.convert24hourtohuman(hourindex + lasthour),
-										Vector.createfromvalues(hourmarker + 3, 1), "Left", "Grey", "Timeline Hours")
 
 		outcome["Timeline Zero Line"] = ("Line", self.backgroundstart,
 												Vector.createfromvalues(self.startline, self.height), "Grey", 1, "")
 
-		return outcome
+		lasthour = currenttime.gethour()
 
+		# Print the hour labels
+		for hourindex in range(lasthour, lasthour + 14):
 
+			# Display the current hour at the current time marker only if it's exactly on the clock
+			if (currenttime.getminute() == 0) or (hourindex > lasthour):
 
-	# -------------------------------------------------------------------
-	# Paints the timeline markers at the top of the screen
-	# -------------------------------------------------------------------
+				# Position of hour marker line & text etc
+				markertop, markerbottom, textposition, textlabel, indexer = self.calculatetimemarkermetrics(currenttime, hourindex, 0)
 
-	def drawtimelinemarkers(self, currenttime):
-	
-		outcome = {}
-	
-		for hourindex in range(1, 14):
+				# Draw hour marker number
+				outcome["Timeline Hour Text " + indexer] = ("Text",
+															textlabel, textposition, "Left", "Grey", "Timeline Hours")
 
 			for subindex in range(0, 4):
-	
+
 				# Position of marker
-				pixelposition = self.calculatemarkerposition(currenttime, hourindex, subindex)
-	
+				markertop, markerbottom, textposition, textlabel, indexer = self.calculatetimemarkermetrics(currenttime, hourindex, subindex)
+
 				# Only draw marker if it's to the right of the current time marker
-				if self.startline < pixelposition:
-					outcome["Timeline Line " + str(1000 + (hourindex * 10) + subindex)] = ("Line",
-									Vector.createfromvalues(pixelposition, 0),
-									Vector.createfromvalues(pixelposition, self.calculatemarkerlineheight(subindex)),
-									"Grey", 1, "")
+				if self.startline < markertop.getx():
+					outcome["Timeline Line " + indexer] = ("Line", markertop, markerbottom, "Grey", 1, "")
 
 		return outcome
+
 
 
 	# -------------------------------------------------------------------
@@ -171,5 +154,25 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		outcome["Desired Temp"] = ("Text", str(displayedtemperature), position, "Right", colour, "Desired Temp")
 
 		outcome["Desired Temp Screen Background"] = ("Box", self.backgroundstart, self.backgroundend, "Black", "", 0)
+
+		return outcome
+
+
+
+	# -------------------------------------------------------------------
+	# Paints the astro data
+	# -------------------------------------------------------------------
+
+	def drawastrodata(self, currenttime, astrolibrary):
+
+		outcome = {}
+
+		# Loop over scheduled times
+		for astroitem in astrolibrary:
+
+			blockposition, blocksize, blockcolour, blocklabel = self.calculateastrometrics(astroitem, currenttime)
+
+			# Draw block
+			outcome["Astro Block " + blocklabel] = ("Box", blockposition, blocksize, blockcolour, "", 0)
 
 		return outcome

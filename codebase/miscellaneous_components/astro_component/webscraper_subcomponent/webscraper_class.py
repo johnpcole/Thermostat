@@ -30,38 +30,42 @@ class DefineScraper:
 
 		self.lastsuccessfulyear = -9999
 
-		self.lastwebresult = ""
+		self.lastresult = {}
+		self.lastresult["Day"] = ""
+		self.lastresult["Nau"] = ""
+		self.lastresult["Civ"] = ""
+		self.lastresult["Ast"] = ""
 
 
 
-	def getsuntimes(self, day, month, year):
+	def getastrotimes(self, day, month, year, datamode):
 
-		sunrise = Clock.createasinteger(0)
-		sunset = Clock.createasinteger(0)
+		starttime = Clock.createasinteger(0)
+		endtime = Clock.createasinteger(0)
 
-		self.retrievewebpage(year)
+		self.retrievewebpages(year)
 
-		if self.lastwebresult != "":
+		if self.lastresult[datamode] != "":
 
 			desiredlinestart = str(day) + "  "
 			if day < 10:
 				desiredlinestart = "0" + desiredlinestart
 
-			for dataline in self.lastwebresult:
+			for dataline in self.lastresult[datamode]:
 				if dataline[:4] == desiredlinestart:
 
 					index = (month * 11) - 7
-					sunrise = self.sanitisetime(dataline[(index + 0):(index + 4)])
-					sunset = self.sanitisetime(dataline[(index + 5):(index + 9)])
+					starttime = self.sanitisetime(dataline[(index + 0):(index + 4)], 0, 0, 0)
+					endtime = self.sanitisetime(dataline[(index + 5):(index + 9)], 23, 59, 59)
 
 		else:
-			print "Could not extract Sunrise/Sunset times from internet scrape"
+			print "Could not extract times from internet scrape"
 
-		return sunrise, sunset
+		return starttime, endtime
 
 
 
-	def retrievewebpage(self, specifiedyear):
+	def retrievewebpages(self, specifiedyear):
 
 		tries = 0
 
@@ -70,21 +74,23 @@ class DefineScraper:
 
 		if (specifiedyear != self.lastsuccessfulyear) or (Duration.iswithinlimit(timesincelastupdate, self.resultagebuffer) == False):
 
-			url = self.buildurl(specifiedyear)
-			webresponse = ""
-
 			while tries < self.webcalltries:
 				try:
-					webrequest = GenerateWebRequest(url)
-					webresponse = GetWebPage(webrequest).read(20000)
-					tries = 99999
+					webresponse = {}
+					for datamode in ("Day", "Nau", "Civ", "Ast"):
+						url = self.buildurl(specifiedyear, datamode)
+						webresponse[datamode] = ""
+						webrequest = GenerateWebRequest(url)
+						webresponse[datamode] = GetWebPage(webrequest).read(20000)
+						tries = 99999
 				except WebError as errorobject:
 					tries = tries + 1
-					#print "Error accessing website: ", errorobject.reason
+					print "Error accessing website: ", errorobject.reason
 
 			if tries == 99999:
 				print "Access to website data Succeeded"
-				self.lastwebresult = webresponse.split("\n")
+				for datamode in ("Day", "Nau", "Civ", "Ast"):
+					self.lastresult[datamode] = webresponse[datamode].split("\n")
 				self.lastsuccessfulwebcall = DateTime.createfromobject(currentdatetime)
 				self.lastsuccessfulyear = specifiedyear
 			else:
@@ -95,20 +101,21 @@ class DefineScraper:
 
 
 
-	def sanitisetime(self, textstring):
+	def sanitisetime(self, textstring, defaulthour, defaultmin, defaultsec):
 
 		hour = textstring[0:2]
 		min = textstring[2:4]
+		outcome = Clock.createastime(defaulthour, defaultmin, defaultsec)
+
 		# Doesn't cope with //// or ==== results indicating permanent above/below limits
 		try:
 			hourvalue = int(hour)
 			minvalue = int(min)
+			outcome = Clock.createastime(hourvalue, minvalue, 0)
 		except:
-			hourvalue = 0
-			minvalue = 0
 			print "Problems reading sunrise/sunset time: ", textstring
 
-		return Clock.createastime(hourvalue, minvalue, 0)
+		return outcome
 
 
 
@@ -129,13 +136,19 @@ class DefineScraper:
 
 
 
-	def buildurl(self, year):
+	def buildurl(self, year, mode):
 
-		datamode = 0 # for sunrise/set
+		if mode == "Day":
+			datamode = 0 # for sunrise/set
 		# datamode = 1 # for moonrise/set
-		# datamode = 2 # for civil
-		# datamode = 3 # for nautical
-		# datamode = 4 # for astro
+		elif mode == "Civ":
+			datamode = 2 # for civil
+		elif mode == "Nau":
+			datamode = 3 # for nautical
+		elif mode == "Ast":
+			datamode = 4 # for astro
+		else:
+			datamode = 1/0
 
 		url = "http://aa.usno.navy.mil/cgi-bin/aa_rstablew.pl?ID=AA"
 		url = url + "&year=" + str(year)
