@@ -1,59 +1,65 @@
-from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.datetime_datatypes import datetime_module as DateTime
 from webscraper_subcomponent import webscraper_module as WebScraper
-from . import astro_privatefunctions as AstroFunction
 from astroitem_subcomponent import astroitem_module as AstroItem
 
 
 
 class DefineAstro:
 
-	def __init__(self, locationname, longitude, latitude, timeshift):
+	def __init__(self, locationname, longitude, latitude, timeshift, connectionmode, currenttimeobject):
 
 		self.todaydatetime = DateTime.createfromsextuplet(1, 1, 2000, 0, 0, 0)
 
 		self.astrolibrary = []
 
-		self.webscraper = WebScraper.createscraper(locationname, longitude, latitude, timeshift)
+		self.webscraper = WebScraper.createscraper(locationname, longitude, latitude, timeshift, connectionmode)
+
+		#self.updateastrotimes(currenttimeobject)
 
 
 
-	def updateastrotimes(self):
+	def updateastrotimes(self, currenttimeobject):
 
-		nowday, nowmonth, nowyear, tomday, tommonth, tomyear, differenceflag = AstroFunction.calculatedatevalues(self.todaydatetime)
+		nowdate = currenttimeobject.getdate()
 
-		if differenceflag == True:
+		if DateTime.areidentical(self.todaydatetime, nowdate) == False:
 
 			self.astrolibrary = []
 
-			self.todaydatetime = DateTime.createfromsextuplet(nowday, nowmonth, nowyear, 0, 0, 0)
+			self.todaydatetime = DateTime.createfromobject(nowdate)
 
-			for datamode in ("Day", "Nau", "Civ", "Ast"):
+			for dayshift in range(-1, 2, 1):
 
-				starttime, endtime = self.webscraper.getastrotimes(nowday, nowmonth, nowyear, datamode)
-				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, False))
+				lookupdate = self.createcustomdate(dayshift)
 
-				starttime, endtime = self.webscraper.getastrotimes(tomday, tommonth, tomyear, datamode)
-				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, True))
+				#print "Updating Astrodata for", lookupdate.getsextuplet()
 
-		#else:
+				for datamode in ("Day", "Nau", "Civ", "Ast"):
+
+					linesfound, onestarttime, onestartvalid, oneendtime, oneendvalid, twostarttime, twostartvalid, twoendtime, twoendvalid = self.webscraper.getastrotimes(lookupdate, datamode, nowdate)
+					if linesfound > 0:
+						self.astrolibrary.append(AstroItem.createitem(datamode, onestarttime, oneendtime, lookupdate, onestartvalid, oneendvalid))
+						#if datamode == "Ast":
+							#print "Line 1:", onestarttime.gettext(), onestartvalid, oneendtime.gettext(), oneendvalid
+					if linesfound > 1:
+						self.astrolibrary.append(AstroItem.createitem(datamode, twostarttime, twoendtime, lookupdate, twostartvalid, twoendvalid))
+						#if datamode == "Ast":
+							#print "Line 2:", twostarttime.gettext(), twostartvalid, twoendtime.gettext(), twoendvalid
+
+				#else:
 			#print "Not updating sunrise/set times"
 
 
 
 	def getlibrary(self):
 
-		outcome = []
+		return self.astrolibrary
 
-		todayflag, tomorrowflag = AstroFunction.calculatefilter(self.todaydatetime)
 
-		for item in self.astrolibrary:
 
-			if item.gettomorrow() == False:
-				if todayflag == True:
-					outcome.append(item)
-			else:
-				if tomorrowflag == True:
-					outcome.append(item)
+	def createcustomdate(self, dayshift):
+
+		outcome = DateTime.createfromobject(self.todaydatetime)
+		outcome.adjustdays(dayshift)
 
 		return outcome

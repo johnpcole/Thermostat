@@ -46,10 +46,11 @@ class DefineUserInterface:
 	# Refreshes the screen
 	# -------------------------------------------------------------------
 
-	def refreshscreen(self, boilercontroller, currenttime, astrodata):
+	def refreshscreen(self, boilercontroller, currenttimeobject, astrodata):
 
 		# Display the runway
-		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller, currenttime, self.maindisplay, astrodata))
+		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller,
+					currenttimeobject.getaccurateclock(), currenttimeobject.getdate(), self.maindisplay, astrodata))
 
 		# Display the board
 		self.maindisplay.paintitems(self.displayboard.buildboard(boilercontroller))

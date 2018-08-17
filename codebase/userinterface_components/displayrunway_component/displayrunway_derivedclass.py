@@ -1,9 +1,10 @@
 from ...common_components.vector_datatype import vector_module as Vector
-from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.transition_datatype import transition_module as Transition
 from .. import display_sharedfunctions as DisplayFunction
 from . import runwaymetrics_baseclass as Metrics
 from schedulebuilder_subcomponent import schedulebuilder_module as ScheduleBuilder
+from . import displayrunway_privatefunctions as RunwayFunction
+
 
 
 class DefineRunway(Metrics.DefineRunwayMetrics):
@@ -23,7 +24,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 	# Build the Runway
 	# -------------------------------------------------------------------
 
-	def buildrunway(self, boilercontroller, currenttime, displayobject, astrodata):
+	def buildrunway(self, boilercontroller, currenttime, currentdate, displayobject, astrodata):
 
 		self.artefacts = {}
 
@@ -41,8 +42,8 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
 
 		# Draw astro
-		newitems = self.drawastrodata(currenttime, astrodata.getlibrary())
-		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
+		newitems = self.drawastrodata(currenttime, currentdate, astrodata.getlibrary())
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway D"))
 
 		return self.artefacts
 
@@ -108,8 +109,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome = {}
 
-		outcome["Timeline Zero Line"] = ("Line", self.backgroundstart,
-												Vector.createfromvalues(self.startline, self.height), "Grey", 1, "")
+		outcome["Timeline Zero Line"] = ("Line", self.zerolinetop, self.zerolinebottom, "Grey", 1, "")
 
 		lasthour = currenttime.gethour()
 
@@ -153,7 +153,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome["Desired Temp"] = ("Text", str(displayedtemperature), position, "Right", colour, "Desired Temp")
 
-		outcome["Desired Temp Screen Background"] = ("Box", self.backgroundstart, self.backgroundend, "Black", "", 0)
+		outcome["Desired Temp Screen Background"] = ("Box", self.backgroundposition, self.backgroundsize, "Black", "", 0)
 
 		return outcome
 
@@ -163,16 +163,33 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 	# Paints the astro data
 	# -------------------------------------------------------------------
 
-	def drawastrodata(self, currenttime, astrolibrary):
+	def drawastrodata(self, currenttime, currentdate, astrolibrary):
 
 		outcome = {}
+
+		counter = 0
 
 		# Loop over scheduled times
 		for astroitem in astrolibrary:
 
-			blockposition, blocksize, blockcolour, blocklabel = self.calculateastrometrics(astroitem, currenttime)
+			counter = counter + 1
 
-			# Draw block
-			outcome["Astro Block " + blocklabel] = ("Box", blockposition, blocksize, blockcolour, "", 0)
+			displaymode = RunwayFunction.getdateshift(currentdate, astroitem.getdate())
+
+			if displaymode != -999:
+				blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime, displaymode, counter)
+
+				# Draw block
+				outcome[blocklabel + " 1"] = ("Box", starttop, blocksize, blockcolour, "", 0)
+
+				# Draw lines
+				if startborder == True:
+					outcome[blocklabel + " 2"] = ("Line", starttop, startbottom, "Black", 1, "")
+
+				if endborder == True:
+					outcome[blocklabel + " 3"] = ("Line", endtop, endbottom, "Black", 1, "")
+
+		outcome["A Background"] = ("Box", Vector.createfromvalues(0, self.astrotop),
+									Vector.createfromvalues(480, self.astroheight), "Sky Nig", "", 0)
 
 		return outcome

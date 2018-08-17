@@ -1,12 +1,11 @@
 from boilercontroller_components import boilercontroller_module as BoilerController
 
-from miscellaneous_components.astro_component import astro_module as Astro
-
 from userinterface_components import userinterface_module as UserInterface
 
-from common_components.userinterface_framework import userinterface_module as GUI
+from miscellaneous_components.astro_component import astro_module as Astro
+from miscellaneous_components.timekeeper_component import timekeeper_module as TimeKeeper
 
-from .common_components.clock_datatype import clock_module as Clock
+from common_components.userinterface_framework import userinterface_module as GUI
 
 def runapplication():
 
@@ -22,10 +21,10 @@ def runapplication():
 
 	userinterface = UserInterface.createuserinterface()
 
-	previousmeasuretime = Clock.getnow()
-	cyclemeasure = 0
+	timekeeper = TimeKeeper.createtimekeeper()
 
-	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0)
+	connecttowebsite = True
+	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51.497772
 
 
 	# ===============================================================================================================
@@ -33,32 +32,25 @@ def runapplication():
 
 	while userinterface.getquitstate() == False:
 
-		currentmeasuretime = Clock.getnow()
-		cyclemeasure = cyclemeasure + 1
-		if currentmeasuretime.getvalue() != previousmeasuretime.getvalue():
-			#print "Cycles last second =", cyclemeasure
-			cyclemeasure = 0
-		previousmeasuretime = currentmeasuretime
-
-		# Get current time as hours & minutes only
-		currenttime = Clock.getsecondlessnow()
+		# Update the system clock (not used by boiler switch)
+		timekeeper.update()
 
 		# Process any input events (mouse clicks, mouse moves)
 		useraction = userinterface.processinputs(boilercontroller)
 
 		# If a temperature override was set, apply this
 		if useraction.get("Override Temperature") == True:
-			boilercontroller.setoverridetemperature(userinterface, currenttime)
+			boilercontroller.setoverridetemperature(userinterface, timekeeper)
 
 		# Update the boiler controller with latest current & desired temperatures,
 		# and switch on/off the boilder accordingly
-		boilercontroller.updateboilercontroller(currenttime)
+		boilercontroller.updateboilercontroller(timekeeper)
 
 		# Update sunrise/sunset data
-		astrodata.updateastrotimes()
+		astrodata.updateastrotimes(timekeeper)
 
 		# Refresh Screen
-		userinterface.refreshscreen(boilercontroller, currenttime, astrodata)
+		userinterface.refreshscreen(boilercontroller, timekeeper, astrodata)
 
 
 
