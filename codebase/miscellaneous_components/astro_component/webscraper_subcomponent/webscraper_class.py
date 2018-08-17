@@ -1,14 +1,15 @@
 from urllib2 import urlopen as GetWebPage
 from urllib2 import Request as GenerateWebRequest
 from urllib2 import URLError as WebError
-from ....common_components.clock_datatype import clock_module as Clock
 from ....common_components.datetime_datatypes import datetime_module as DateTime
 from ....common_components.datetime_datatypes import duration_module as Duration
-
+from . import webscraper_privatefunctions as ScraperFunction
 
 class DefineScraper:
 
-	def __init__(self, locationname, longitude, latitude, timeshift):
+	def __init__(self, locationname, longitude, latitude, timeshift, connectionmode):
+
+		self.connectionmode = connectionmode
 
 		self.location = locationname   # Bristol+(UK)
 
@@ -16,9 +17,9 @@ class DefineScraper:
 
 		self.latitude = latitude       # 51.497772
 
-		self.lonsig, self.londeg, self.lonmin = self.preparelocation(longitude)
+		self.lonsig, self.londeg, self.lonmin = ScraperFunction.preparelocation(longitude)
 
-		self.latsig, self.latdeg, self.latmin = self.preparelocation(latitude)
+		self.latsig, self.latdeg, self.latmin = ScraperFunction.preparelocation(latitude)
 
 		self.timeshift = timeshift
 
@@ -38,122 +39,71 @@ class DefineScraper:
 
 
 
-	def getastrotimes(self, day, month, year, datamode):
+	def getastrotimes(self, lookupdateobject, datamode, nowdateobject):
 
-		starttime = Clock.createasinteger(0)
-		endtime = Clock.createasinteger(0)
+		lookupday, lookupmonth, lookupyear, dummy1, dummy2, dummy3 = lookupdateobject.getsextuplet()
 
-		self.retrievewebpages(year)
-
-		if day == 16:
-			dummyoffset = 20
-		elif day == 17:
-			dummyoffset = 20
-		else:
-			dummyoffset = 3
-		if datamode == "Day":
-			dummytime = 0 + dummyoffset
-		elif datamode == "Civ":
-			dummytime = 1 + dummyoffset
-		elif datamode == "Nau":
-			dummytime = 2 + dummyoffset
-		elif datamode == "Ast":
-			dummytime = 3 + dummyoffset
-		else:
-			datamode = 1/0
-
-		return Clock.createastime(dummytime, 0, 0), Clock.createastime(dummytime, 45, 0)
-
-		if self.lastresult[datamode] != "":
-
-			desiredlinestart = str(day) + "  "
-			if day < 10:
-				desiredlinestart = "0" + desiredlinestart
-
-			for dataline in self.lastresult[datamode]:
-				if dataline[:4] == desiredlinestart:
-
-					index = (month * 11) - 7
-					starttime = self.sanitisetime(dataline[(index + 0):(index + 4)], "Start")
-					endtime = self.sanitisetime(dataline[(index + 5):(index + 9)], "End")
+		if self.connectionmode == False:
+			starttime, startvalidity, endtime, endvalidity = ScraperFunction.generatedummydata(lookupday, datamode)
 
 		else:
-			print "Could not extract times from internet scrape"
+			starttext = "----"
+			endtext = "----"
 
-		return starttime, endtime
+			# Only download the pages if the current ones are out of date
+			# or for the wrong year
+			if self.calculaterefresh(lookupyear, nowdateobject):
+				self.retrievewebpages(lookupyear, nowdateobject)
+
+			if self.lastresult[datamode] != "":
+
+				linefound = False
+				desiredlinestart = str(lookupday) + "  "
+				if lookupday < 10:
+					desiredlinestart = "0" + desiredlinestart
+
+				for dataline in self.lastresult[datamode]:
+					if (dataline[:4] == desiredlinestart) and (linefound == False):
+
+						index = (lookupmonth * 11) - 7
+						starttext = dataline[(index + 0):(index + 4)]
+						endtext = dataline[(index + 5):(index + 9)]
+						linefound = True
+
+			starttime, startvalidity = ScraperFunction.sanitisetime(starttext, "Start")
+			endtime, endvalidity = ScraperFunction.sanitisetime(endtext, "End")
+
+		return starttime, startvalidity, endtime, endvalidity
 
 
 
-	def retrievewebpages(self, specifiedyear):
+	def retrievewebpages(self, specifiedyear, currentdateobject):
 
 		tries = 0
 
-		currentdatetime = DateTime.getnow()
-		timesincelastupdate = DateTime.secondsdifference(self.lastsuccessfulwebcall, currentdatetime)
+		print "Downloading data for:", specifiedyear
 
-		if (specifiedyear != self.lastsuccessfulyear) or (Duration.iswithinlimit(timesincelastupdate, self.resultagebuffer) == False):
-
-			while tries < self.webcalltries:
-				try:
-					webresponse = {}
-					for datamode in ("Day", "Nau", "Civ", "Ast"):
-						url = self.buildurl(specifiedyear, datamode)
-						webresponse[datamode] = ""
-						#webrequest = GenerateWebRequest(url)
-						#webresponse[datamode] = GetWebPage(webrequest).read(20000)
-						tries = 99999
-				except WebError as errorobject:
-					tries = tries + 1
-					print "Error accessing website: ", errorobject.reason
-
-			if tries == 99999:
-				print "Access to website data Succeeded"
+		while tries < self.webcalltries:
+			try:
+				webresponse = {}
 				for datamode in ("Day", "Nau", "Civ", "Ast"):
-					self.lastresult[datamode] = webresponse[datamode].split("\n")
-				self.lastsuccessfulwebcall = DateTime.createfromobject(currentdatetime)
-				self.lastsuccessfulyear = specifiedyear
-			else:
-				print "Access to website data Failed"
+					webresponse[datamode] = ""
+					url = self.buildurl(specifiedyear, datamode)
+					webrequest = GenerateWebRequest(url)
+					webresponse[datamode] = GetWebPage(webrequest).read(20000)
+					tries = 99999
+			except WebError as errorobject:
+				tries = tries + 1
+				print "Error accessing website: ", errorobject.reason
 
-		#else:
-		#	print "Relying on local cached data (Still fresh)"
-
-
-
-	def sanitisetime(self, textstring, defaultmode):
-
-		hour = textstring[0:2]
-		min = textstring[2:4]
-
-		try:
-			hourvalue = int(hour)
-			minvalue = int(min)
-			outcome = Clock.createastime(hourvalue, minvalue, 0)
-		except:
-			if defaultmode == "Start":
-				outcome = Clock.createastime(0, 0, 11)
-			else:
-				outcome = Clock.createastime(23, 59, 11)
-			#print "Problems reading sunrise/sunset time: ", textstring
-
-		return outcome
-
-
-
-	def preparelocation(self, decimallocation):
-
-		if decimallocation < 0.0:
-			sign = -1
+		if tries == 99999:
+			#print "Access to website data Succeeded"
+			for datamode in ("Day", "Nau", "Civ", "Ast"):
+				self.lastresult[datamode] = webresponse[datamode].split("\n")
+			self.lastsuccessfulwebcall = DateTime.createfromobject(currentdateobject)
+			self.lastsuccessfulyear = specifiedyear
 		else:
-			sign = 1
-
-		location = abs(decimallocation)
-
-		degs = int(location)
-
-		mins = int((location - float(degs)) * 60.0)
-
-		return sign, degs, mins
+			print "Access to website data Failed"
 
 
 
@@ -181,8 +131,24 @@ class DefineScraper:
 		url = url + "&lat_sign=" + str(self.latsig)
 		url = url + "&lat_deg=" + str(self.latdeg)
 		url = url + "&lat_min=" + str(self.latmin)
-		url = url + "&tz=&tz_sign=-1"
-
+		url = url + "&tz=0"
+		url = url + "&tz_sign=1"
+		if mode == "Ast":
+			print url
 		return url
 
 
+
+	def calculaterefresh(self, specifiedyear, currentdatetime):
+
+		timesincelastupdate = DateTime.secondsdifference(self.lastsuccessfulwebcall, currentdatetime)
+
+		outcome = False
+
+		if specifiedyear != self.lastsuccessfulyear:
+			outcome = True
+		else:
+			if Duration.iswithinlimit(timesincelastupdate, self.resultagebuffer) == False:
+				outcome = True
+
+		return outcome

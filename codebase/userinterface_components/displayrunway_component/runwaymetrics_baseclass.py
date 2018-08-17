@@ -132,23 +132,18 @@ class DefineRunwayMetrics:
 
 
 
-	def calculateastrometrics(self, astroobject, currenttime):
+	def calculateastrometrics(self, astroobject, currenttime, indexer):
 
 		blocktype = astroobject.gettype()
 		blockcolour = "Sky " + blocktype
 
-		indexer = 0
-		if astroobject.getdate() == "Tomorrow":
-			indexer = 1
-			blockcolour = "Yel " + blocktype
-		elif astroobject.getdate() == "Yesterday":
-			indexer = -1
-			blockcolour = "Red " + blocktype
+		timevalueadd = RunwayFunction.gettimeshiftervalue(indexer, astroobject.getdate())
 
-		timevalueadd = RunwayFunction.gettimeshiftervalue(indexer, astroobject.getdst())
+		startborder = astroobject.getstartvalidity()
+		endborder = astroobject.getendvalidity()
 
-		starttimevalue, startborder = RunwayFunction.getsanitisedtimevalue(astroobject.getstarttime())
-		endtimevalue, endborder = RunwayFunction.getsanitisedtimevalue(astroobject.getendtime())
+		starttimevalue = RunwayFunction.getsanitisedtimevalue(astroobject.getstarttime(), startborder, "Start")
+		endtimevalue = RunwayFunction.getsanitisedtimevalue(astroobject.getendtime(), endborder, "End")
 
 		pixelstart = self.calculaterunwayitemoffset(starttimevalue + timevalueadd, currenttime, False)
 		pixelend = self.calculaterunwayitemoffset(endtimevalue + timevalueadd, currenttime, False)

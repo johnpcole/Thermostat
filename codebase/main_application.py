@@ -23,7 +23,8 @@ def runapplication():
 
 	timekeeper = TimeKeeper.createtimekeeper()
 
-	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 60.497772, 0) #51
+	connecttowebsite = True
+	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51
 
 
 	# ===============================================================================================================
@@ -46,7 +47,7 @@ def runapplication():
 		boilercontroller.updateboilercontroller(timekeeper)
 
 		# Update sunrise/sunset data
-		astrodata.updateastrotimes()
+		astrodata.updateastrotimes(timekeeper)
 
 		# Refresh Screen
 		userinterface.refreshscreen(boilercontroller, timekeeper, astrodata)

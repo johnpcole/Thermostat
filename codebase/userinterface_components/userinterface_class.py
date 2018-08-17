@@ -49,13 +49,14 @@ class DefineUserInterface:
 	def refreshscreen(self, boilercontroller, currenttimeobject, astrodata):
 
 		# Display the runway
-		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller, currenttimeobject.getaccurateclock(), self.maindisplay, astrodata))
+		self.maindisplay.paintitems(self.displayrunway.buildrunway(boilercontroller,
+					currenttimeobject.getaccurateclock(), currenttimeobject.getdate(), self.maindisplay, astrodata))
 
 		# Display the board
-		self.maindisplay.paintitems(self.displayboard.buildboard(boilercontroller))
+		#self.maindisplay.paintitems(self.displayboard.buildboard(boilercontroller))
 
 		# Display the buttons
-		self.maindisplay.paintitems(self.displaybuttons.buildbuttons(boilercontroller, self.controls))
+		#self.maindisplay.paintitems(self.displaybuttons.buildbuttons(boilercontroller, self.controls))
 
 		# Flip the screen
 		self.maindisplay.refreshscreen()

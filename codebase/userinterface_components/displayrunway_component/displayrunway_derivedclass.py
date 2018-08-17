@@ -3,6 +3,8 @@ from ...common_components.transition_datatype import transition_module as Transi
 from .. import display_sharedfunctions as DisplayFunction
 from . import runwaymetrics_baseclass as Metrics
 from schedulebuilder_subcomponent import schedulebuilder_module as ScheduleBuilder
+from . import displayrunway_privatefunctions as RunwayFunction
+
 
 
 class DefineRunway(Metrics.DefineRunwayMetrics):
@@ -22,7 +24,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 	# Build the Runway
 	# -------------------------------------------------------------------
 
-	def buildrunway(self, boilercontroller, currenttime, displayobject, astrodata):
+	def buildrunway(self, boilercontroller, currenttime, currentdate, displayobject, astrodata):
 
 		self.artefacts = {}
 
@@ -40,7 +42,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
 
 		# Draw astro
-		newitems = self.drawastrodata(currenttime, astrodata.getlibrary())
+		newitems = self.drawastrodata(currenttime, currentdate, astrodata.getlibrary())
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway D"))
 
 		return self.artefacts
@@ -161,24 +163,27 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 	# Paints the astro data
 	# -------------------------------------------------------------------
 
-	def drawastrodata(self, currenttime, astrolibrary):
+	def drawastrodata(self, currenttime, currentdate, astrolibrary):
 
 		outcome = {}
 
 		# Loop over scheduled times
 		for astroitem in astrolibrary:
 
-			blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime)
+			displaymode = RunwayFunction.getdateshift(currentdate, astroitem.getdate())
 
-			# Draw block
-			outcome[blocklabel + " 1"] = ("Box", starttop, blocksize, blockcolour, "", 0)
+			if displaymode != -999:
+				blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime, displaymode)
 
-			# Draw lines
-			if startborder == True:
-				outcome[blocklabel + " 2"] = ("Line", starttop, startbottom, "Black", 1, "")
+				# Draw block
+				outcome[blocklabel + " 1"] = ("Box", starttop, blocksize, blockcolour, "", 0)
 
-			if endborder == True:
-				outcome[blocklabel + " 3"] = ("Line", endtop, endbottom, "Black", 1, "")
+				# Draw lines
+				if startborder == True:
+					outcome[blocklabel + " 2"] = ("Line", starttop, startbottom, "Black", 1, "")
+
+				if endborder == True:
+					outcome[blocklabel + " 3"] = ("Line", endtop, endbottom, "Black", 1, "")
 
 		outcome["A Background"] = ("Box", Vector.createfromvalues(0, self.astrotop),
 									Vector.createfromvalues(480, self.astroheight), "Sky Nig", "", 0)
