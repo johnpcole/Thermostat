@@ -42,7 +42,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		# Draw astro
 		newitems = self.drawastrodata(currenttime, astrodata.getlibrary())
-		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway C"))
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Runway D"))
 
 		return self.artefacts
 
@@ -108,8 +108,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome = {}
 
-		outcome["Timeline Zero Line"] = ("Line", self.backgroundstart,
-												Vector.createfromvalues(self.startline, self.height), "Grey", 1, "")
+		outcome["Timeline Zero Line"] = ("Line", self.zerolinetop, self.zerolinebottom, "Grey", 1, "")
 
 		lasthour = currenttime.gethour()
 
@@ -130,6 +129,9 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 				# Position of marker
 				markertop, markerbottom, textposition, textlabel, indexer = self.calculatetimemarkermetrics(currenttime, hourindex, subindex)
+
+				if (subindex == 0) and (hourindex == 25):
+					print "Midnight at ", markertop.getx()
 
 				# Only draw marker if it's to the right of the current time marker
 				if self.startline < markertop.getx():
@@ -153,7 +155,7 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome["Desired Temp"] = ("Text", str(displayedtemperature), position, "Right", colour, "Desired Temp")
 
-		outcome["Desired Temp Screen Background"] = ("Box", self.backgroundstart, self.backgroundend, "Black", "", 0)
+		outcome["Desired Temp Screen Background"] = ("Box", self.backgroundposition, self.backgroundsize, "Black", "", 0)
 
 		return outcome
 
@@ -170,9 +172,16 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		# Loop over scheduled times
 		for astroitem in astrolibrary:
 
-			blockposition, blocksize, blockcolour, blocklabel = self.calculateastrometrics(astroitem, currenttime)
-
+			blockposition, blocksize, blockcolour, blocklabel, lineblockposition, lineblocksize = self.calculateastrometrics(astroitem, currenttime)
+			if blockcolour[:3] == "Yel":
 			# Draw block
-			outcome["Astro Block " + blocklabel] = ("Box", blockposition, blocksize, blockcolour, "", 0)
+				outcome[blocklabel + "Middle"] = ("Box", blockposition, blocksize, blockcolour, "", 0)
+
+			# Draw lines
+				outcome[blocklabel + " End"] = ("Box", lineblockposition, lineblocksize, "Black", "", 0)
+				if blockcolour[-3:] == "Ast":
+					print lineblockposition.getx(), lineblocksize.getx(), lineblockposition.getx()+lineblocksize.getx()
+		outcome["A Background"] = ("Box", Vector.createfromvalues(0, self.astrotop),
+									Vector.createfromvalues(480, self.astrobottom), "Sky Nig", "", 0)
 
 		return outcome

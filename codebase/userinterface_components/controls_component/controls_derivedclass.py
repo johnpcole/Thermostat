@@ -33,7 +33,7 @@ class DefineController(Buttons.DefineButtons):
 		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
 
 		# Get buttons in the correct state
-		self.showconfiguremenu() #quitmainmenu()
+		self.quitmenus() #showconfiguremenu() #quitmainmenu()
 
 
 	# ==========================================================================================

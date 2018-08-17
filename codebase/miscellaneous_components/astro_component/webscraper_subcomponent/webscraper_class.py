@@ -96,8 +96,8 @@ class DefineScraper:
 			else:
 				print "Access to website data Failed"
 
-		else:
-			print "Relying on local cached data (Still fresh)"
+		#else:
+		#	print "Relying on local cached data (Still fresh)"
 
 
 
@@ -113,7 +113,8 @@ class DefineScraper:
 			minvalue = int(min)
 			outcome = Clock.createastime(hourvalue, minvalue, 0)
 		except:
-			print "Problems reading sunrise/sunset time: ", textstring
+			outcome = Clock.createastime(defaulthour, defaultmin, defaultsec)
+			#print "Problems reading sunrise/sunset time: ", textstring
 
 		return outcome
 

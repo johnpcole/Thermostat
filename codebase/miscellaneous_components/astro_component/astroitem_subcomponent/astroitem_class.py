@@ -2,7 +2,7 @@ from ....common_components.enumeration_datatype import enumeration_module as Enu
 
 class DefineItem:
 
-	def __init__(self, astrotype, starttime, endtime, istomorrow):
+	def __init__(self, astrotype, starttime, endtime, datemode):
 
 		self.astrotype = Enumeration.createenum(["Day", "Civ", "Nau", "Ast"], astrotype)
 
@@ -10,7 +10,7 @@ class DefineItem:
 
 		self.endtime = endtime
 
-		self.tomorrowflag = istomorrow
+		self.datemode = Enumeration.createenum(["Yesterday", "Today", "Tomorrow"], datemode)
 
 
 	def gettype(self):
@@ -31,6 +31,6 @@ class DefineItem:
 
 
 
-	def gettomorrow(self):
+	def getdate(self):
 
-		return self.tomorrowflag
+		return self.datemode.displaycurrent()

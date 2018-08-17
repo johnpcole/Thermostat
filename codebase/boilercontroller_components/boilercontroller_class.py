@@ -41,12 +41,13 @@ class DefineBoilerController:
 	# Updates the boiler controller components
 	# -------------------------------------------------------------------
 
-	def updateboilercontroller(self, currenttime):
+	def updateboilercontroller(self, currenttimeobject):
 
 		# Get the current temperature
 		self.thermometer.updatethermometer()
 
 		# Get the desired temperature
+		currenttime = currenttimeobject.getclock()
 		self.tempsetter.updatedesiredtemperature(self.schedule.getcurrentinstruction(currenttime),
 																						currenttime)
 
@@ -63,9 +64,9 @@ class DefineBoilerController:
 	# Manually overrides the desired temperature
 	# -------------------------------------------------------------------
 
-	def setoverridetemperature(self, userinterface, currenttime):
+	def setoverridetemperature(self, userinterface, currenttimeobject):
 
-			self.tempsetter.setoverridetemperature(userinterface.getoverridetemperatureinstruction(), currenttime)
+			self.tempsetter.setoverridetemperature(userinterface.getoverridetemperatureinstruction(), currenttimeobject.getclock())
 
 
 
