@@ -1,7 +1,7 @@
 from ...common_components.vector_datatype import vector_module as Vector
 from ...common_components.clock_datatype import clock_module as Clock
 from .. import display_sharedfunctions as DisplayFunction
-from time import localtime as LocalTime
+from . import displayrunway_privatefunctions as RunwayFunction
 
 
 
@@ -47,8 +47,8 @@ class DefineRunwayMetrics:
 		self.hourtextoffset = Vector.createfromvalues(3, 1)
 
 		# Position of daylight bars
-		self.astrotop = 0
-		self.astrobottom = 3
+		self.astrotop = 20
+		self.astroheight = 30
 
 
 
@@ -137,49 +137,29 @@ class DefineRunwayMetrics:
 		blocktype = astroobject.gettype()
 		blockcolour = "Sky " + blocktype
 
+		indexer = 0
 		if astroobject.getdate() == "Tomorrow":
-			timevalueadd = 24 * 3600
-			suffix = "2"
-			blockcolour = "Sky " + blocktype
-		elif astroobject.getdate() == "Yesterday":
-			timevalueadd = -24 * 3600
-			suffix = "3"
-			blockcolour = "Red " + blocktype
-		else:
-			timevalueadd = 0
-			suffix = "1"
+			indexer = 1
 			blockcolour = "Yel " + blocktype
+		elif astroobject.getdate() == "Yesterday":
+			indexer = -1
+			blockcolour = "Red " + blocktype
 
-		if LocalTime().tm_isdst == 1:
-			timevalueadd = timevalueadd + 3600
+		timevalueadd = RunwayFunction.gettimeshiftervalue(indexer, astroobject.getdst())
 
-		endtime = astroobject.getendtime()
-		if endtime.getsecond() > 0:
-			endvalue = endtime.getvalue() + timevalueadd + 1
-		else:
-			endvalue = endtime.getvalue() + timevalueadd
+		starttimevalue, startborder = RunwayFunction.getsanitisedtimevalue(astroobject.getstarttime())
+		endtimevalue, endborder = RunwayFunction.getsanitisedtimevalue(astroobject.getendtime())
 
-		pixelstart = self.calculaterunwayitemoffset(astroobject.getstarttime().getvalue() + timevalueadd, currenttime, False)
-		pixelend = self.calculaterunwayitemoffset(endvalue, currenttime, False)
-		blockposition = Vector.createfromvalues(pixelstart + 1, self.astrotop)
-		blocksize = Vector.createfromvalues(pixelend - pixelstart - 2, self.astrobottom)
+		pixelstart = self.calculaterunwayitemoffset(starttimevalue + timevalueadd, currenttime, False)
+		pixelend = self.calculaterunwayitemoffset(endtimevalue + timevalueadd, currenttime, False)
+		starttop = Vector.createfromvalues(pixelstart, self.astrotop)
+		endtop = Vector.createfromvalues(pixelend, self.astrotop)
+		startbottom = Vector.createfromvalues(pixelstart, self.astrotop + self.astroheight)
+		endbottom = Vector.createfromvalues(pixelend, self.astrotop + self.astroheight)
+		blocksize = Vector.add(Vector.subtract(endbottom, starttop), Vector.createfromvalues(1, 0))
 
-		lineblockposition = Vector.createfromvalues(pixelstart, self.astrotop)
-		lineblocksize = Vector.createfromvalues(pixelend - pixelstart, self.astrobottom)
+		blocklabel = RunwayFunction.getblocklabel(blocktype, indexer)
 
+		return blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder
 
-		if blocktype == "Day":
-			blocklabel = "E" + suffix
-		elif blocktype == "Civ":
-			blocklabel = "D" + suffix
-		elif blocktype == "Nau":
-			blocklabel = "C" + suffix
-		elif blocktype == "Ast":
-			print blocktype, astroobject.getstarttime().gettext(), endtime.gettext(), pixelstart, pixelend
-			blocklabel = "B" + suffix
-		else:
-			blocklabel = "Z" + suffix
-
-
-		return blockposition, blocksize, blockcolour, blocklabel, lineblockposition, lineblocksize
 

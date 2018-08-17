@@ -45,6 +45,25 @@ class DefineScraper:
 
 		self.retrievewebpages(year)
 
+		if day == 16:
+			dummyoffset = 20
+		elif day == 17:
+			dummyoffset = 20
+		else:
+			dummyoffset = 3
+		if datamode == "Day":
+			dummytime = 0 + dummyoffset
+		elif datamode == "Civ":
+			dummytime = 1 + dummyoffset
+		elif datamode == "Nau":
+			dummytime = 2 + dummyoffset
+		elif datamode == "Ast":
+			dummytime = 3 + dummyoffset
+		else:
+			datamode = 1/0
+
+		return Clock.createastime(dummytime, 0, 0), Clock.createastime(dummytime, 45, 0)
+
 		if self.lastresult[datamode] != "":
 
 			desiredlinestart = str(day) + "  "
@@ -55,8 +74,8 @@ class DefineScraper:
 				if dataline[:4] == desiredlinestart:
 
 					index = (month * 11) - 7
-					starttime = self.sanitisetime(dataline[(index + 0):(index + 4)], 0, 0, 0)
-					endtime = self.sanitisetime(dataline[(index + 5):(index + 9)], 23, 59, 59)
+					starttime = self.sanitisetime(dataline[(index + 0):(index + 4)], "Start")
+					endtime = self.sanitisetime(dataline[(index + 5):(index + 9)], "End")
 
 		else:
 			print "Could not extract times from internet scrape"
@@ -80,8 +99,8 @@ class DefineScraper:
 					for datamode in ("Day", "Nau", "Civ", "Ast"):
 						url = self.buildurl(specifiedyear, datamode)
 						webresponse[datamode] = ""
-						webrequest = GenerateWebRequest(url)
-						webresponse[datamode] = GetWebPage(webrequest).read(20000)
+						#webrequest = GenerateWebRequest(url)
+						#webresponse[datamode] = GetWebPage(webrequest).read(20000)
 						tries = 99999
 				except WebError as errorobject:
 					tries = tries + 1
@@ -101,19 +120,20 @@ class DefineScraper:
 
 
 
-	def sanitisetime(self, textstring, defaulthour, defaultmin, defaultsec):
+	def sanitisetime(self, textstring, defaultmode):
 
 		hour = textstring[0:2]
 		min = textstring[2:4]
-		outcome = Clock.createastime(defaulthour, defaultmin, defaultsec)
 
-		# Doesn't cope with //// or ==== results indicating permanent above/below limits
 		try:
 			hourvalue = int(hour)
 			minvalue = int(min)
 			outcome = Clock.createastime(hourvalue, minvalue, 0)
 		except:
-			outcome = Clock.createastime(defaulthour, defaultmin, defaultsec)
+			if defaultmode == "Start":
+				outcome = Clock.createastime(0, 0, 11)
+			else:
+				outcome = Clock.createastime(23, 59, 11)
 			#print "Problems reading sunrise/sunset time: ", textstring
 
 		return outcome

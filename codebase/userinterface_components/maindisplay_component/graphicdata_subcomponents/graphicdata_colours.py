@@ -35,15 +35,15 @@ def getcolourpallette():
 	colours["Sky Ast"] = (25, 60, 105)
 	colours["Sky Nig"] = (0, 0, 55)
 
-	colours["Red Day"] = (255, 100, 240)
-	colours["Red Civ"] = (205, 75, 180)
-	colours["Red Nau"] = (155, 50, 120)
-	colours["Red Ast"] = (105, 25, 60)
+	colours["Red Day"] = (255, 75, 75)
+	colours["Red Civ"] = (205, 50, 50)
+	colours["Red Nau"] = (155, 25, 25)
+	colours["Red Ast"] = (105, 0, 0)
 
-	colours["Yel Day"] = (255, 255, 240)
-	colours["Yel Civ"] = (205, 205, 180)
-	colours["Yel Nau"] = (155, 155, 120)
-	colours["Yel Ast"] = (105, 105, 60)
+	colours["Yel Day"] = (255, 255, 100)
+	colours["Yel Civ"] = (205, 205, 75)
+	colours["Yel Nau"] = (155, 155, 50)
+	colours["Yel Ast"] = (105, 105, 25)
 
 
 	return colours

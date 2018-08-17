@@ -20,7 +20,7 @@ class DefineAstro:
 
 	def updateastrotimes(self):
 
-		nowday, nowmonth, nowyear, tomday, tommonth, tomyear, yesday, yesmonth, yesyear, differenceflag = AstroFunction.calculatedatevalues(self.todaydatetime)
+		nowday, nowmonth, nowyear, nowdst, tomday, tommonth, tomyear, tomdst, yesday, yesmonth, yesyear, yesdst, differenceflag = AstroFunction.calculatedatevalues(self.todaydatetime)
 
 		if differenceflag == True:
 
@@ -31,14 +31,13 @@ class DefineAstro:
 			for datamode in ("Day", "Nau", "Civ", "Ast"):
 
 				starttime, endtime = self.webscraper.getastrotimes(nowday, nowmonth, nowyear, datamode)
-				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Today"))
+				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Today", nowdst))
 
 				starttime, endtime = self.webscraper.getastrotimes(tomday, tommonth, tomyear, datamode)
-				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Tomorrow"))
+				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Tomorrow", tomdst))
 
 				starttime, endtime = self.webscraper.getastrotimes(yesday, yesmonth, yesyear, datamode)
-				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Yesterday"))
-
+				self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, "Yesterday", yesdst))
 
 		#else:
 			#print "Not updating sunrise/set times"

@@ -1,5 +1,4 @@
 from ...common_components.vector_datatype import vector_module as Vector
-from ...common_components.clock_datatype import clock_module as Clock
 from ...common_components.transition_datatype import transition_module as Transition
 from .. import display_sharedfunctions as DisplayFunction
 from . import runwaymetrics_baseclass as Metrics
@@ -130,9 +129,6 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 				# Position of marker
 				markertop, markerbottom, textposition, textlabel, indexer = self.calculatetimemarkermetrics(currenttime, hourindex, subindex)
 
-				if (subindex == 0) and (hourindex == 25):
-					print "Midnight at ", markertop.getx()
-
 				# Only draw marker if it's to the right of the current time marker
 				if self.startline < markertop.getx():
 					outcome["Timeline Line " + indexer] = ("Line", markertop, markerbottom, "Grey", 1, "")
@@ -172,16 +168,19 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 		# Loop over scheduled times
 		for astroitem in astrolibrary:
 
-			blockposition, blocksize, blockcolour, blocklabel, lineblockposition, lineblocksize = self.calculateastrometrics(astroitem, currenttime)
-			if blockcolour[:3] == "Yel":
+			blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime)
+
 			# Draw block
-				outcome[blocklabel + "Middle"] = ("Box", blockposition, blocksize, blockcolour, "", 0)
+			outcome[blocklabel + " 1"] = ("Box", starttop, blocksize, blockcolour, "", 0)
 
 			# Draw lines
-				outcome[blocklabel + " End"] = ("Box", lineblockposition, lineblocksize, "Black", "", 0)
-				if blockcolour[-3:] == "Ast":
-					print lineblockposition.getx(), lineblocksize.getx(), lineblockposition.getx()+lineblocksize.getx()
+			if startborder == True:
+				outcome[blocklabel + " 2"] = ("Line", starttop, startbottom, "Black", 1, "")
+
+			if endborder == True:
+				outcome[blocklabel + " 3"] = ("Line", endtop, endbottom, "Black", 1, "")
+
 		outcome["A Background"] = ("Box", Vector.createfromvalues(0, self.astrotop),
-									Vector.createfromvalues(480, self.astrobottom), "Sky Nig", "", 0)
+									Vector.createfromvalues(480, self.astroheight), "Sky Nig", "", 0)
 
 		return outcome

@@ -18,6 +18,7 @@ class DefineTimekeeper:
 	def update(self):
 
 		self.cyclemeasure = self.cyclemeasure + 1
+		#self.currenttime = Clock.createastime(20, 30, 0)
 		self.currenttime = Clock.getnow()
 
 		if Clock.isequal(self.currenttime, self.previoustime) == False:
