@@ -41,15 +41,13 @@ class DefineScraper:
 
 	def getastrotimes(self, lookupdateobject, datamode, nowdateobject):
 
+		linesfound = 0
+		rowvalidity, onestarttime, onestartvalid, oneendtime, oneendvalid = ScraperFunction.extracttimings("            ", 1)
+		rowvalidity, twostarttime, twostartvalid, twoendtime, twoendvalid = ScraperFunction.extracttimings("            ", 1)
+
 		lookupday, lookupmonth, lookupyear, dummy1, dummy2, dummy3 = lookupdateobject.getsextuplet()
 
-		if self.connectionmode == False:
-			starttime, startvalidity, endtime, endvalidity = ScraperFunction.generatedummydata(lookupday, datamode)
-
-		else:
-			starttext = "----"
-			endtext = "----"
-
+		if self.connectionmode == True:
 			# Only download the pages if the current ones are out of date
 			# or for the wrong year
 			if self.calculaterefresh(lookupyear, nowdateobject):
@@ -57,23 +55,30 @@ class DefineScraper:
 
 			if self.lastresult[datamode] != "":
 
-				linefound = False
-				desiredlinestart = str(lookupday) + "  "
-				if lookupday < 10:
-					desiredlinestart = "0" + desiredlinestart
+				desiredlinestart, desiredcolumn = ScraperFunction.getindexes(lookupday, lookupmonth)
 
 				for dataline in self.lastresult[datamode]:
-					if (dataline[:4] == desiredlinestart) and (linefound == False):
+					if dataline[:4] == desiredlinestart:
+						rowvalidity, starttime, startvalidity, endtime, endvalidity = ScraperFunction.extracttimings(dataline, desiredcolumn)
+						if rowvalidity == True:
+							linesfound = linesfound + 1
+							if linesfound == 1:
+								onestarttime = starttime
+								onestartvalid = startvalidity
+								oneendtime = endtime
+								oneendvalid = endvalidity
+							elif linesfound == 2:
+								twostarttime = starttime
+								twostartvalid = startvalidity
+								twoendtime = oneendtime
+								twoendvalid = oneendvalid
+								oneendtime = endtime
+								oneendvalid = endvalidity
+							else:
+								print "Too many data rows found on website"
+								x = 1/0
 
-						index = (lookupmonth * 11) - 7
-						starttext = dataline[(index + 0):(index + 4)]
-						endtext = dataline[(index + 5):(index + 9)]
-						linefound = True
-
-			starttime, startvalidity = ScraperFunction.sanitisetime(starttext, "Start")
-			endtime, endvalidity = ScraperFunction.sanitisetime(endtext, "End")
-
-		return starttime, startvalidity, endtime, endvalidity
+		return linesfound, onestarttime, onestartvalid, oneendtime, oneendvalid, twostarttime, twostartvalid, twoendtime, twoendvalid
 
 
 

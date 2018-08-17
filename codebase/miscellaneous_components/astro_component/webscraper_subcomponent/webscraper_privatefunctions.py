@@ -69,3 +69,33 @@ def generatedummydata(day, datamode):
 	return starttime, startvalidity, endtime, endvalidity
 
 
+def getindexes(lookupday, lookupmonth):
+
+	desiredlinestart = str(lookupday) + "  "
+	if lookupday < 10:
+		desiredlinestart = "0" + desiredlinestart
+
+	desiredcolumn = (lookupmonth * 11) - 7
+
+	return desiredlinestart, desiredcolumn
+
+
+
+def extracttimings(dataline, columnindex):
+
+	fulldata = dataline[(columnindex + 0):(columnindex + 9)]
+	invalidrowone = "         "
+	invalidrowtwo = "==== ===="
+	if (fulldata == invalidrowone) or (fulldata == invalidrowtwo):
+		rowvalidity = False
+	else:
+		rowvalidity = True
+
+	starttext = dataline[(columnindex + 0):(columnindex + 4)]
+	endtext = dataline[(columnindex + 5):(columnindex + 9)]
+
+	starttime, startvalidity = sanitisetime(starttext, "Start")
+	endtime, endvalidity = sanitisetime(endtext, "End")
+
+	return rowvalidity, starttime, startvalidity, endtime, endvalidity
+

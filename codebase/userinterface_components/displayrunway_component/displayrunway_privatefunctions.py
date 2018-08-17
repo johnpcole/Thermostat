@@ -18,7 +18,7 @@ def getsanitisedtimevalue(clockobject, validity, mode):
 
 
 
-def getblocklabel(blocktype, indexer):
+def getblocklabel(blocktype, indexer, counter):
 
 	if blocktype == "Day":
 		blocklabel = "E"
@@ -31,7 +31,7 @@ def getblocklabel(blocktype, indexer):
 	else:
 		blocklabel = "Z"
 
-	outcome = blocklabel + str(indexer + 2)
+	outcome = blocklabel + str(((indexer + 3) * 1000) + counter)
 
 	return outcome
 
@@ -42,8 +42,7 @@ def gettimeshiftervalue(indexer, dateobject):
 	multiplier = indexer * 24
 
 	if determinedststate(dateobject) == True:
-		multiplier = multiplier + 24
-
+		multiplier = multiplier + 1
 	return (multiplier * 60 * 60)
 
 
@@ -55,14 +54,10 @@ def getdateshift(currentdate, astroitemdate):
 	if DateTime.areidentical(currentdate, astroitemdate) == True:
 		outcome = 0
 	else:
-		yesterdaydate = DateTime.createfromobject(currentdate)
-		yesterdaydate.adjustdays(-1)
-		if DateTime.areidentical(yesterdaydate, astroitemdate) == True:
+		if DateTime.areidentical(createcustomdate(currentdate, -1), astroitemdate) == True:
 			outcome = -1
 		else:
-			tomorrowdate = DateTime.createfromobject(currentdate)
-			tomorrowdate.adjustdays(1)
-			if DateTime.areidentical(tomorrowdate, astroitemdate) == True:
+			if DateTime.areidentical(createcustomdate(currentdate, 1), astroitemdate) == True:
 				outcome = 1
 
 	return outcome
@@ -71,7 +66,7 @@ def getdateshift(currentdate, astroitemdate):
 
 def determinedststate(dateobject):
 
-	year, month, day, dummy1, dummy2, dummy3 = dateobject.getsextuplet()
+	day, month, year, dummy1, dummy2, dummy3 = dateobject.getsextuplet()
 
 	dsttesttime = SystemTime.mktime((year,month,day,3,2,1,-1,-1,-1))
 
@@ -86,3 +81,10 @@ def determinedststate(dateobject):
 
 	return outcome
 
+
+def createcustomdate(currentdateobject, dayshift):
+
+	outcome = DateTime.createfromobject(currentdateobject)
+	outcome.adjustdays(dayshift)
+
+	return outcome

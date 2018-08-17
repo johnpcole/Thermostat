@@ -24,7 +24,7 @@ def runapplication():
 	timekeeper = TimeKeeper.createtimekeeper()
 
 	connecttowebsite = True
-	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51
+	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51.497772
 
 
 	# ===============================================================================================================

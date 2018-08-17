@@ -47,8 +47,8 @@ class DefineRunwayMetrics:
 		self.hourtextoffset = Vector.createfromvalues(3, 1)
 
 		# Position of daylight bars
-		self.astrotop = 20
-		self.astroheight = 30
+		self.astrotop = 0
+		self.astroheight = 3
 
 
 
@@ -132,7 +132,7 @@ class DefineRunwayMetrics:
 
 
 
-	def calculateastrometrics(self, astroobject, currenttime, indexer):
+	def calculateastrometrics(self, astroobject, currenttime, indexer, counter):
 
 		blocktype = astroobject.gettype()
 		blockcolour = "Sky " + blocktype
@@ -153,7 +153,7 @@ class DefineRunwayMetrics:
 		endbottom = Vector.createfromvalues(pixelend, self.astrotop + self.astroheight)
 		blocksize = Vector.add(Vector.subtract(endbottom, starttop), Vector.createfromvalues(1, 0))
 
-		blocklabel = RunwayFunction.getblocklabel(blocktype, indexer)
+		blocklabel = RunwayFunction.getblocklabel(blocktype, indexer, counter)
 
 		return blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder
 

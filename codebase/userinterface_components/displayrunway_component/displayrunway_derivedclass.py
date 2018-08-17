@@ -167,13 +167,17 @@ class DefineRunway(Metrics.DefineRunwayMetrics):
 
 		outcome = {}
 
+		counter = 0
+
 		# Loop over scheduled times
 		for astroitem in astrolibrary:
+
+			counter = counter + 1
 
 			displaymode = RunwayFunction.getdateshift(currentdate, astroitem.getdate())
 
 			if displaymode != -999:
-				blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime, displaymode)
+				blocksize, blockcolour, blocklabel, starttop, endtop, startbottom, endbottom, startborder, endborder = self.calculateastrometrics(astroitem, currenttime, displaymode, counter)
 
 				# Draw block
 				outcome[blocklabel + " 1"] = ("Box", starttop, blocksize, blockcolour, "", 0)

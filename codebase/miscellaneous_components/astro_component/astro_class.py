@@ -28,22 +28,25 @@ class DefineAstro:
 
 			self.todaydatetime = DateTime.createfromobject(nowdate)
 
-			for dayshift in range(0, 2, 1):   #  range(-1, 2, 1):
+			for dayshift in range(-1, 2, 1):
 
-				lookupdate = DateTime.createfromobject(self.todaydatetime)
-				lookupdate.adjustdays(dayshift)
+				lookupdate = self.createcustomdate(dayshift)
 
-				print "Updating Astrodata for", lookupdate.getsextuplet()
+				#print "Updating Astrodata for", lookupdate.getsextuplet()
 
 				for datamode in ("Day", "Nau", "Civ", "Ast"):
 
-					starttime, startvalidity, endtime, endvalidity = self.webscraper.getastrotimes(lookupdate, datamode, nowdate)
-					self.astrolibrary.append(AstroItem.createitem(datamode, starttime, endtime, lookupdate, startvalidity, endvalidity))
-					if datamode == "Ast":
-						print starttime.gettext(), startvalidity, endtime.gettext(), endvalidity
+					linesfound, onestarttime, onestartvalid, oneendtime, oneendvalid, twostarttime, twostartvalid, twoendtime, twoendvalid = self.webscraper.getastrotimes(lookupdate, datamode, nowdate)
+					if linesfound > 0:
+						self.astrolibrary.append(AstroItem.createitem(datamode, onestarttime, oneendtime, lookupdate, onestartvalid, oneendvalid))
+						#if datamode == "Ast":
+							#print "Line 1:", onestarttime.gettext(), onestartvalid, oneendtime.gettext(), oneendvalid
+					if linesfound > 1:
+						self.astrolibrary.append(AstroItem.createitem(datamode, twostarttime, twoendtime, lookupdate, twostartvalid, twoendvalid))
+						#if datamode == "Ast":
+							#print "Line 2:", twostarttime.gettext(), twostartvalid, twoendtime.gettext(), twoendvalid
 
-
-		#else:
+				#else:
 			#print "Not updating sunrise/set times"
 
 
@@ -52,3 +55,11 @@ class DefineAstro:
 
 		return self.astrolibrary
 
+
+
+	def createcustomdate(self, dayshift):
+
+		outcome = DateTime.createfromobject(self.todaydatetime)
+		outcome.adjustdays(dayshift)
+
+		return outcome
