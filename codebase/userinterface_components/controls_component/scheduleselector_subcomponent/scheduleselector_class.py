@@ -104,9 +104,36 @@ class DefineSelector():
 
 
 	# -------------------------------------------------------------------
+	# Returns the number of buttons
+	# -------------------------------------------------------------------
+
+	def getbuttoncount(self):
+
+		return self.buttoncount
+
+
+
+	# -------------------------------------------------------------------
 	# Returns the current button definition
 	# -------------------------------------------------------------------
 
 	def getbuttonmeaning(self, buttonindex):
 
 		return self.buttonmeaning[buttonindex].gettime(), self.buttonmeaning[buttonindex].gettemp()
+
+
+
+	# -------------------------------------------------------------------
+	# Returns the current button definition based on button label
+	# -------------------------------------------------------------------
+
+	def getbuttonmeaningbylabel(self, buttonlabel):
+
+		if (buttonlabel == "A") or (buttonlabel == "D") or (buttonlabel == "F"):
+			buttonmapping = 1
+		elif (buttonlabel == "B") or (buttonlabel == "E"):
+			buttonmapping = 2
+		else:
+			buttonmapping = 3
+
+		return self.getbuttonmeaning(buttonmapping)

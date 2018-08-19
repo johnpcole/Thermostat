@@ -33,7 +33,7 @@ class DefineController(Buttons.DefineButtons):
 		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
 
 		# Get buttons in the correct state
-		self.quitmenus() #showconfiguremenu() #quitmainmenu()
+		self.showconfiguremenu() #quitmainmenu()
 
 
 	# ==========================================================================================
@@ -71,7 +71,7 @@ class DefineController(Buttons.DefineButtons):
 			if clickedbutton == "Release: Start Menu":
 				self.showmainmenu(currentdesiredtemperature)
 
-			if clickedbutton == "Release: Configure Schedule":
+			elif clickedbutton == "Release: Configure Schedule":
 				self.showconfiguremenu()
 
 			elif clickedbutton[:17] == "Release: Override":
@@ -82,6 +82,9 @@ class DefineController(Buttons.DefineButtons):
 
 			elif clickedbutton == "Release: Temp Commit":
 				self.setdesiredtemp()
+
+			elif clickedbutton[:25] == "Release: Schedule Select ":
+				print clickedbutton
 
 		return self.useraction
 
@@ -242,3 +245,4 @@ class DefineController(Buttons.DefineButtons):
 	def getuseraction(self):
 
 		return self.useraction
+

@@ -134,6 +134,10 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 				else:
 
 					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour, outline = self.calcbuttonmetrics(control, buttonname, "")
+					if buttonname[:16] == "Schedule Select ":
+						timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
+						outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
+						outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
 
 					if imagename != "Hide":
 						outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)

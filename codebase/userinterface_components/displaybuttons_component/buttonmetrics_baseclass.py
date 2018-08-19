@@ -224,3 +224,13 @@ class DefineButtonMetrics:
 		return buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour, buttonoutline
 
 
+
+	def calcschedulebuttonmetrics(self, buttonposition, buttonsize, selectordata, buttonname):
+
+		timetext, temptext = selectordata.getbuttonmeaningbylabel(buttonname[-1:])
+
+		timeposition = Vector.add(buttonposition, Vector.createfromvalues(int(buttonsize.getx() / 2), 0))
+
+		tempposition = Vector.add(timeposition, Vector.createfromvalues(0, 37))
+
+		return timetext.getsecondlesstext(), str(temptext), timeposition, tempposition
