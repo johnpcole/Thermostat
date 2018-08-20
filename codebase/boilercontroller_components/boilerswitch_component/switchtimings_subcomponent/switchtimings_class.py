@@ -1,4 +1,4 @@
-from ....common_components.clock_datatype import clock_module as Clock
+from ....common_components.datetime_datatypes import datetime_module as DateTime
 
 
 class DefineSwitchTiming:
@@ -9,7 +9,7 @@ class DefineSwitchTiming:
 
 	def __init__(self):
 
-		self.latestswitchtime = Clock.getnow()
+		self.latestswitchtime = DateTime.getnow()
 
 
 
@@ -19,9 +19,9 @@ class DefineSwitchTiming:
 
 	def getsecondssincelastswitched(self):
 
-		timesincelastswitched = Clock.timediff(self.latestswitchtime, Clock.getnow())
+		timesincelastswitched = DateTime.secondsdifference(self.latestswitchtime, DateTime.getnow())
 
-		return timesincelastswitched.getvalue()
+		return timesincelastswitched.getvalue("Seconds")
 
 
 
@@ -41,4 +41,4 @@ class DefineSwitchTiming:
 
 	def updateswitchedtime(self):
 
-		self.latestswitchtime = Clock.getnow()
+		self.latestswitchtime = DateTime.getnow()

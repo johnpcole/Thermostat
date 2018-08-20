@@ -8,7 +8,7 @@ class DefineAstro:
 
 	def __init__(self, locationname, longitude, latitude, timeshift, connectionmode, currenttimeobject):
 
-		self.todaydatetime = DateTime.createfromsextuplet(1, 1, 2000, 0, 0, 0)
+		self.todaydate = DateTime.createdatefromtriplet(1, 1, 2000)
 
 		self.astrolibrary = []
 
@@ -22,7 +22,7 @@ class DefineAstro:
 
 		nowdate = currenttimeobject.getdate()
 
-		if DateTime.areidentical(self.todaydatetime, nowdate) == False:
+		if DateTime.areidentical(self.todaydate, nowdate) == False:
 
 			self.astrolibrary = []
 

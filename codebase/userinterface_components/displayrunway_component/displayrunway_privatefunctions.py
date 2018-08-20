@@ -66,7 +66,7 @@ def getdateshift(currentdate, astroitemdate):
 
 def determinedststate(dateobject):
 
-	day, month, year, dummy1, dummy2, dummy3 = dateobject.getsextuplet()
+	day, month, year = dateobject.getdatetriplet()
 
 	dsttesttime = SystemTime.mktime((year,month,day,3,2,1,-1,-1,-1))
 

@@ -1,5 +1,5 @@
 from ...common_components.vector_datatype import vector_module as Vector
-from ...common_components.clock_datatype import clock_module as Clock
+from ...common_components.datetime_datatypes import clock_module as Clock
 from .. import display_sharedfunctions as DisplayFunction
 from . import displayrunway_privatefunctions as RunwayFunction
 

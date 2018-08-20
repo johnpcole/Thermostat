@@ -1,4 +1,4 @@
-from ...common_components.clock_datatype import clock_module as Clock
+from ...common_components.datetime_datatypes import clock_module as Clock
 from ...common_components.datetime_datatypes import datetime_module as DateTime
 
 
@@ -11,7 +11,8 @@ class DefineTimekeeper:
 
 		self.previoustime = Clock.getnow()
 
-		self.currentdate = DateTime.getnow()
+		day, month, year = DateTime.getnow().getdatetriplet()
+		self.currentdate = DateTime.createdatefromtriplet(day, month, year)
 
 		self.cyclemeasure = 0
 
@@ -32,8 +33,8 @@ class DefineTimekeeper:
 			self.cyclemeasure = 0
 			self.previoustime = Clock.createasclock(self.currenttime)
 
-		day, month, year, dummy1, dummy2, dummy3 = DateTime.getnow().getsextuplet()
-		self.currentdate = DateTime.createfromsextuplet(day, month, year, 0, 0, 0)
+		day, month, year = DateTime.getnow().getdatetriplet()
+		self.currentdate = DateTime.createdatefromtriplet(day, month, year)
 
 
 

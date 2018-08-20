@@ -27,7 +27,7 @@ class DefineScraper:
 
 		self.resultagebuffer = Duration.createfromvalues(5, "Days")
 
-		self.lastsuccessfulwebcall = DateTime.createfromsextuplet(1, 1, 2000, 0, 0, 0)
+		self.lastsuccessfulwebcall = DateTime.createdatefromtriplet(1, 1, 2000)
 
 		self.lastsuccessfulyear = -9999
 
@@ -45,7 +45,7 @@ class DefineScraper:
 		rowvalidity, onestarttime, onestartvalid, oneendtime, oneendvalid = ScraperFunction.extracttimings("            ", 1)
 		rowvalidity, twostarttime, twostartvalid, twoendtime, twoendvalid = ScraperFunction.extracttimings("            ", 1)
 
-		lookupday, lookupmonth, lookupyear, dummy1, dummy2, dummy3 = lookupdateobject.getsextuplet()
+		lookupday, lookupmonth, lookupyear = lookupdateobject.getdatetriplet()
 
 		if self.connectionmode == True:
 			# Only download the pages if the current ones are out of date

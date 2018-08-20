@@ -66,7 +66,8 @@ class DefineBoilerController:
 
 	def setoverridetemperature(self, userinterface, currenttimeobject):
 
-			self.tempsetter.setoverridetemperature(userinterface.getoverridetemperatureinstruction(), currenttimeobject.getclock())
+			self.tempsetter.setoverridetemperature(userinterface.getoverridetemperatureinstruction(),
+																						currenttimeobject.getclock())
 
 
 

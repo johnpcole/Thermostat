@@ -47,6 +47,28 @@ class DefineDateTime:
 
 
 # ---------------------------------------------------------
+# Sets the DATE using a
+# Day-Month-Year triplet of integers
+# ---------------------------------------------------------
+
+	def setdatefromtriplet(self, day, month, year):
+
+		self.datecomponent.setfromtriplet(day, month, year)
+
+
+
+# ---------------------------------------------------------
+# Sets the TIME using a
+# Hour-Minute-Second triplet of integers
+# ---------------------------------------------------------
+
+	def settimefromtriplet(self, hour, minute, second):
+
+		self.timecomponent.setfromtriplet(hour, minute, second)
+
+
+
+# ---------------------------------------------------------
 # Sets the datetime using a YYYYMMDDHHMMSS string
 # ---------------------------------------------------------
 
@@ -56,24 +78,85 @@ class DefineDateTime:
 		self.datecomponent.setfromiso(datestring)
 		self.timecomponent.setfromiso(timestring)
 
-	
-	
+
+
+# ---------------------------------------------------------
+# Sets the datetime using a HHMMSS string
+# ---------------------------------------------------------
+
+	def settimefromiso(self, isostring):
+
+		self.timecomponent.setfromiso(isostring)
+
+
+
+# ---------------------------------------------------------
+# Sets the date using a YYYYMMDD string
+# ---------------------------------------------------------
+
+	def setdatefromiso(self, isostring):
+
+		self.datecomponent.setfromiso(isostring)
+
+
+
+# ---------------------------------------------------------
+# Sets the date using a daysintomillennium integer
+# ---------------------------------------------------------
+
+	def setdatefromvalue(self, daysintomillenniuminteger):
+
+		self.datecomponent.setfromdaysintomillennium(daysintomillenniuminteger)
+
+
+
+# ---------------------------------------------------------
+# Sets the time using a secondsintodayinteger integer
+# ---------------------------------------------------------
+
+	def settimefromvalue(self, secondsintodayinteger):
+
+		self.timecomponent.setfromsecondsintoday(secondsintodayinteger)
+
+
+
 # ===========================================================================================================
 # Object Processing
 # ===========================================================================================================
-	
+
 # ---------------------------------------------------------
 # Sets the datetime to the current system clock value
 # ---------------------------------------------------------
-	
+
 	def settonow(self):
-		
+
 		isodatestring, isotimestring = DateTimeFunction.getcurrentdatetime()
 		self.timecomponent.setfromiso(isotimestring)
 		self.datecomponent.setfromiso(isodatestring)
-	
-	
-	
+
+
+
+# ---------------------------------------------------------
+# Sets the date to the current system clock value
+# ---------------------------------------------------------
+
+	def setdatetonow(self):
+
+		isodatestring, isotimestring = DateTimeFunction.getcurrentdatetime()
+		self.datecomponent.setfromiso(isodatestring)
+
+
+
+# ---------------------------------------------------------
+# Sets the time to the current system clock value
+# ---------------------------------------------------------
+
+	def settimetonow(self):
+		isodatestring, isotimestring = DateTimeFunction.getcurrentdatetime()
+		self.timecomponent.setfromiso(isotimestring)
+
+
+
 # ---------------------------------------------------------
 # Adjusts the datetime by specified
 # number of seconds (+ve or -ve)
@@ -148,9 +231,9 @@ class DefineDateTime:
 	def adjustdate(self, durationdelta):
 
 		self.datecomponent.adjustdate(durationdelta)
-	
-	
-	
+
+
+
 # ===========================================================================================================
 # Get Information
 # ===========================================================================================================
@@ -165,6 +248,46 @@ class DefineDateTime:
 		day, month, year = self.datecomponent.gettriplet()
 		hour, minute, second = self.timecomponent.gettriplet()
 		return day, month, year, hour, minute, second
+
+
+
+# ---------------------------------------------------------
+# Returns the datetime as a triplet of
+# Day-Month-Year integers
+# ---------------------------------------------------------
+
+	def getdatetriplet(self):
+		day, month, year = self.datecomponent.gettriplet()
+		return day, month, year
+
+
+
+# ---------------------------------------------------------
+# Returns the time as a triplet of
+# Hour-Minute-Second integers
+# ---------------------------------------------------------
+
+	def gettimetriplet(self):
+		hour, minute, second = self.timecomponent.gettriplet()
+		return hour, minute, second
+
+
+
+# ---------------------------------------------------------
+# Returns the date as a YYYYYMMDD string
+# ---------------------------------------------------------
+
+	def getdateiso(self):
+		return self.datecomponent.getiso()
+
+
+
+# ---------------------------------------------------------
+# Returns the time as a HHMMSS string
+# ---------------------------------------------------------
+
+	def gettimeiso(self):
+		return self.timecomponent.getiso()
 
 
 
@@ -199,10 +322,35 @@ class DefineDateTime:
 
 
 # ---------------------------------------------------------
+# Returns the time as a readable string
+# ---------------------------------------------------------
+
+	def getreadabletime(self, timeformat, secondsflag):
+
+		timecomponent = self.gettimecomponent()
+
+		outcome = timecomponent.getreadabletime(timeformat, secondsflag)
+		return outcome
+
+
+
+# ---------------------------------------------------------
+# Returns the date as a readable string
+# ---------------------------------------------------------
+
+	def getreadabledate(self, dayflag, dateflag, monthflag, yearflag, separator):
+		datecomponent = self.getdatecomponent()
+
+		outcome = datecomponent.getreadabledate(dayflag, dateflag, monthflag, yearflag, separator)
+		return outcome
+
+
+
+# ---------------------------------------------------------
 # Returns the datetime as a readable string
 # ---------------------------------------------------------
 
-	def getreadabledate(self, timeformat, secondsflag, dayflag, dateflag, monthflag, yearflag, separator):
+	def getreadabletimedate(self, timeformat, secondsflag, dayflag, dateflag, monthflag, yearflag, separator):
 
 		timecomponent = self.gettimecomponent()
 		datecomponent = self.getdatecomponent()
@@ -210,6 +358,24 @@ class DefineDateTime:
 		outcome = timecomponent.getreadabletime(timeformat, secondsflag) + " "
 		outcome = outcome + datecomponent.getreadabledate(dayflag, dateflag, monthflag, yearflag, separator)
 		return outcome
+
+# ---------------------------------------------------------
+# Returns the date using a daysintomillennium integer
+# ---------------------------------------------------------
+
+	def getdatevalue(self):
+
+		self.datecomponent.getdaysintomillennium()
+
+
+
+# ---------------------------------------------------------
+# Returns the time using a secondsintodayinteger integer
+# ---------------------------------------------------------
+
+	def gettimevalue(self):
+
+		self.timecomponent.getsecondsintoday()
 
 
 

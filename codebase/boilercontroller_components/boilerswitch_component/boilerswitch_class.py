@@ -1,4 +1,5 @@
 from switchtimings_subcomponent import switchtimings_module as SwitchTiming
+from ...common_components.datetime_datatypes import duration_module as Duration
 
 
 class DefineBoilerSwitch:
@@ -11,7 +12,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = False
 
-		self.switchreliefbuffer = 120 # seconds
+		self.switchreliefbuffer = Duration.createfromvalues(120, "Seconds")
 
 		self.lastontime = SwitchTiming.createswitchtiming()
 
@@ -52,7 +53,7 @@ class DefineBoilerSwitch:
 		else:
 			lastswitchedseconds = self.lastofftime.getsecondssincelastswitched()
 
-		return max(0, (self.switchreliefbuffer - lastswitchedseconds))
+		return max(0, (self.switchreliefbuffer.getvalue("Seconds") - lastswitchedseconds))
 
 
 	# -------------------------------------------------------------------
