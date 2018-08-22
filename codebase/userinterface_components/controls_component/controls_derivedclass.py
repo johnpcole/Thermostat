@@ -3,6 +3,8 @@ from ...common_components.enumeration_datatype import enumeration_module as Enum
 from . import buttons_baseclass as Buttons
 from tempselector_subcomponent import tempselector_module as TempSelector
 from scheduleselector_subcomponent import scheduleselector_module as ScheduleSelector
+from instructionselector_subcomponent import instructionselector_module as InstructionSelector
+
 
 
 class DefineController(Buttons.DefineButtons):
@@ -26,6 +28,9 @@ class DefineController(Buttons.DefineButtons):
 		# Timeline Selector (Slider)
 		self.timelineselector = ScheduleSelector.createselector()
 
+		# Instruction Selector (Slider)
+		self.instructionselector = InstructionSelector.createselector()
+
 		# Mouse location
 		self.mouselocation = Vector.createblank()
 
@@ -33,7 +38,7 @@ class DefineController(Buttons.DefineButtons):
 		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
 
 		# Get buttons in the correct state
-		self.showconfiguremenu() #quitmainmenu()
+		self.showamenu("Configure") #"Quit"
 
 
 	# ==========================================================================================
@@ -66,27 +71,33 @@ class DefineController(Buttons.DefineButtons):
 
 			self.timelineselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
 
+			self.instructionselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+
 			self.updateconfiguremenu(schedule)
 
 			if clickedbutton == "Release: Start Menu":
-				self.showmainmenu(currentdesiredtemperature)
+				self.showamenu("Main")
+				self.temperatureselector.resetcontrols(currentdesiredtemperature)
 
 			elif clickedbutton == "Release: Configure Schedule":
-				self.showconfiguremenu()
+				self.showamenu("Configure")
+				self.timelineselector.resetcontrols()
 
 			elif clickedbutton[:17] == "Release: Override":
 				self.temperatureselector.updatebuttonselection(clickedbutton[18:])
 
 			elif (clickedbutton == "Release: Temp Cancel") or (clickedbutton == "Release: Exit"):
-				self.quitmenus()
+				self.showamenu("Quit")
 
 			elif clickedbutton == "Release: Temp Commit":
-				self.setdesiredtemp()
+				self.showamenu("Quit")
+				self.useraction.set("Override Temperature")
 
 			elif clickedbutton[:25] == "Release: Schedule Select ":
-				print clickedbutton
+				self.selectaninstruction(clickedbutton[25:])
 
 		return self.useraction
+
 
 
 	# -------------------------------------------------------------------
@@ -109,59 +120,34 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
-	# Shows the main menu
+	# Shows the desired menu
 	# -------------------------------------------------------------------
 
-	def showmainmenu(self, currentdesiredtemperature):
+	def showamenu(self, menuselector):
 
-		# Set Start Menu to Hidden
-		self.updatebutton("Start Menu", "Hidden")
+		# Set Start Menu
+		if menuselector == "Quit":
+			self.updatebutton("Start Menu", "Enabled")
+		else:
+			self.updatebutton("Start Menu", "Hidden")
 
-		# Set Configuration Menu to Hidden
-		self.updatebutton("Schedule Config", "Hidden")
+		# Set Configuration Menu
+		if menuselector == "Configure":
+			self.updatebutton("Schedule Config", "Enabled")
+		else:
+			self.updatebutton("Schedule Group", "Hidden")
 
-		# Set main menu buttons to displayed and enabled
-		self.updatebutton("Set Temp", "Enabled")
+		# Set main menu buttons
+		if menuselector == "Main":
+			self.updatebutton("Set Temp", "Enabled")
+		else:
+			self.updatebutton("Set Temp", "Hidden")
 
-		# Set the slider value to be the current boiler temperature
-		self.temperatureselector.resetcontrols(currentdesiredtemperature)
-
-
-
-	# -------------------------------------------------------------------
-	# Quits the main menu
-	# -------------------------------------------------------------------
-
-	def quitmenus(self):
-
-		# Set Configuration Menu to Hidden
-		self.updatebutton("Schedule Group", "Hidden")
-
-		# Set main menu buttons to hidden
-		self.updatebutton("Set Temp", "Hidden")
-
-		# Set Start Menu to Enabled
-		self.updatebutton("Start Menu", "Enabled")
-
-
-
-	# -------------------------------------------------------------------
-	# Shows the configuration menu
-	# -------------------------------------------------------------------
-
-	def showconfiguremenu(self):
-
-		# Set Start Menu to Hidden
-		self.updatebutton("Start Menu", "Hidden")
-
-		# Set main menu buttons to Hidden
-		self.updatebutton("Set Temp", "Hidden")
-
-		# Set Configuration Menu to displayed and enabled
-		self.updatebutton("Schedule Config", "Enabled")
-
-		# Set the slider value to be current hour
-		self.timelineselector.resetcontrols()
+		# Set instruction setting buttons
+		if menuselector == "Instruction":
+			self.updatebutton("Instruction Config", "Enabled")
+		else:
+			self.updatebutton("Instruction Config", "Hidden")
 
 
 
@@ -171,9 +157,10 @@ class DefineController(Buttons.DefineButtons):
 
 	def updateconfiguremenu(self, schedule):
 
-		self.updatebutton("Schedule Reset", "Hidden")
-
 		if self.getbuttonstate("Timeline Slider") == "Enabled":
+
+			self.updatebutton("Schedule Reset", "Hidden")
+
 			buttoncount = self.timelineselector.updatebuttonmeanings(schedule)
 
 			if buttoncount == 1:
@@ -186,14 +173,15 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
-	# Sets the desired temperature
+	# Sets up the instruction menu
 	# -------------------------------------------------------------------
 
-	def setdesiredtemp(self):
+	def selectaninstruction(self, clickedbuttonletter):
 
-		self.quitmenus()
-
-		self.useraction.set("Override Temperature")
+		instructiontime, instructiontemp = self.timelineselector.getbuttonmeaningbylabel(clickedbuttonletter)
+		print clickedbuttonletter, instructiontime.gettext(), instructiontemp
+		self.showamenu("Instruction")
+		self.instructionselector.resetcontrols(instructiontemp, instructiontime)
 
 
 
@@ -220,6 +208,7 @@ class DefineController(Buttons.DefineButtons):
 		return self.inputobject.getquitstate()
 
 
+
 	# -------------------------------------------------------------------
 	# Returns the current UNCOMMITTED desired temperature on the slider
 	# -------------------------------------------------------------------
@@ -229,6 +218,7 @@ class DefineController(Buttons.DefineButtons):
 		return self.temperatureselector
 
 
+
 	# -------------------------------------------------------------------
 	# Returns the current UNCOMMITTED desired schedule time on the slider
 	# -------------------------------------------------------------------
@@ -236,6 +226,7 @@ class DefineController(Buttons.DefineButtons):
 	def gettimelineselectordata(self):
 
 		return self.timelineselector
+
 
 
 	# -------------------------------------------------------------------

@@ -47,9 +47,17 @@ class DefineButtons:
 		self.definebutton("Schedule Select E",  273, 130, 100,  80, ["Schedule 2", "Schedule Reset", "Schedule Group"])
 		self.definebutton("Schedule Select F",  190, 130, 100,  80, ["Schedule 1", "Schedule Reset", "Schedule Group"])
 
-		#self.definebutton("Add Instruction",     24, 246,  50,  50, ["Schedule Config", "Schedule Group"])
+		self.definebutton("Add Instruction",    403, 246,  50,  50, ["Schedule Config", "Schedule Group"])
 		#self.definebutton("Delete Instruction", 406, 150,  50,  50, ["Schedule Config", "Schedule Group"])
 		self.definebutton("Exit",               333, 246,  50,  50, ["Schedule Config", "Schedule Group"])
+
+		# Configure Instruction Areas
+		self.definebutton("Instruction Slider Hour",     24,  24, 80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Min",      124,  24, 80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Temp",     224,  24, 80,  280, ["Instruction Config"])
+
+
+
 
 
 

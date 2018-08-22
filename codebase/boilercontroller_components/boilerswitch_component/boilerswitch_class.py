@@ -12,11 +12,11 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = False
 
-		self.switchreliefbuffer = Duration.createfromvalues(120, "Seconds")
+		self.switchreliefbuffer = Duration.createfromvalues(10, "Seconds")
 
-		self.lastontime = SwitchTiming.createswitchtiming()
+		self.lastondatetime = SwitchTiming.createswitchtiming()
 
-		self.lastofftime = SwitchTiming.createswitchtiming()
+		self.lastoffdatetime = SwitchTiming.createswitchtiming()
 
 	# =========================================================================================
 
@@ -49,11 +49,12 @@ class DefineBoilerSwitch:
 	def getcurrentbufferstate(self):
 
 		if self.switchstatus == False:
-			lastswitchedseconds = self.lastontime.getsecondssincelastswitched()
+			lastswitchedseconds = self.lastondatetime.getdurationsincelastswitched()
 		else:
-			lastswitchedseconds = self.lastofftime.getsecondssincelastswitched()
+			lastswitchedseconds = self.lastoffdatetime.getdurationsincelastswitched()
 
-		return max(0, (self.switchreliefbuffer.getvalue("Seconds") - lastswitchedseconds))
+		return max(0, (self.switchreliefbuffer.getsecondsvalue() - lastswitchedseconds.getsecondsvalue()))
+
 
 
 	# -------------------------------------------------------------------
@@ -63,9 +64,9 @@ class DefineBoilerSwitch:
 	def updateboilerclocks(self):
 
 		if self.switchstatus == True:
-			self.lastontime.updateswitchedtime()
+			self.lastondatetime.updateswitchedtime()
 		else:
-			self.lastofftime.updateswitchedtime()
+			self.lastoffdatetime.updateswitchedtime()
 
 
 
@@ -77,7 +78,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = True
 		self.updateboilerclocks()
-		print "Boiler switched on at", self.lastontime.getlastswitchedtime().gettext()
+		print "Boiler switched on at", self.lastondatetime.getlastswitcheddatetime().getiso()
 		#CODE TO THROW RELAY
 
 
@@ -90,7 +91,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = False
 		self.updateboilerclocks()
-		print "Boiler switched off at", self.lastofftime.getlastswitchedtime().gettext()
+		print "Boiler switched off at", self.lastoffdatetime.getlastswitcheddatetime().getiso()
 		#CODE TO THROW RELAY
 
 
