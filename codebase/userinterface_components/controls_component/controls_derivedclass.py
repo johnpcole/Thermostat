@@ -230,6 +230,16 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
+	# Returns the current UNCOMMITTED desired schedule time on the slider
+	# -------------------------------------------------------------------
+
+	def getinstructionselectordata(self):
+
+		return self.instructionselector
+
+
+
+	# -------------------------------------------------------------------
 	# Returns the latest user action
 	# -------------------------------------------------------------------
 

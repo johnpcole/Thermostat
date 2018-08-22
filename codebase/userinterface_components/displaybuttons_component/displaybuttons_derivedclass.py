@@ -140,12 +140,14 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 		outcome = {}
 
+		selectordata = control.getinstructionselectordata()
+
 		for buttonname in self.instructionmenubuttons:
 			if control.getbuttonstate(buttonname) != "Hidden":
 
 				if buttonname[:19] == "Instruction Slider ":
 
-					print buttonname
+					print selectordata.getslidervalue("Hour"), selectordata.getslidervalue("Min"), selectordata.getslidervalue("Temp")
 
 				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)

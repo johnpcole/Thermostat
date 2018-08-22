@@ -1,6 +1,7 @@
 from ...common_components.vector_datatype import vector_module as Vector
 from tempslider_subcomponent import tempslider_module as TempSlider
 from scheduleslider_subcomponent import scheduleslider_module as ScheduleSlider
+from instructionslider_subcomponent import instructionslider_module as InstructionSlider
 from pushbuttons_subcomponent import pushbuttons_module as PushButtons
 
 
@@ -13,6 +14,13 @@ class DefineButtonMetrics:
 
 		self.scheduleslider = ScheduleSlider.createslider(controls.getbuttonposition("Timeline Slider"),
 															controls.getbuttonsize("Timeline Slider"))
+
+		self.instructionslider = InstructionSlider.createslider(controls.getbuttonposition("Instruction Slider Hour"),
+																controls.getbuttonsize("Instruction Slider Hour"),
+																controls.getbuttonposition("Instruction Slider Min"),
+																controls.getbuttonsize("Instruction Slider Min"),
+																controls.getbuttonposition("Instruction Slider Temp"),
+																controls.getbuttonsize("Instruction Slider Temp"))
 
 		self.pushbuttons = PushButtons.createpushbuttons()
 
