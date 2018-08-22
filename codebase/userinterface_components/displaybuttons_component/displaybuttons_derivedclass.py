@@ -17,6 +17,9 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 		# The list of configure schedule buttons
 		self.configuremenubuttons = controls.getbuttoncollection("Schedule Group")
 
+		# The list of configure instruction buttons
+		self.instructionmenubuttons = controls.getbuttoncollection("Instruction Config")
+
 		# The current buttons display definition
 		self.artefacts = {}
 
@@ -40,6 +43,10 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 		# Draw the configuration menu buttons
 		newitems = self.drawconfiguremenu(usercontrols, boilercontroller.getschedule())
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons C"))
+
+		# Draw the instruction menu buttons
+		newitems = self.drawinstructionmenu(usercontrols)
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons D"))
 
 		return self.artefacts
 
@@ -80,14 +87,11 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
 
 
-					position, size, linkstart, linkend = self.calctempslideroutline()
-					outcome = self.drawgenericbuttonarea(outcome, position, size, "None", "White", "Hide", "Slider Outline")
+					linkstart, linkend = self.calctempslidermisc()
 					outcome["Options Link"] = ("Line", linkstart, linkend, "White", 1, "")
 
-				else:
-
-					buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
-					outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
 
 		return outcome
 
@@ -105,36 +109,67 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 				if buttonname == "Timeline Slider":
 
-					position, size = self.calctimeslideroutline()
-					outcome = self.drawgenericbuttonarea(outcome, position, size, "None", "White", "Hide", "Slider Outline")
-
 					for hourindex in range(0, 25):
-
 						rangemin, rangemax = self.calctimeslidermarkrange(hourindex, slidervalue)
 
 						for subindex in range(rangemin, rangemax):
 
 							markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour = self.calctimeslidertimemetrics(hourindex, subindex, slidervalue)
-
 							outcome["Slider Time Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
 							if fontsize != "Hide":
 								outcome["Slider Time Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
 
 					for instructiontime in schedule.getscheduledtimes():
-
 						markertop, markerbottom, labelposition, templabel, indexer, fontsize, colour = self.calctimeslidertempmetrics(instructiontime.getsecondlessvalue(), schedule.getscheduledinstruction(instructiontime), slidervalue)
-
 						outcome["Slider Temp Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
 
-				else:
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 
-					buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
-					if buttonname[:16] == "Schedule Select ":
-						timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
-						outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
-						outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
+				if buttonname[:16] == "Schedule Select ":
+					timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
+					outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
+					outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
 
-					outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", "Hide", buttonname)
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", "Hide", buttonname)
+
+		return outcome
+
+
+
+	def drawinstructionmenu(self, control):
+
+		outcome = {}
+
+		# for buttonname in self.instructionmenubuttons:
+		# 	if control.getbuttonstate(buttonname) != "Hidden":
+		#
+		# 		if buttonname == "Timeline Slider":
+		#
+		# 			position, size = self.calctimeslideroutline()
+		# 			outcome = self.drawgenericbuttonarea(outcome, position, size, "None", "White", "Hide", "Slider Outline")
+		#
+		# 			for hourindex in range(0, 25):
+		# 				rangemin, rangemax = self.calctimeslidermarkrange(hourindex, slidervalue)
+		#
+		# 				for subindex in range(rangemin, rangemax):
+		#
+		# 					markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour = self.calctimeslidertimemetrics(hourindex, subindex, slidervalue)
+		# 					outcome["Slider Time Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
+		# 					if fontsize != "Hide":
+		# 						outcome["Slider Time Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
+		#
+		# 			for instructiontime in schedule.getscheduledtimes():
+		# 				markertop, markerbottom, labelposition, templabel, indexer, fontsize, colour = self.calctimeslidertempmetrics(instructiontime.getsecondlessvalue(), schedule.getscheduledinstruction(instructiontime), slidervalue)
+		# 				outcome["Slider Temp Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
+		#
+		# 		buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
+		#
+		# 		if buttonname[:16] == "Schedule Select ":
+		# 			timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
+		# 			outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
+		# 			outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
+		#
+		# 		outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", "Hide", buttonname)
 
 		return outcome
 

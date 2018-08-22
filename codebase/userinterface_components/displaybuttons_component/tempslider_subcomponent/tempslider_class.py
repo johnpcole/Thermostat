@@ -25,17 +25,9 @@ class DefineSlider:
 		self.linkend = Vector.createfromvalues(450, 175)
 
 
-	def calcslideroverall(self):
+	def calcslidermisc(self):
 
-		temp, boxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(3, 3)
-
-		sliderposition = Vector.subtract(boxposition, Vector.createfromvalues(1, 1))
-
-		temp, lastboxposition, boxsize, boxcentre, boxfont = self.calcslidermetrics(27, 27)
-
-		slidersize = Vector.add(boxsize, Vector.createfromvalues(lastboxposition.getx() - boxposition.getx() + 2, 2))
-
-		return sliderposition, slidersize, self.linkstart, self.linkend
+		return self.linkstart, self.linkend
 
 
 

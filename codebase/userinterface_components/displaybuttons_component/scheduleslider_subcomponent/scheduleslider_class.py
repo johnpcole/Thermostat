@@ -144,7 +144,3 @@ class DefineSlider:
 
 
 
-	def calcslideroverall(self):
-
-		return self.sliderposition, self.slidersize
-

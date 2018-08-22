@@ -17,11 +17,6 @@ class DefineButtonMetrics:
 		self.origin = Vector.createorigin()
 
 
-	def calctimeslideroutline(self):
-
-		return self.scheduleslider.calcslideroverall()
-
-
 
 	def calctimeslidermarkrange(self, hourindex, sliderhourvalue):
 
@@ -41,9 +36,9 @@ class DefineButtonMetrics:
 
 
 
-	def calctempslideroutline(self):
+	def calctempslidermisc(self):
 
-		return self.tempslider.calcslideroverall()
+		return self.tempslider.calcslidermisc()
 
 
 
@@ -55,7 +50,7 @@ class DefineButtonMetrics:
 
 	def calcbuttonmetrics(self, control, buttonname, selectorvalue):
 
-		return self.pushbuttons.calcbuttonmetrics(control, buttonname, selectorvalue)
+		return PushButtons.calcbuttonmetrics(control, buttonname, selectorvalue)
 
 
 

@@ -10,30 +10,6 @@ class DefinePushButtons:
 
 
 
-	def calcbuttonmetrics(self, control, buttonname, selectorvalue):
-
-		buttonlocation = control.getbuttonposition(buttonname)
-		buttonsize = control.getbuttonsize(buttonname)
-		buttoncolour = "Grey"
-
-		if buttonname[:9] == "Override ":
-			timing = buttonname[9:]
-			imagename = "timer_" + timing
-			if selectorvalue == timing:
-				buttoncolour = "Selected"
-		elif buttonname[:5] == "Temp ":
-			imagename = "c" + buttonname[6:]
-		elif buttonname == "Exit":
-			imagename = "return"
-		elif buttonname[:16] == "Schedule Select ":
-			imagename = "Hide"
-		else:
-			imagename = "configure"
-
-		return buttonlocation, buttonsize, imagename, buttoncolour
-
-
-
 	def calcschedulebuttonmetrics(self, buttonposition, buttonsize, selectordata, buttonname):
 
 		timetext, temptext = selectordata.getbuttonmeaningbylabel(buttonname[-1:])
