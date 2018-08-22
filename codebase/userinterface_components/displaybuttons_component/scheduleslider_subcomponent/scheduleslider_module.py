@@ -1,5 +1,5 @@
 import scheduleslider_class as ScheduleSliderClass
 
-def createslider():
-	return ScheduleSliderClass.DefineSlider()
+def createslider(sliderposition, slidersize):
+	return ScheduleSliderClass.DefineSlider(sliderposition, slidersize)
 

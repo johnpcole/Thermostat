@@ -1,5 +1,5 @@
 import tempslider_class as TempSliderClass
 
-def createslider():
-	return TempSliderClass.DefineSlider()
+def createslider(sliderposition, slidersize):
+	return TempSliderClass.DefineSlider(sliderposition, slidersize)
 

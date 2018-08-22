@@ -6,11 +6,13 @@ from pushbuttons_subcomponent import pushbuttons_module as PushButtons
 
 class DefineButtonMetrics:
 
-	def __init__(self):
+	def __init__(self, controls):
 
-		self.tempslider = TempSlider.createslider()
+		self.tempslider = TempSlider.createslider(controls.getbuttonposition("Temp Slider"),
+															controls.getbuttonsize("Temp Slider"))
 
-		self.scheduleslider = ScheduleSlider.createslider()
+		self.scheduleslider = ScheduleSlider.createslider(controls.getbuttonposition("Timeline Slider"),
+															controls.getbuttonsize("Timeline Slider"))
 
 		self.pushbuttons = PushButtons.createpushbuttons()
 

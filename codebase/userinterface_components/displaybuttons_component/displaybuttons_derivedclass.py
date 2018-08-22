@@ -9,7 +9,7 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 	def __init__(self, controls):
 
 		# Get the metrics using baseclass method
-		Metrics.DefineButtonMetrics.__init__(self)
+		Metrics.DefineButtonMetrics.__init__(self, controls)
 
 		# The list of start menu buttons
 		self.startmenubuttons = controls.getbuttoncollection("Set Temp")
@@ -140,36 +140,15 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 		outcome = {}
 
-		# for buttonname in self.instructionmenubuttons:
-		# 	if control.getbuttonstate(buttonname) != "Hidden":
-		#
-		# 		if buttonname == "Timeline Slider":
-		#
-		# 			position, size = self.calctimeslideroutline()
-		# 			outcome = self.drawgenericbuttonarea(outcome, position, size, "None", "White", "Hide", "Slider Outline")
-		#
-		# 			for hourindex in range(0, 25):
-		# 				rangemin, rangemax = self.calctimeslidermarkrange(hourindex, slidervalue)
-		#
-		# 				for subindex in range(rangemin, rangemax):
-		#
-		# 					markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour = self.calctimeslidertimemetrics(hourindex, subindex, slidervalue)
-		# 					outcome["Slider Time Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
-		# 					if fontsize != "Hide":
-		# 						outcome["Slider Time Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
-		#
-		# 			for instructiontime in schedule.getscheduledtimes():
-		# 				markertop, markerbottom, labelposition, templabel, indexer, fontsize, colour = self.calctimeslidertempmetrics(instructiontime.getsecondlessvalue(), schedule.getscheduledinstruction(instructiontime), slidervalue)
-		# 				outcome["Slider Temp Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
-		#
-		# 		buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
-		#
-		# 		if buttonname[:16] == "Schedule Select ":
-		# 			timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
-		# 			outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
-		# 			outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
-		#
-		# 		outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", "Hide", buttonname)
+		for buttonname in self.instructionmenubuttons:
+			if control.getbuttonstate(buttonname) != "Hidden":
+
+				if buttonname[:19] == "Instruction Slider ":
+
+					print buttonname
+
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
 
 		return outcome
 

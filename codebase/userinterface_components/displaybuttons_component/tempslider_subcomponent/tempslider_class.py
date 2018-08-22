@@ -4,15 +4,14 @@ from ....common_components.vector_datatype import vector_module as Vector
 
 class DefineSlider:
 
-	def __init__(self):
-
+	def __init__(self, sliderposition, slidersize):
 
 		self.sliderendreduction = Vector.createfromvalues(-1, 0)
 		self.sliderendshift = Vector.createfromvalues(1, 0)
 
-		self.sliderposition = Vector.createfromvalues(40, 25)
+		self.sliderposition = Vector.add(sliderposition, Vector.createfromvalues(16, 1)) #To get to 40, 25
 
-		self.slidersize = Vector.createfromvalues(400, 78)
+		self.slidersize = Vector.subtract(slidersize, Vector.createfromvalues(32, 2)) #To get to 400, 78
 
 		self.sliderstepsize = Vector.createfromvalues(self.slidersize.getx() / 25, 0)
 		self.slidertextoffset = Vector.createfromvalues(0, 19)

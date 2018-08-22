@@ -4,7 +4,7 @@ from ....common_components.vector_datatype import vector_module as Vector
 
 class DefineSlider:
 
-	def __init__(self):
+	def __init__(self, sliderposition, slidersize):
 
 		# Buttons
 
@@ -14,9 +14,9 @@ class DefineSlider:
 
 		# Timeline Slider
 
-		self.sliderposition = Vector.createfromvalues(24, 24)
+		self.sliderposition = sliderposition #Vector.createfromvalues(24, 24)
 
-		self.slidersize = Vector.createfromvalues(432, 80)
+		self.slidersize = slidersize #Vector.createfromvalues(432, 80)
 
 		self.slidernormstepsize = Vector.createfromvalues(16, 0)
 		self.sliderzoomstepsize = Vector.createfromvalues(40, 0)

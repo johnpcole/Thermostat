@@ -52,7 +52,7 @@ def calcbuttonmetrics(control, buttonname, selectorvalue):
 		imagename = "timer_" + timing
 		if selectorvalue == timing:
 			buttoncolour = "Selected"
-	elif buttonname[-7:] == " Slider":
+	elif (buttonname[-7:] == " Slider") or (buttonname[:19] == "Instruction Slider "):
 		imagename = "Hide"
 		buttoncolour = "None"
 	elif buttonname[:5] == "Temp ":
