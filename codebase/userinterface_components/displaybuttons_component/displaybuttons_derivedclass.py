@@ -146,8 +146,17 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 			if control.getbuttonstate(buttonname) != "Hidden":
 
 				if buttonname[:19] == "Instruction Slider ":
+					mode = buttonname[19:]
+					slidervalue = selectordata.getslidervalue(mode)
 
-					print selectordata.getslidervalue("Hour"), selectordata.getslidervalue("Min"), selectordata.getslidervalue("Temp")
+					rangestart, rangeend, rangestep = self.calcinstructionsliderrange(mode)
+
+					print mode, slidervalue, rangestart, rangeend, rangestep
+
+					for index in range(rangestart, rangeend + 1, rangestep):
+
+						position, size, indexlabel, background = self.calcinstructionslidermetrics(mode, index, slidervalue)
+						outcome["Instruction Slider " + indexlabel] = ("Box", position, size, background, "", 0)
 
 				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)

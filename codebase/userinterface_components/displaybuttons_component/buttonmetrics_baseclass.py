@@ -28,6 +28,18 @@ class DefineButtonMetrics:
 
 
 
+	def calcinstructionslidermetrics(self, mode, index, slidervalue):
+
+		return self.instructionslider.calcslidermetrics(mode, index, slidervalue)
+
+
+
+	def calcinstructionsliderrange(self, mode):
+
+		return self.instructionslider.calculatesliderrange(mode)
+
+
+
 	def calctimeslidermarkrange(self, hourindex, sliderhourvalue):
 
 		return self.scheduleslider.calculatemarkrange(hourindex, sliderhourvalue)

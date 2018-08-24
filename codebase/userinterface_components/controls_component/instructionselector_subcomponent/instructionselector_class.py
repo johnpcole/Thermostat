@@ -84,4 +84,9 @@ class DefineSelector():
 
 	def getslidervalue(self, sliderselector):
 
-		return int(self.slidervalue[sliderselector] / 100)
+		if sliderselector == "Min":
+			multiplier = 5
+		else:
+			multiplier = 1
+
+		return multiplier * int(self.slidervalue[sliderselector] / (100 * multiplier))
