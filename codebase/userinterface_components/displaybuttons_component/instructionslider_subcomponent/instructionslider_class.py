@@ -13,7 +13,7 @@ class DefineSlider:
 		self.slidersize = {}
 		self.stepsize = {}
 		self.selectedstepsize = {}
-
+		self.direction = {}
 
 		self.slidermin["Hour"] = 0
 		self.slidermax["Hour"] = 23
@@ -22,6 +22,7 @@ class DefineSlider:
 		self.slidersize["Hour"] = hourslidersize
 		self.stepsize["Hour"] = 11
 		self.selectedstepsize["Hour"] = 27
+		self.direction["Hour"] = False
 
 
 		self.slidermin["Min"] = 0
@@ -31,6 +32,7 @@ class DefineSlider:
 		self.slidersize["Min"] = minslidersize
 		self.stepsize["Min"] = 20
 		self.selectedstepsize["Min"] = 60
+		self.direction["Min"] = False
 
 
 		self.slidermin["Temp"] = 3
@@ -40,14 +42,16 @@ class DefineSlider:
 		self.slidersize["Temp"] = tempslidersize
 		self.stepsize["Temp"] = 10
 		self.selectedstepsize["Temp"] = 40
+		self.direction["Temp"] = True
 
 
 
 	def calcslidermetrics(self, mode, displayedvalue, selectedvalue):
 
-		effectivedisplayedstep = int((displayedvalue - self.slidermin[mode]) / self.sliderstep[mode])
-		verticalstart = effectivedisplayedstep * self.stepsize[mode]
-		if displayedvalue > selectedvalue:
+		extrashift, effectivevalue = self.calcselectedshift(mode, displayedvalue, selectedvalue)
+
+		verticalstart = int(effectivevalue / self.sliderstep[mode]) * self.stepsize[mode]
+		if extrashift == True:
 			verticalstart = verticalstart + self.selectedstepsize[mode] - self.stepsize[mode]
 
 		if displayedvalue == selectedvalue:
@@ -65,6 +69,22 @@ class DefineSlider:
 		else:
 			background = str(displayedvalue)
 		return position, size, indexlabel, background
+
+
+
+	def calcselectedshift(self, mode, displayedvalue, selectedvalue):
+
+		extrashift = False
+		if self.direction[mode] == True:
+			effectivevalue = self.slidermax[mode] - displayedvalue
+			if displayedvalue < selectedvalue:
+				extrashift = True
+		else:
+			effectivevalue = displayedvalue - self.slidermin[mode]
+			if displayedvalue > selectedvalue:
+				extrashift = True
+
+		return extrashift, effectivevalue
 
 
 

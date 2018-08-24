@@ -31,9 +31,9 @@ class DefineSelector():
 
 		# Specifies the slider granularity / speed
 		self.speed = {}
-		self.speed["Hour"] = 5
-		self.speed["Min"] = 5
-		self.speed["Temp"] = 5
+		self.speed["Hour"] = 10
+		self.speed["Min"] = 15
+		self.speed["Temp"] = -10
 
 
 	# ==========================================================================================
