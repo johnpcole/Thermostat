@@ -155,8 +155,10 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 					for index in range(rangestart, rangeend + 1, rangestep):
 
-						position, size, indexlabel, background = self.calcinstructionslidermetrics(mode, index, slidervalue)
+						position, size, indexlabel, background, text, textpos, textalign, textcolour = self.calcinstructionslidermetrics(mode, index, slidervalue)
 						outcome["Instruction Slider " + indexlabel] = ("Box", position, size, background, "", 0)
+						if text != "NONE":
+							outcome["Instruction Slider Text " + indexlabel] = ("Text", text, textpos, textalign, textcolour, "Button Temps")
 
 				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)

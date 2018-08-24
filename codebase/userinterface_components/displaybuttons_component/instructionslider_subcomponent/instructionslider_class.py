@@ -14,14 +14,17 @@ class DefineSlider:
 		self.stepsize = {}
 		self.selectedstepsize = {}
 		self.direction = {}
+		self.textoffset = {}
+		self.textalignment = {}
+
 
 		self.slidermin["Hour"] = 0
 		self.slidermax["Hour"] = 23
 		self.sliderstep["Hour"] = 1
 		self.sliderposition["Hour"] = hoursliderposition
 		self.slidersize["Hour"] = hourslidersize
-		self.stepsize["Hour"] = 11
-		self.selectedstepsize["Hour"] = 27
+		self.stepsize["Hour"] = 10
+		self.selectedstepsize["Hour"] = 50
 		self.direction["Hour"] = False
 
 
@@ -30,8 +33,8 @@ class DefineSlider:
 		self.sliderstep["Min"] = 5
 		self.sliderposition["Min"] = minsliderposition
 		self.slidersize["Min"] = minslidersize
-		self.stepsize["Min"] = 20
-		self.selectedstepsize["Min"] = 60
+		self.stepsize["Min"] = 21
+		self.selectedstepsize["Min"] = 49
 		self.direction["Min"] = False
 
 
@@ -45,6 +48,14 @@ class DefineSlider:
 		self.direction["Temp"] = True
 
 
+		self.textoffset["Hour"] = Vector.createfromvalues(70, 3)
+		self.textoffset["Min"] = Vector.createfromvalues(10, 3)
+		self.textoffset["Temp"] = Vector.createfromvalues(40, -1)
+		self.textalignment["Hour"] = "Right"
+		self.textalignment["Min"] = "Left"
+		self.textalignment["Temp"] = "Centre"
+
+
 
 	def calcslidermetrics(self, mode, displayedvalue, selectedvalue):
 
@@ -56,19 +67,30 @@ class DefineSlider:
 
 		if displayedvalue == selectedvalue:
 			verticalsize = self.selectedstepsize[mode]
+			text = str(displayedvalue)
+			if mode != "Temp":
+				text = ("00" + text)[-2:]
 		else:
 			verticalsize = self.stepsize[mode]
+			text = "NONE"
 
-		position = Vector.add(self.sliderposition[mode], Vector.createfromvalues(0, verticalstart))
-		size = Vector.createfromvalues(self.slidersize[mode].getx(), verticalsize)
+		position = Vector.add(self.sliderposition[mode], Vector.createfromvalues(1, verticalstart))
+		size = Vector.createfromvalues(self.slidersize[mode].getx() - 2, verticalsize)
 		indexlabel = mode + " " + str(displayedvalue)
-		if mode == "Hour":
-			background = str(displayedvalue + 3)
-		elif mode == "Min":
-			background = str(4 + int(displayedvalue / 5))
-		else:
+		#if mode == "Hour":
+		#	background = str(displayedvalue + 3)
+		#elif mode == "Min":
+		#	background = str(4 + int(displayedvalue / 5))
+		if mode == "Temp":
 			background = str(displayedvalue)
-		return position, size, indexlabel, background
+			textcolour = "Black"
+		else:
+			background = "Black"
+			textcolour = "White"
+
+		textpos = Vector.add(position, self.textoffset[mode])
+
+		return position, size, indexlabel, background, text, textpos, self.textalignment[mode], textcolour
 
 
 

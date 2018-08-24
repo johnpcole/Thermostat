@@ -53,7 +53,7 @@ class DefineButtons:
 
 		# Configure Instruction Areas
 		self.definebutton("Instruction Slider Hour",     20,  20, 80,  280, ["Instruction Config"])
-		self.definebutton("Instruction Slider Min",      120,  20, 80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Min",      110,  20, 80,  280, ["Instruction Config"])
 		self.definebutton("Instruction Slider Temp",     240,  20, 80,  280, ["Instruction Config"])
 
 

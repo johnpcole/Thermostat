@@ -25,15 +25,16 @@ class DefineSelector():
 		self.minimum["Hour"] = 0
 		self.maximum["Hour"] = 2300
 		self.minimum["Min"] = 0
-		self.maximum["Min"] = 5900
+		self.maximum["Min"] = 5500
 		self.minimum["Temp"] = 300
 		self.maximum["Temp"] = 2700
 
 		# Specifies the slider granularity / speed
 		self.speed = {}
 		self.speed["Hour"] = 10
-		self.speed["Min"] = 15
+		self.speed["Min"] = 30
 		self.speed["Temp"] = -10
+
 
 
 	# ==========================================================================================
