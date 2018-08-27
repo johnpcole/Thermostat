@@ -85,10 +85,11 @@ class DefineSelector():
 	# Updates the slider on the main menu
 	# -------------------------------------------------------------------
 
-	def resetcontrols(self):
+	def resetcontrols(self, resetmode):
 
 		# Set the slider value to be the current time
-		self.slidervalue = 12 * 60 * 60
+		if resetmode == False:
+			self.slidervalue = 12 * 60 * 60
 		self.buttoncount = 0
 
 

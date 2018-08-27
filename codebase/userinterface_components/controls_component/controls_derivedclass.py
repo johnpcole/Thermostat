@@ -35,7 +35,7 @@ class DefineController(Buttons.DefineButtons):
 		self.mouselocation = Vector.createblank()
 
 		# Specifies what the user has done this cycle
-		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
+		self.useraction = Enumeration.createenum(["None", "Override Temperature", "Delete Instruction", "Modify Instruction"], "None")
 
 		# Get buttons in the correct state
 		self.showamenu("Configure") #"Quit"
@@ -63,38 +63,55 @@ class DefineController(Buttons.DefineButtons):
 
 		if self.inputobject.getmouseaction() == True:
 
-			clickedbutton = self.getdetailedmouseaction()
+			registeredaction = self.getdetailedmouseaction()
 
 			mousechange = self.updatemouseposition()
 
-			self.temperatureselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+			self.temperatureselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
 
-			self.timelineselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+			self.timelineselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
 
-			self.instructionselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+			self.instructionselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
+
+			if registeredaction[:9] == "Release: ":
+				clickedbutton = registeredaction[9:]
+
+				if clickedbutton == "Start Menu":
+					self.showamenu("Main")
+					self.temperatureselector.resetcontrols(currentdesiredtemperature)
+
+				elif (clickedbutton == "Configure Schedule") or (clickedbutton == "Instruction Cancel"):
+					self.showamenu("Configure")
+					if clickedbutton == "Configure Schedule":
+						resetmode = False
+					else:
+						resetmode = True
+					self.timelineselector.resetcontrols(resetmode)
+
+				elif clickedbutton[:8] == "Override":
+					self.temperatureselector.updatebuttonselection(clickedbutton[9:])
+
+				elif clickedbutton == "Instruction Delete":
+					self.useraction.set("Delete Instruction")
+					self.showamenu("Configure")
+					self.timelineselector.resetcontrols(True)
+
+				elif clickedbutton == "Instruction Commit":
+					self.useraction.set("Modify Instruction")
+					self.showamenu("Configure")
+					self.timelineselector.resetcontrols(True)
+
+				elif (clickedbutton == "Temp Cancel") or (clickedbutton == "Exit"):
+					self.showamenu("Quit")
+
+				elif clickedbutton == "Temp Commit":
+					self.showamenu("Quit")
+					self.useraction.set("Override Temperature")
+
+				elif clickedbutton[:16] == "Schedule Select ":
+					self.selectaninstruction(clickedbutton[16:])
 
 			self.updateconfiguremenu(schedule)
-
-			if clickedbutton == "Release: Start Menu":
-				self.showamenu("Main")
-				self.temperatureselector.resetcontrols(currentdesiredtemperature)
-
-			elif clickedbutton == "Release: Configure Schedule":
-				self.showamenu("Configure")
-				self.timelineselector.resetcontrols()
-
-			elif clickedbutton[:17] == "Release: Override":
-				self.temperatureselector.updatebuttonselection(clickedbutton[18:])
-
-			elif (clickedbutton == "Release: Temp Cancel") or (clickedbutton == "Release: Exit"):
-				self.showamenu("Quit")
-
-			elif clickedbutton == "Release: Temp Commit":
-				self.showamenu("Quit")
-				self.useraction.set("Override Temperature")
-
-			elif clickedbutton[:25] == "Release: Schedule Select ":
-				self.selectaninstruction(clickedbutton[25:])
 
 		return self.useraction
 
@@ -179,7 +196,21 @@ class DefineController(Buttons.DefineButtons):
 	def selectaninstruction(self, clickedbuttonletter):
 
 		instructiontime, instructiontemp = self.timelineselector.getbuttonmeaningbylabel(clickedbuttonletter)
-		print clickedbuttonletter, instructiontime.gettext(), instructiontemp
+		self.showamenu("Instruction")
+		self.instructionselector.resetcontrols(instructiontemp, instructiontime)
+
+
+
+	# -------------------------------------------------------------------
+	# Performs action on selected instruction
+	# -------------------------------------------------------------------
+
+	def modifyaninstruction(self, modifymode):
+
+		updatedinstruction = self.instructionselector.getcurrentinstructiontime()
+
+
+		instructiontime, instructiontemp = self.timelineselector.getbuttonmeaningbylabel(clickedbuttonletter)
 		self.showamenu("Instruction")
 		self.instructionselector.resetcontrols(instructiontemp, instructiontime)
 

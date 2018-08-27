@@ -88,7 +88,7 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 
 					linkstart, linkend = self.calctempslidermisc()
-					outcome["Options Link"] = ("Line", linkstart, linkend, "White", 1, "")
+					outcome["   Options Link"] = ("Line", linkstart, linkend, "White", 1, "")
 
 				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
 				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
@@ -185,11 +185,11 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 			firststart = Vector.createfromvalues(topleft.getx() + 4, lookup.gety())
 			firstend = Vector.createfromvalues(bottomright.getx() - 4, lookup.gety())
-			areadefinitions[labelling + " Outline " + index + " 1"] = ("Line", firststart, firstend, linecolour, 1, "")
+			areadefinitions["Z " + labelling + " Outline " + index + " 1"] = ("Line", firststart, firstend, linecolour, 1, "")
 
 			secondstart = Vector.createfromvalues(lookup.getx(), topleft.gety() + 4)
 			secondend = Vector.createfromvalues(lookup.getx(), bottomright.gety() - 4)
-			areadefinitions[labelling + " Outline " + index + " 2"] = ("Line", secondstart, secondend, linecolour, 1, "")
+			areadefinitions["Z " + labelling + " Outline " + index + " 2"] = ("Line", secondstart, secondend, linecolour, 1, "")
 
 		# Rounded Corners
 		for index in ("topleft", "topright", "bottomleft", "bottomright"):
@@ -197,7 +197,7 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 			xbase, xsign, ybase, ysign = self.calcroundedcorneranchors(topleft, bottomright, index)
 
 			fourthstartandend = Vector.createfromvalues(xbase + xsign, ybase + ysign)
-			areadefinitions[labelling + " Outline " + index + " corner"] = ("Line", fourthstartandend, fourthstartandend, "Black", 1, "")
+			areadefinitions["Z " + labelling + " Outline " + index + " corner"] = ("Line", fourthstartandend, fourthstartandend, "Black", 1, "")
 
 			for mode in ("vertical", "horizontal"):
 
@@ -205,15 +205,15 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 				thirdstart = Vector.createfromvalues(xbase + (xsign * startxoffset), ybase + (ysign * startyoffset))
 				thirdend = Vector.createfromvalues(xbase + (xsign * endxoffset), ybase + (ysign * endyoffset))
-				areadefinitions[labelling + " Outline " + index + " " + mode] = ("Line", thirdstart, thirdend, linecolour, 1, "")
+				areadefinitions["Z " + labelling + " Outline " + index + " " + mode] = ("Line", thirdstart, thirdend, linecolour, 1, "")
 
 		if imagename != "Hide":
-			areadefinitions[labelling + " Logo"] = ("Image", imagename, position)
+			areadefinitions["Z " + labelling + " Logo"] = ("Image", imagename, position)
 
 		if backgroundcolour != "None":
 			fillposition = Vector.createfromvalues(position.getx() + 1, position.gety() + 1)
 			fillsize = Vector.createfromvalues(size.getx() - 2, size.gety() - 2)
-			areadefinitions[labelling + " Fill"] = ("Box", fillposition, fillsize, backgroundcolour, "", 0)
+			areadefinitions["  " + labelling + " Fill"] = ("Box", fillposition, fillsize, backgroundcolour, "", 0)
 
 		outcome = existingdefinitionlist.copy()
 		outcome.update(areadefinitions)

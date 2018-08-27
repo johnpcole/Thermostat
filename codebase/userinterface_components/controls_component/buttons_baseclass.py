@@ -52,9 +52,12 @@ class DefineButtons:
 		self.definebutton("Exit",               333, 246,  50,  50, ["Schedule Config", "Schedule Group"])
 
 		# Configure Instruction Areas
-		self.definebutton("Instruction Slider Hour",     20,  20, 80,  280, ["Instruction Config"])
-		self.definebutton("Instruction Slider Min",      110,  20, 80,  280, ["Instruction Config"])
-		self.definebutton("Instruction Slider Temp",     240,  20, 80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Hour",      20,  20,  80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Min",      110,  20,  80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Slider Temp",     240,  20,  80,  280, ["Instruction Config"])
+		self.definebutton("Instruction Delete",          410,  20,  50,   50, ["Instruction Config"])
+		self.definebutton("Instruction Cancel",          410, 180,  50,   50, ["Instruction Config"])
+		self.definebutton("Instruction Commit",          410, 250,  50,   50, ["Instruction Config"])
 
 
 

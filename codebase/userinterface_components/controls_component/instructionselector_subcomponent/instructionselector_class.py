@@ -1,4 +1,6 @@
 from ....common_components.enumeration_datatype import enumeration_module as Enumeration
+from ....common_components.datetime_datatypes import clock_module as Clock
+
 
 
 class DefineSelector():
@@ -34,6 +36,9 @@ class DefineSelector():
 		self.speed["Hour"] = 10
 		self.speed["Min"] = 30
 		self.speed["Temp"] = -10
+
+		# The currently selected instruction time
+		self.currentinstructiontime = Clock.createasinteger(0)
 
 
 
@@ -76,6 +81,7 @@ class DefineSelector():
 		self.slidervalue["Temp"] = instructiontemperature * 100
 		self.slidervalue["Hour"] = instructionclock.gethour() * 100
 		self.slidervalue["Min"] = instructionclock.getminute() * 100
+		self.currentinstructiontime = instructionclock
 
 
 
@@ -91,3 +97,13 @@ class DefineSelector():
 			multiplier = 1
 
 		return multiplier * int(self.slidervalue[sliderselector] / (100 * multiplier))
+
+
+
+	# -------------------------------------------------------------------
+	# Returns the selected instruction time
+	# -------------------------------------------------------------------
+
+	def getcurrentinstructiontime(self):
+
+		return self.currentinstructiontime

@@ -45,23 +45,25 @@ def calcbuttonmetrics(control, buttonname, selectorvalue):
 
 	buttonlocation = control.getbuttonposition(buttonname)
 	buttonsize = control.getbuttonsize(buttonname)
-	buttoncolour = "Grey"
+	buttoncolour = "Button"
+	imagename = "Hide"
 
-	if buttonname[:9] == "Override ":
+	if buttonname[-6:] == "Cancel":
+		imagename = "cancel"
+		buttoncolour = "Cancel"
+	elif buttonname[-6:] == "Commit":
+		imagename = "commit"
+		buttoncolour = "Commit"
+	elif buttonname[:9] == "Override ":
 		timing = buttonname[9:]
 		imagename = "timer_" + timing
 		if selectorvalue == timing:
 			buttoncolour = "Selected"
-	elif (buttonname[-7:] == " Slider") or (buttonname[:19] == "Instruction Slider "):
-		imagename = "Hide"
-		buttoncolour = "None"
-	elif buttonname[:5] == "Temp ":
-		imagename = "c" + buttonname[6:]
+	elif buttonname == "Configure Schedule":
+		imagename = "configure"
 	elif buttonname == "Exit":
 		imagename = "return"
-	elif buttonname[:16] == "Schedule Select ":
-		imagename = "Hide"
 	else:
-		imagename = "configure"
+		buttoncolour = "Black"
 
 	return buttonlocation, buttonsize, imagename, buttoncolour
