@@ -38,7 +38,7 @@ class DefineIPAddress:
 		# Store a dummy address and print an error
 		else:
 			self.partaddress = [-999, -999, -999, -999]
-			print "Invalid IP Address Format - ", fulladdressstring
+			print("Invalid IP Address Format - ", fulladdressstring)
 
 
 

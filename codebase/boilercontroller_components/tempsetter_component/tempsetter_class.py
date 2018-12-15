@@ -23,17 +23,17 @@ class DefineSetter:
 	def updatedesiredtemperature(self, scheduledtemperature, currenttime):
 
 		if scheduledtemperature != self.currentscheduledtemperature:
-			print "Change in scheduled temperature detected at " + currenttime.gettext()
+			print("Change in scheduled temperature detected at " + currenttime.gettext())
 
 		if self.overridemode.get("Timed"):
 			if Clock.isequal(self.overrideexpire, currenttime) == True:
 				self.overridemode.set("Off")
-				print "Override ended at " + currenttime.gettext()
+				print("Override ended at " + currenttime.gettext())
 
 		elif self.overridemode.get("Next"):
 			if scheduledtemperature != self.currentscheduledtemperature:
 				self.overridemode.set("Off")
-				print "Override ended at " + currenttime.gettext()
+				print("Override ended at " + currenttime.gettext())
 
 		if self.overridemode.get("Off") == True:
 			self.desiredtemperature = scheduledtemperature
@@ -55,11 +55,11 @@ class DefineSetter:
 
 		if (expire == "Lock") or (expire == "Next"):
 			self.overridemode.set(expire)
-			print "Override set for " + self.overridemode.displaycurrent()
+			print("Override set for " + self.overridemode.displaycurrent())
 		else:
 			self.overridemode.set("Timed")
 			self.overrideexpire = Clock.timeadd(currenttime, Clock.createastime(0, int(expire), 0))
-			print "Override set for " + self.overrideexpire.gettext()
+			print("Override set for " + self.overrideexpire.gettext())
 
 		return self.desiredtemperature
 

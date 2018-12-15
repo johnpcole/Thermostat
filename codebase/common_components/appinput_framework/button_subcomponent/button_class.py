@@ -52,7 +52,7 @@ class DefineButton:
 		if (newstate == "Hidden") or (newstate == "Enabled") or (newstate == "Disabled"):
 			self.state = newstate
 		else:
-			print "Invalid button state - ", newstate
+			print("Invalid button state - ", newstate)
 
 
 	# -------------------------------------------------------------------

@@ -1,4 +1,4 @@
-from switchtimings_subcomponent import switchtimings_module as SwitchTiming
+from .switchtimings_subcomponent import switchtimings_module as SwitchTiming
 from ...common_components.datetime_datatypes import duration_module as Duration
 
 
@@ -78,7 +78,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = True
 		self.updateboilerclocks()
-		print "Boiler switched on at", self.lastondatetime.getlastswitcheddatetime().getiso()
+		print("Boiler switched on at", self.lastondatetime.getlastswitcheddatetime().getiso())
 		#CODE TO THROW RELAY
 
 
@@ -91,7 +91,7 @@ class DefineBoilerSwitch:
 
 		self.switchstatus = False
 		self.updateboilerclocks()
-		print "Boiler switched off at", self.lastoffdatetime.getlastswitcheddatetime().getiso()
+		print("Boiler switched off at", self.lastoffdatetime.getlastswitcheddatetime().getiso())
 		#CODE TO THROW RELAY
 
 

@@ -29,7 +29,7 @@ class DefineTimekeeper:
 		#self.currenttime = Clock.createastime(20, 30, 0)
 
 		if Clock.isequal(self.currenttime, self.previoustime) == False:
-			#print "Cycles last second =", self.cyclemeasure
+			#print("Cycles last second =", self.cyclemeasure)
 			self.cyclemeasure = 0
 			self.previoustime = Clock.createasclock(self.currenttime)
 

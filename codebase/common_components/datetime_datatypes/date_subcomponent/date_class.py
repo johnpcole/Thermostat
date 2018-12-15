@@ -95,7 +95,7 @@ class DefineDate:
 		
 		# Print an error
 		else:
-			print "Cannot Adjust (", stepsize, ")"
+			print("Cannot Adjust (", stepsize, ")")
 
 		
 		

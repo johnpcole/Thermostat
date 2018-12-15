@@ -1,7 +1,7 @@
 from ...common_components.vector_datatype import vector_module as Vector
 from .. import display_sharedfunctions as DisplayFunction
 from . import boardmetrics_baseclass as Metrics
-from flame_subcomponent import flame_module as Flame
+from . flame_subcomponent import flame_module as Flame
 
 
 

@@ -1,7 +1,7 @@
 from . import datetime_class as DateTimeClass
 from . import duration_module as Duration
-from date_subcomponent import date_module as Date
-from time_subcomponent import time_module as Time
+from .date_subcomponent import date_module as Date
+from .time_subcomponent import time_module as Time
 
 
 # ---------------------------------------------------------

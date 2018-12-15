@@ -1,4 +1,4 @@
-import pushbuttons_class as PushButtonsClass
+from . import pushbuttons_class as PushButtonsClass
 
 def createpushbuttons():
 	return PushButtonsClass.DefinePushButtons()

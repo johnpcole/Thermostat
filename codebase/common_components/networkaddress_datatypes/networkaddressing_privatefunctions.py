@@ -106,7 +106,7 @@ def createaddressstring(partaddresslist, addresslength, delimitercharacter, addr
 			# Error
 			else:
 				convertedpartaddress = "?????"
-				print "Invalid Address Base - ", addressbase
+				print("Invalid Address Base - ", addressbase)
 		
 		# Otherwise add a question mark
 		else:

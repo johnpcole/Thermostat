@@ -71,7 +71,7 @@ class DefineColourLibrary:
 			colouronelabel, colourtwolabel, fractionvalue = ColourFunction.getcolourmixvalues(colourlabel[4:])
 			#if colourtwolabel == "Transparent":
 			#	outcome = ColourFunction.gettransparentquadlet(self.get(colouronelabel), fractionvalue)
-			#	print "Transparent: ", outcome
+			#	print("Transparent: ", outcome)
 			#else:
 			outcome = ColourFunction.getmixturetriplet(self.get(colouronelabel), self.get(colourtwolabel),
 																										fractionvalue)

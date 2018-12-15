@@ -45,7 +45,7 @@ def getunitmultiplier(unitlabel):
 		multiplier = 604800
 	else:
 		multiplier = 0
-		print "Invalid unit - ", unitlabel
+		print("Invalid unit - ", unitlabel)
 
 	return multiplier
 

@@ -1,4 +1,4 @@
-from scheduleitem_subcomponent import scheduleitem_module as ScheduleItem
+from .scheduleitem_subcomponent import scheduleitem_module as ScheduleItem
 from ....common_components.datetime_datatypes import clock_module as Clock
 
 class DefineScheduleBuilder:

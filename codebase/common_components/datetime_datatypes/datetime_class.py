@@ -1,5 +1,5 @@
-from date_subcomponent import date_module as Date
-from time_subcomponent import time_module as Time
+from .date_subcomponent import date_module as Date
+from .time_subcomponent import time_module as Time
 from . import datetime_privatefunctions as DateTimeFunction
 
 # ===========================================================================================================

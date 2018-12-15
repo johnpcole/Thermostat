@@ -27,11 +27,11 @@ def separatedatetimeisocomponents(datetimestring):
 def getcurrentdatetime():
 
 	currentdatetime = str(PythonDateTime.datetime.now())
-	#print "Current DateTime: ", currentdatetime
+	#print("Current DateTime: ", currentdatetime)
 	currentdate = currentdatetime[:4] + currentdatetime[5:7] + currentdatetime[8:10]
-	#print "Current Date: ", currentdate
+	#print("Current Date: ", currentdate)
 	currenttime = currentdatetime[11:13] + currentdatetime[14:16] + currentdatetime[17:19]
-	#print "Current Time: ", currenttime
+	#print("Current Time: ", currenttime)
 
 	return currentdate, currenttime
 

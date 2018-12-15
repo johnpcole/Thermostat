@@ -1,6 +1,6 @@
-from urllib2 import urlopen as GetWebPage
-from urllib2 import Request as GenerateWebRequest
-from urllib2 import URLError as WebError
+from urllib.request import urlopen as GetWebPage
+from urllib.request import Request as GenerateWebRequest
+from urllib.request import URLError as WebError
 from ....common_components.datetime_datatypes import datetime_module as DateTime
 from ....common_components.datetime_datatypes import duration_module as Duration
 from . import webscraper_privatefunctions as ScraperFunction
@@ -74,7 +74,7 @@ class DefineScraper:
 							oneendtime = endtime
 							oneendvalid = endvalidity
 						else:
-							print "Too many data rows found on website"
+							print("Too many data rows found on website")
 							x = 1/0
 
 		return linesfound, onestarttime, onestartvalid, oneendtime, oneendvalid, twostarttime, twostartvalid, twoendtime, twoendvalid
@@ -85,7 +85,7 @@ class DefineScraper:
 
 		tries = 0
 
-		print "Downloading data for:", specifiedyear
+		print("Downloading data for:", specifiedyear)
 
 		while tries < self.webcalltries:
 			try:
@@ -101,16 +101,16 @@ class DefineScraper:
 					tries = 99999
 			except WebError as errorobject:
 				tries = tries + 1
-				print "Error accessing website: ", errorobject.reason
+				print("Error accessing website: ", errorobject.reason)
 
 		if tries == 99999:
-			#print "Access to website data Succeeded"
+			#print("Access to website data Succeeded")
 			for datamode in ("Day", "Nau", "Civ", "Ast"):
 				self.lastresult[datamode] = webresponse[datamode].split("\n")
 			self.lastsuccessfulwebcall = DateTime.createfromobject(currentdateobject)
 			self.lastsuccessfulyear = specifiedyear
 		else:
-			print "Access to website data Failed"
+			print("Access to website data Failed")
 
 
 
@@ -141,7 +141,7 @@ class DefineScraper:
 		url = url + "&tz=0"
 		url = url + "&tz_sign=1"
 		if mode == "Ast":
-			print url
+			print(url)
 		return url
 
 
