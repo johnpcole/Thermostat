@@ -30,6 +30,52 @@ def createfromsextuplet(day, month, year, hour, minute, second):
 
 
 # ---------------------------------------------------------
+# Creates a date using a
+# Day-Month-Year triplet of integers
+# ---------------------------------------------------------
+
+def createdatefromtriplet(day, month, year):
+
+	newdatetime = DateTimeClass.DefineDateTime()
+	newdatetime.setfromsextuplet(day, month, year, 0, 0, 0)
+	return newdatetime
+
+
+
+# ---------------------------------------------------------
+# Creates a time using a
+# Hour-Minute-Second triplet of integers
+# ---------------------------------------------------------
+
+def createtimefromtriple(hour, minute, second):
+
+	newdatetime = DateTimeClass.DefineDateTime()
+	newdatetime.setfromsextuplet(1, 1, 2100, hour, minute, second)
+	return newdatetime
+
+
+
+# ---------------------------------------------------------
+# Creates a date using a YYYYMMDD string
+# ---------------------------------------------------------
+
+def createdatefromiso(isostring):
+
+	return createfromiso(isostring + "000000")
+
+
+
+# ---------------------------------------------------------
+# Creates a date using a HHMMSS string
+# ---------------------------------------------------------
+
+def createtimefromiso(isostring):
+
+	return createfromiso("21000101" + isostring)
+
+
+
+# ---------------------------------------------------------
 # Creates a datetime using a YYYYMMDDHHMMSS string
 # ---------------------------------------------------------
 
@@ -37,6 +83,32 @@ def createfromiso(isostring):
 
 	newdatetime = DateTimeClass.DefineDateTime()
 	newdatetime.setfromiso(isostring)
+	return newdatetime
+
+
+
+# ---------------------------------------------------------
+# Creates a date using a daysintomillennium integer
+# ---------------------------------------------------------
+
+def createdatefromvalue(daysintomillenniuminteger):
+
+	newdatetime = DateTimeClass.DefineDateTime()
+	newdatetime.setdatefromvalue(daysintomillenniuminteger)
+	newdatetime.settimefromiso("000000")
+	return newdatetime
+
+
+
+# ---------------------------------------------------------
+# Creates a time using a secondsintoday integer
+# ---------------------------------------------------------
+
+def createtimefromvalue(secondsintodayinteger):
+
+	newdatetime = DateTimeClass.DefineDateTime()
+	newdatetime.settimefromvalue(secondsintodayinteger)
+	newdatetime.setdatefromiso("21000101")
 	return newdatetime
 
 

@@ -23,7 +23,7 @@ def runapplication():
 
 	timekeeper = TimeKeeper.createtimekeeper()
 
-	connecttowebsite = True
+	connecttowebsite = False
 	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51.497772
 
 
@@ -41,6 +41,11 @@ def runapplication():
 		# If a temperature override was set, apply this
 		if useraction.get("Override Temperature") == True:
 			boilercontroller.setoverridetemperature(userinterface, timekeeper)
+
+		# If the scehdule was updated, apply this
+		if (useraction.get("Modify Instruction") == True) or (useraction.get("Delete Instruction") == True):
+			print useraction.displaycurrent()
+			#boilercontroller.modifyschedule(userinterface)
 
 		# Update the boiler controller with latest current & desired temperatures,
 		# and switch on/off the boilder accordingly

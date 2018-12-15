@@ -3,6 +3,8 @@ from ...common_components.enumeration_datatype import enumeration_module as Enum
 from . import buttons_baseclass as Buttons
 from tempselector_subcomponent import tempselector_module as TempSelector
 from scheduleselector_subcomponent import scheduleselector_module as ScheduleSelector
+from instructionselector_subcomponent import instructionselector_module as InstructionSelector
+
 
 
 class DefineController(Buttons.DefineButtons):
@@ -26,14 +28,17 @@ class DefineController(Buttons.DefineButtons):
 		# Timeline Selector (Slider)
 		self.timelineselector = ScheduleSelector.createselector()
 
+		# Instruction Selector (Slider)
+		self.instructionselector = InstructionSelector.createselector()
+
 		# Mouse location
 		self.mouselocation = Vector.createblank()
 
 		# Specifies what the user has done this cycle
-		self.useraction = Enumeration.createenum(["None", "Override Temperature"], "None")
+		self.useraction = Enumeration.createenum(["None", "Override Temperature", "Delete Instruction", "Modify Instruction"], "None")
 
 		# Get buttons in the correct state
-		self.quitmenus() #showconfiguremenu() #quitmainmenu()
+		self.showamenu("Configure") #"Quit"
 
 
 	# ==========================================================================================
@@ -58,32 +63,58 @@ class DefineController(Buttons.DefineButtons):
 
 		if self.inputobject.getmouseaction() == True:
 
-			clickedbutton = self.getdetailedmouseaction()
+			registeredaction = self.getdetailedmouseaction()
 
 			mousechange = self.updatemouseposition()
 
-			self.temperatureselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+			self.temperatureselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
 
-			self.timelineselector.updateslider(clickedbutton, mousechange, self.inputobject.getcurrentmousearea())
+			self.timelineselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
+
+			self.instructionselector.updateslider(registeredaction, mousechange, self.inputobject.getcurrentmousearea())
+
+			if registeredaction[:9] == "Release: ":
+				clickedbutton = registeredaction[9:]
+
+				if clickedbutton == "Start Menu":
+					self.showamenu("Main")
+					self.temperatureselector.resetcontrols(currentdesiredtemperature)
+
+				elif (clickedbutton == "Configure Schedule") or (clickedbutton == "Instruction Cancel"):
+					self.showamenu("Configure")
+					if clickedbutton == "Configure Schedule":
+						resetmode = False
+					else:
+						resetmode = True
+					self.timelineselector.resetcontrols(resetmode)
+
+				elif clickedbutton[:8] == "Override":
+					self.temperatureselector.updatebuttonselection(clickedbutton[9:])
+
+				elif clickedbutton == "Instruction Delete":
+					self.useraction.set("Delete Instruction")
+					self.showamenu("Configure")
+					self.timelineselector.resetcontrols(True)
+
+				elif clickedbutton == "Instruction Commit":
+					self.useraction.set("Modify Instruction")
+					self.showamenu("Configure")
+					self.timelineselector.resetcontrols(True)
+
+				elif (clickedbutton == "Temp Cancel") or (clickedbutton == "Exit"):
+					self.showamenu("Quit")
+
+				elif clickedbutton == "Temp Commit":
+					self.showamenu("Quit")
+					self.useraction.set("Override Temperature")
+
+				elif clickedbutton[:16] == "Schedule Select ":
+					self.selectaninstruction(clickedbutton[16:])
 
 			self.updateconfiguremenu(schedule)
 
-			if clickedbutton == "Release: Start Menu":
-				self.showmainmenu(currentdesiredtemperature)
-
-			if clickedbutton == "Release: Configure Schedule":
-				self.showconfiguremenu()
-
-			elif clickedbutton[:17] == "Release: Override":
-				self.temperatureselector.updatebuttonselection(clickedbutton[18:])
-
-			elif (clickedbutton == "Release: Temp Cancel") or (clickedbutton == "Release: Exit"):
-				self.quitmenus()
-
-			elif clickedbutton == "Release: Temp Commit":
-				self.setdesiredtemp()
-
 		return self.useraction
+
 
 
 	# -------------------------------------------------------------------
@@ -106,59 +137,34 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
-	# Shows the main menu
+	# Shows the desired menu
 	# -------------------------------------------------------------------
 
-	def showmainmenu(self, currentdesiredtemperature):
+	def showamenu(self, menuselector):
 
-		# Set Start Menu to Hidden
-		self.updatebutton("Start Menu", "Hidden")
+		# Set Start Menu
+		if menuselector == "Quit":
+			self.updatebutton("Start Menu", "Enabled")
+		else:
+			self.updatebutton("Start Menu", "Hidden")
 
-		# Set Configuration Menu to Hidden
-		self.updatebutton("Schedule Config", "Hidden")
+		# Set Configuration Menu
+		if menuselector == "Configure":
+			self.updatebutton("Schedule Config", "Enabled")
+		else:
+			self.updatebutton("Schedule Group", "Hidden")
 
-		# Set main menu buttons to displayed and enabled
-		self.updatebutton("Set Temp", "Enabled")
+		# Set main menu buttons
+		if menuselector == "Main":
+			self.updatebutton("Set Temp", "Enabled")
+		else:
+			self.updatebutton("Set Temp", "Hidden")
 
-		# Set the slider value to be the current boiler temperature
-		self.temperatureselector.resetcontrols(currentdesiredtemperature)
-
-
-
-	# -------------------------------------------------------------------
-	# Quits the main menu
-	# -------------------------------------------------------------------
-
-	def quitmenus(self):
-
-		# Set Configuration Menu to Hidden
-		self.updatebutton("Schedule Group", "Hidden")
-
-		# Set main menu buttons to hidden
-		self.updatebutton("Set Temp", "Hidden")
-
-		# Set Start Menu to Enabled
-		self.updatebutton("Start Menu", "Enabled")
-
-
-
-	# -------------------------------------------------------------------
-	# Shows the configuration menu
-	# -------------------------------------------------------------------
-
-	def showconfiguremenu(self):
-
-		# Set Start Menu to Hidden
-		self.updatebutton("Start Menu", "Hidden")
-
-		# Set main menu buttons to Hidden
-		self.updatebutton("Set Temp", "Hidden")
-
-		# Set Configuration Menu to displayed and enabled
-		self.updatebutton("Schedule Config", "Enabled")
-
-		# Set the slider value to be current hour
-		self.timelineselector.resetcontrols()
+		# Set instruction setting buttons
+		if menuselector == "Instruction":
+			self.updatebutton("Instruction Config", "Enabled")
+		else:
+			self.updatebutton("Instruction Config", "Hidden")
 
 
 
@@ -168,9 +174,10 @@ class DefineController(Buttons.DefineButtons):
 
 	def updateconfiguremenu(self, schedule):
 
-		self.updatebutton("Schedule Reset", "Hidden")
-
 		if self.getbuttonstate("Timeline Slider") == "Enabled":
+
+			self.updatebutton("Schedule Reset", "Hidden")
+
 			buttoncount = self.timelineselector.updatebuttonmeanings(schedule)
 
 			if buttoncount == 1:
@@ -183,14 +190,29 @@ class DefineController(Buttons.DefineButtons):
 
 
 	# -------------------------------------------------------------------
-	# Sets the desired temperature
+	# Sets up the instruction menu
 	# -------------------------------------------------------------------
 
-	def setdesiredtemp(self):
+	def selectaninstruction(self, clickedbuttonletter):
 
-		self.quitmenus()
+		instructiontime, instructiontemp = self.timelineselector.getbuttonmeaningbylabel(clickedbuttonletter)
+		self.showamenu("Instruction")
+		self.instructionselector.resetcontrols(instructiontemp, instructiontime)
 
-		self.useraction.set("Override Temperature")
+
+
+	# -------------------------------------------------------------------
+	# Performs action on selected instruction
+	# -------------------------------------------------------------------
+
+	def modifyaninstruction(self, modifymode):
+
+		updatedinstruction = self.instructionselector.getcurrentinstructiontime()
+
+
+		instructiontime, instructiontemp = self.timelineselector.getbuttonmeaningbylabel(clickedbuttonletter)
+		self.showamenu("Instruction")
+		self.instructionselector.resetcontrols(instructiontemp, instructiontime)
 
 
 
@@ -217,6 +239,7 @@ class DefineController(Buttons.DefineButtons):
 		return self.inputobject.getquitstate()
 
 
+
 	# -------------------------------------------------------------------
 	# Returns the current UNCOMMITTED desired temperature on the slider
 	# -------------------------------------------------------------------
@@ -224,6 +247,7 @@ class DefineController(Buttons.DefineButtons):
 	def gettempselectordata(self):
 
 		return self.temperatureselector
+
 
 
 	# -------------------------------------------------------------------
@@ -235,6 +259,17 @@ class DefineController(Buttons.DefineButtons):
 		return self.timelineselector
 
 
+
+	# -------------------------------------------------------------------
+	# Returns the current UNCOMMITTED desired schedule time on the slider
+	# -------------------------------------------------------------------
+
+	def getinstructionselectordata(self):
+
+		return self.instructionselector
+
+
+
 	# -------------------------------------------------------------------
 	# Returns the latest user action
 	# -------------------------------------------------------------------
@@ -242,3 +277,4 @@ class DefineController(Buttons.DefineButtons):
 	def getuseraction(self):
 
 		return self.useraction
+

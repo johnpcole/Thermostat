@@ -1,4 +1,4 @@
-from ...common_components.clock_datatype import clock_module as Clock
+from ...common_components.datetime_datatypes import clock_module as Clock
 
 
 class DefineThermometer:

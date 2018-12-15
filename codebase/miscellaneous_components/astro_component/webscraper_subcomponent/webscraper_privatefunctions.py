@@ -1,4 +1,4 @@
-from ....common_components.clock_datatype import clock_module as Clock
+from ....common_components.datetime_datatypes import clock_module as Clock
 
 
 def preparelocation(decimallocation):
@@ -39,34 +39,43 @@ def sanitisetime(textstring, defaultmode):
 
 
 
-def generatedummydata(day, datamode):
+def generatedummydata(datamode):
 
-	if day == 16:
-		dummyoffset = 5
-	elif day == 17:
-		dummyoffset = 3
-	else:
-		dummyoffset = 0
+	outcome = "Dummy Data"
+
 	if datamode == "Day":
-		dummytime = 0 + dummyoffset
+		hourstart = 10
+		hourend = 13
 	elif datamode == "Civ":
-		dummytime = 6 + dummyoffset
+		hourstart = 7
+		hourend = 16
 	elif datamode == "Nau":
-		dummytime = 12 + dummyoffset
-	elif datamode == "Ast":
-		dummytime = 18 + dummyoffset
-		#dummytime = -1
+		hourstart = 4
+		hourend = 19
 	else:
-		datamode = 1 / 0
-	if dummytime < 10:
-		dummytext = "0" + str(dummytime)
-	else:
-		dummytext = str(dummytime)
+		hourstart = 1
+		hourend = 22
 
-	starttime, startvalidity = sanitisetime(dummytext + "00", "Start")
-	endtime, endvalidity = sanitisetime(dummytext + "45", "End")
+	for day in range(1, 32):
 
-	return starttime, startvalidity, endtime, endvalidity
+		starttime = Clock.createastime(hourstart, 30, 0)
+		endtime = Clock.createastime(hourend, 30, 0)
+
+		starttimestring = starttime.getsecondlesstext()
+		endtimestring = endtime.getsecondlesstext()
+
+		timestring = "  " + starttimestring[:2] + starttimestring[-2:] + " " + endtimestring[:2] + endtimestring[-2:]
+
+		daytext = "00" + str(day)
+		outcome = outcome + "\n" + daytext[-2:]
+
+		for month in range(1, 13):
+			outcome = outcome + timestring
+
+	outcome = outcome + "\nEnd of dummy data"
+
+	return outcome
+
 
 
 def getindexes(lookupday, lookupmonth):

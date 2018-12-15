@@ -1,6 +1,4 @@
 from ...common_components.vector_datatype import vector_module as Vector
-#from ....common_components.clock_datatype import clock_module as Clock
-#from ....common_components.transition_datatype import transition_module as Transition
 from .. import display_sharedfunctions as DisplayFunction
 from . import buttonmetrics_baseclass as Metrics
 
@@ -11,13 +9,16 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 	def __init__(self, controls):
 
 		# Get the metrics using baseclass method
-		Metrics.DefineButtonMetrics.__init__(self)
+		Metrics.DefineButtonMetrics.__init__(self, controls)
 
 		# The list of start menu buttons
 		self.startmenubuttons = controls.getbuttoncollection("Set Temp")
 
 		# The list of configure schedule buttons
 		self.configuremenubuttons = controls.getbuttoncollection("Schedule Group")
+
+		# The list of configure instruction buttons
+		self.instructionmenubuttons = controls.getbuttoncollection("Instruction Config")
 
 		# The current buttons display definition
 		self.artefacts = {}
@@ -42,6 +43,10 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 		# Draw the configuration menu buttons
 		newitems = self.drawconfiguremenu(usercontrols, boilercontroller.getschedule())
 		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons C"))
+
+		# Draw the instruction menu buttons
+		newitems = self.drawinstructionmenu(usercontrols)
+		self.artefacts.update(DisplayFunction.prefixdictionarykeys(newitems, "Buttons D"))
 
 		return self.artefacts
 
@@ -81,19 +86,12 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 							outcome["Slider Text " + temp] = ("Text", temp, boxcentre, "Centre", "Black", boxfont)
 							#outcome["Slider Highlight " + temp] = ("Box", boxposition, boxsize, "", "Black", 1)
 
-						if temperature == 3:
-							outcome["Slider Outline"] = ("Image", "slider_outline", Vector.add(boxposition, self.slideroutlineoffset))
 
-					outcome["Options Link"] = ("Line", Vector.createfromvalues(30, 175), Vector.createfromvalues(450, 175), "White", 1, "")
+					linkstart, linkend = self.calctempslidermisc()
+					outcome["   Options Link"] = ("Line", linkstart, linkend, "White", 1, "")
 
-
-				else:
-
-					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour, outline = self.calcbuttonmetrics(control, buttonname, selectorvalue)
-
-					outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)
-					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, buttoncolour, "", 0)
-					outcome[buttonname + " Outline"] = ("Image", outline, buttonlocation)
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, selectorvalue)
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
 
 		return outcome
 
@@ -111,35 +109,113 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 				if buttonname == "Timeline Slider":
 
-					outcome["Slider Outline"] = ("Image", "slider_outline", self.timesliderposition)
-
 					for hourindex in range(0, 25):
-
-						rangemin, rangemax = self.calculatemarkrange(hourindex, slidervalue)
+						rangemin, rangemax = self.calctimeslidermarkrange(hourindex, slidervalue)
 
 						for subindex in range(rangemin, rangemax):
 
 							markertop, markerbottom, labelposition, hourlabel, indexer, fontsize, colour = self.calctimeslidertimemetrics(hourindex, subindex, slidervalue)
-
 							outcome["Slider Time Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
 							if fontsize != "Hide":
 								outcome["Slider Time Label " + indexer] = ("Text", hourlabel, labelposition, "Left", colour, fontsize)
 
 					for instructiontime in schedule.getscheduledtimes():
-
 						markertop, markerbottom, labelposition, templabel, indexer, fontsize, colour = self.calctimeslidertempmetrics(instructiontime.getsecondlessvalue(), schedule.getscheduledinstruction(instructiontime), slidervalue)
-
 						outcome["Slider Temp Marker " + indexer] = ("Line", markertop, markerbottom, colour, 1, "")
 
-				else:
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
 
-					buttonlocation, buttonsize, buttonoverlaylocation, buttonoverlaysize, imagename, buttoncolour, outline = self.calcbuttonmetrics(control, buttonname, "")
+				if buttonname[:16] == "Schedule Select ":
+					timetext, temptext, timeposition, tempposition = self.calcschedulebuttonmetrics(buttonlocation, buttonsize, selectordata, buttonname)
+					outcome[buttonname + " Text 1"] = ("Text", timetext, timeposition, "Centre", "White", "Button Temps")
+					outcome[buttonname + " Text 2"] = ("Text", temptext, tempposition, "Centre", "White", "Button Temps")
 
-					if imagename != "Hide":
-						outcome[buttonname + " Logo"] = ("Image", imagename, buttonlocation)
-					outcome[buttonname + " Fill"] = ("Box", buttonoverlaylocation, buttonoverlaysize, buttoncolour, "", 0)
-					outcome[buttonname + " Outline"] = ("Image", outline, buttonlocation)
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", "Hide", buttonname)
 
 		return outcome
 
 
+
+	def drawinstructionmenu(self, control):
+
+		outcome = {}
+
+		selectordata = control.getinstructionselectordata()
+
+		for buttonname in self.instructionmenubuttons:
+			if control.getbuttonstate(buttonname) != "Hidden":
+
+				if buttonname[:19] == "Instruction Slider ":
+					mode = buttonname[19:]
+					slidervalue = selectordata.getslidervalue(mode)
+
+					rangestart, rangeend, rangestep = self.calcinstructionsliderrange(mode)
+
+					#print mode, slidervalue, rangestart, rangeend, rangestep
+
+					for index in range(rangestart, rangeend + 1, rangestep):
+
+						position, size, indexlabel, background, text, textpos, textalign, textcolour = self.calcinstructionslidermetrics(mode, index, slidervalue)
+						outcome["Instruction Slider " + indexlabel] = ("Box", position, size, background, "", 0)
+						if text != "NONE":
+							outcome["Instruction Slider Text " + indexlabel] = ("Text", text, textpos, textalign, textcolour, "Button Temps")
+
+				buttonlocation, buttonsize, imagename, buttoncolour = self.calcbuttonmetrics(control, buttonname, "")
+				outcome = self.drawgenericbuttonarea(outcome, buttonlocation, buttonsize, buttoncolour, "White", imagename, buttonname)
+
+		return outcome
+
+
+
+	def drawgenericbuttonarea(self, existingdefinitionlist, position, size, backgroundcolour, linecolour, imagename, labelling):
+
+		areadefinitions = {}
+
+		topleft = Vector.createfromvector(position)
+		bottomright = Vector.subtract(Vector.add(position, size), Vector.createfromvalues(1, 1))
+
+		# Main Lines
+
+		for index in ("First_and_Second", "Third_and_Fourth"):
+
+			if index == "First_and_Second":
+				lookup = Vector.createfromvector(topleft)
+			else:
+				lookup = Vector.createfromvector(bottomright)
+
+			firststart = Vector.createfromvalues(topleft.getx() + 4, lookup.gety())
+			firstend = Vector.createfromvalues(bottomright.getx() - 4, lookup.gety())
+			areadefinitions["Z " + labelling + " Outline " + index + " 1"] = ("Line", firststart, firstend, linecolour, 1, "")
+
+			secondstart = Vector.createfromvalues(lookup.getx(), topleft.gety() + 4)
+			secondend = Vector.createfromvalues(lookup.getx(), bottomright.gety() - 4)
+			areadefinitions["Z " + labelling + " Outline " + index + " 2"] = ("Line", secondstart, secondend, linecolour, 1, "")
+
+		# Rounded Corners
+		for index in ("topleft", "topright", "bottomleft", "bottomright"):
+
+			xbase, xsign, ybase, ysign = self.calcroundedcorneranchors(topleft, bottomright, index)
+
+			fourthstartandend = Vector.createfromvalues(xbase + xsign, ybase + ysign)
+			areadefinitions["Z " + labelling + " Outline " + index + " corner"] = ("Line", fourthstartandend, fourthstartandend, "Black", 1, "")
+
+			for mode in ("vertical", "horizontal"):
+
+				startxoffset, startyoffset, endxoffset, endyoffset = self.calcroundedcorneroffsets(mode)
+
+				thirdstart = Vector.createfromvalues(xbase + (xsign * startxoffset), ybase + (ysign * startyoffset))
+				thirdend = Vector.createfromvalues(xbase + (xsign * endxoffset), ybase + (ysign * endyoffset))
+				areadefinitions["Z " + labelling + " Outline " + index + " " + mode] = ("Line", thirdstart, thirdend, linecolour, 1, "")
+
+		if imagename != "Hide":
+			areadefinitions["Z " + labelling + " Logo"] = ("Image", imagename, position)
+
+		if backgroundcolour != "None":
+			fillposition = Vector.createfromvalues(position.getx() + 1, position.gety() + 1)
+			fillsize = Vector.createfromvalues(size.getx() - 2, size.gety() - 2)
+			areadefinitions["  " + labelling + " Fill"] = ("Box", fillposition, fillsize, backgroundcolour, "", 0)
+
+		outcome = existingdefinitionlist.copy()
+		outcome.update(areadefinitions)
+
+		return outcome

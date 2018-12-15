@@ -1,3 +1,7 @@
+# Version 5.3
+# - Added drawline
+
+# ====================================================================================
 # Version 5.2
 
 # - fixed image-add to be OS agnostic (directory structure slashes)
