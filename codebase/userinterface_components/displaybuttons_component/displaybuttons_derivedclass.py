@@ -151,7 +151,7 @@ class DefineButtons(Metrics.DefineButtonMetrics):
 
 					rangestart, rangeend, rangestep = self.calcinstructionsliderrange(mode)
 
-					#print mode, slidervalue, rangestart, rangeend, rangestep
+					#print(mode, slidervalue, rangestart, rangeend, rangestep)
 
 					for index in range(rangestart, rangeend + 1, rangestep):
 

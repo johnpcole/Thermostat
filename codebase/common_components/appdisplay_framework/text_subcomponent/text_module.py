@@ -1,4 +1,4 @@
-import text_class as TextGeneratorClass
+from . import text_class as TextGeneratorClass
 
 
 

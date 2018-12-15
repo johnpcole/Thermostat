@@ -1,9 +1,9 @@
 from ...common_components.vector_datatype import vector_module as Vector
 from ...common_components.appdisplay_framework import appdisplay_module as AppDisplay
 
-from graphicdata_subcomponents import graphicdata_colours as Colours
-from graphicdata_subcomponents import graphicdata_images as Images
-from graphicdata_subcomponents import graphicdata_fonts as Fonts
+from .graphicdata_subcomponents import graphicdata_colours as Colours
+from .graphicdata_subcomponents import graphicdata_images as Images
+from .graphicdata_subcomponents import graphicdata_fonts as Fonts
 
 class DefineDisplay:
 
@@ -108,7 +108,7 @@ class DefineDisplay:
 				self.display.drawimage(itemdef[1], itemdef[2])
 
 			else:
-				print 1/0
+				print(1/0)
 
 
 

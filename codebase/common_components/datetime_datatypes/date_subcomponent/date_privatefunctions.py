@@ -22,9 +22,9 @@ def converttriplettoelapseddays(day, month, year):
 def convertelapseddaystotriplet(daysintomillennium):
 
 	year, daysintocurrentyear, isthisleapyear = extractyearfromdays(daysintomillennium)
-#	print "Year = ", year, "     | Remaining days into year = ", daysintocurrentyear, "     (Leap year = ", isthisleapyear, ")"
+#	print("Year = ", year, "     | Remaining days into year = ", daysintocurrentyear, "     (Leap year = ", isthisleapyear, ")")
 	month, day = extractmonthfromdays(daysintocurrentyear, isthisleapyear)
-#	print "Month = ", month, "     | Day = ", day
+#	print("Month = ", month, "     | Day = ", day)
 	return day, month, year
 
 

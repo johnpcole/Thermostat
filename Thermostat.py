@@ -1,5 +1,5 @@
 from codebase import main_application as ThermostatApplication
 
-print "Application Started"
+print("Application Started")
 ThermostatApplication.runapplication()
-print "Application Ended"
+print("Application Ended")

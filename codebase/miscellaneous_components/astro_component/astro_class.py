@@ -1,6 +1,6 @@
 from ...common_components.datetime_datatypes import datetime_module as DateTime
-from webscraper_subcomponent import webscraper_module as WebScraper
-from astroitem_subcomponent import astroitem_module as AstroItem
+from .webscraper_subcomponent import webscraper_module as WebScraper
+from .astroitem_subcomponent import astroitem_module as AstroItem
 
 
 
@@ -32,7 +32,7 @@ class DefineAstro:
 
 				lookupdate = self.createcustomdate(dayshift)
 
-				#print "Updating Astrodata for", lookupdate.getsextuplet()
+				#print("Updating Astrodata for", lookupdate.getsextuplet())
 
 				for datamode in ("Day", "Nau", "Civ", "Ast"):
 
@@ -40,14 +40,14 @@ class DefineAstro:
 					if linesfound > 0:
 						self.astrolibrary.append(AstroItem.createitem(datamode, onestarttime, oneendtime, lookupdate, onestartvalid, oneendvalid))
 						#if datamode == "Ast":
-							#print "Line 1:", onestarttime.gettext(), onestartvalid, oneendtime.gettext(), oneendvalid
+							#print("Line 1:", onestarttime.gettext(), onestartvalid, oneendtime.gettext(), oneendvalid)
 					if linesfound > 1:
 						self.astrolibrary.append(AstroItem.createitem(datamode, twostarttime, twoendtime, lookupdate, twostartvalid, twoendvalid))
 						#if datamode == "Ast":
-							#print "Line 2:", twostarttime.gettext(), twostartvalid, twoendtime.gettext(), twoendvalid
+							#print("Line 2:", twostarttime.gettext(), twostartvalid, twoendtime.gettext(), twoendvalid)
 
 				#else:
-			#print "Not updating sunrise/set times"
+			#print("Not updating sunrise/set times")
 
 
 

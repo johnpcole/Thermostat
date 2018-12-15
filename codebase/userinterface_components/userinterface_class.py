@@ -1,8 +1,8 @@
-from maindisplay_component import maindisplay_module as Display
-from displayrunway_component import displayrunway_module as DisplayRunway
-from displayboard_component import displayboard_module as DisplayBoard
-from displaybuttons_component import displaybuttons_module as DisplayButtons
-from controls_component import controls_module as Controller
+from .maindisplay_component import maindisplay_module as Display
+from .displayrunway_component import displayrunway_module as DisplayRunway
+from .displayboard_component import displayboard_module as DisplayBoard
+from .displaybuttons_component import displaybuttons_module as DisplayButtons
+from .controls_component import controls_module as Controller
 
 
 

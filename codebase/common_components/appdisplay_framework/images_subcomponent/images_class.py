@@ -37,12 +37,12 @@ class DefineImageLibrary:
 			try:
 				self.key[imagelabel] = GUI.image.load(fullpath).convert_alpha()
 			except:
-				print "Cannot load image - ", fullpath
+				print("Cannot load image - ", fullpath)
 		else:
 			try:
 				self.key[imagelabel] = GUI.image.load(fullpath).convert()
 			except:
-				print "Cannot load image - ", fullpath
+				print("Cannot load image - ", fullpath)
 
 
 

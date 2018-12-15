@@ -1,4 +1,4 @@
-from schedulebutton_subcomponent import schedulebutton_module as ScheduleButton
+from .schedulebutton_subcomponent import schedulebutton_module as ScheduleButton
 
 
 class DefineSelector():

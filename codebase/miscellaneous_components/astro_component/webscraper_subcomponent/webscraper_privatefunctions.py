@@ -33,7 +33,7 @@ def sanitisetime(textstring, defaultmode):
 			outcometime = Clock.createastime(0, 0, 0)
 		else:
 			outcometime = Clock.createastime(23, 59, 59)
-		#print "Problems reading sunrise/sunset time: ", textstring
+		#print("Problems reading sunrise/sunset time: ", textstring)
 
 	return outcometime, outcomevalidity
 

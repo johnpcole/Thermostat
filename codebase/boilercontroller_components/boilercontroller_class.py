@@ -1,8 +1,8 @@
-from boilerswitch_component import boilerswitch_module as BoilerSwitch
-from thermostat_component import thermostat_module as Thermostat
-from schedule_component import schedule_module as Schedule
-from tempsetter_component import tempsetter_module as TempSetter
-from thermometer_component import thermometer_module as Thermometer
+from .boilerswitch_component import boilerswitch_module as BoilerSwitch
+from .thermostat_component import thermostat_module as Thermostat
+from .schedule_component import schedule_module as Schedule
+from .tempsetter_component import tempsetter_module as TempSetter
+from .thermometer_component import thermometer_module as Thermometer
 
 
 

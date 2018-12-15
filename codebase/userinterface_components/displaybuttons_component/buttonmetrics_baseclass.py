@@ -1,8 +1,8 @@
 from ...common_components.vector_datatype import vector_module as Vector
-from tempslider_subcomponent import tempslider_module as TempSlider
-from scheduleslider_subcomponent import scheduleslider_module as ScheduleSlider
-from instructionslider_subcomponent import instructionslider_module as InstructionSlider
-from pushbuttons_subcomponent import pushbuttons_module as PushButtons
+from .tempslider_subcomponent import tempslider_module as TempSlider
+from .scheduleslider_subcomponent import scheduleslider_module as ScheduleSlider
+from .instructionslider_subcomponent import instructionslider_module as InstructionSlider
+from .pushbuttons_subcomponent import pushbuttons_module as PushButtons
 
 
 class DefineButtonMetrics:

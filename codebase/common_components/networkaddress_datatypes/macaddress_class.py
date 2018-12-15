@@ -38,7 +38,7 @@ class DefineMacAddress:
 		# Store a dummy address and print an error
 		else:
 			self.partaddress = [-999, -999, -999, -999, -999, -999]
-			print "Invalid MAC Address Format - ", fulladdressstring
+			print("Invalid MAC Address Format - ", fulladdressstring)
 
 
 

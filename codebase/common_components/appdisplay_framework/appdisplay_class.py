@@ -1,6 +1,6 @@
-from colours_subcomponent import colours_module as ColourLibrary
-from images_subcomponent import images_module as ImageLibrary
-from text_subcomponent import text_module as TextGenerator
+from .colours_subcomponent import colours_module as ColourLibrary
+from .images_subcomponent import images_module as ImageLibrary
+from .text_subcomponent import text_module as TextGenerator
 from ..vector_datatype import vector_module as Vector
 from ..userinterface_framework import userinterface_module as GUI
 

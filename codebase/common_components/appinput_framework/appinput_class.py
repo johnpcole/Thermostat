@@ -1,4 +1,4 @@
-from button_subcomponent import button_module as Button
+from .button_subcomponent import button_module as Button
 from ..vector_datatype import vector_module as Vector
 from ..userinterface_framework import userinterface_module as GUI
 
@@ -167,7 +167,7 @@ class DefineApplicationInput:
 
 		else:
 
-			print "Invalid button state - ", newstate
+			print("Invalid button state - ", newstate)
 
 
 	# -------------------------------------------------------------------
@@ -179,7 +179,7 @@ class DefineApplicationInput:
 		if buttonname in self.buttons:
 			self.buttons[buttonname].changeboundary(newposition, newdimensions)
 		else:
-			print "Invalid button name - ", buttonname
+			print("Invalid button name - ", buttonname)
 
 
 
@@ -190,7 +190,7 @@ class DefineApplicationInput:
 	def createarea(self, buttonname, buttonposition, buttondimensions, buttongroupmembership):
 
 		if buttonname in self.buttons:
-			print "Duplicate button name - ", buttonname
+			print("Duplicate button name - ", buttonname)
 		else:
 			self.buttons[buttonname] = Button.createbutton(buttonposition, buttondimensions, buttongroupmembership)
 
@@ -293,7 +293,7 @@ class DefineApplicationInput:
 					checkcount = checkcount + 1
 		if checkcount > 1:
 			outcome = "! Multiple Buttons !"
-			print "Multiple visible buttons present at hover location"
+			print("Multiple visible buttons present at hover location")
 		return outcome
 
 
@@ -330,7 +330,7 @@ class DefineApplicationInput:
 		if buttonname in self.buttons:
 			outcome = self.buttons[buttonname].getstate()
 		else:
-			print "Invalid button name - ", buttonname
+			print("Invalid button name - ", buttonname)
 
 		return outcome
 
@@ -346,7 +346,7 @@ class DefineApplicationInput:
 		if buttonname in self.buttons:
 			outcome = self.buttons[buttonname].getposition()
 		else:
-			print "Invalid button name - ", buttonname
+			print("Invalid button name - ", buttonname)
 
 		return outcome
 
@@ -362,7 +362,7 @@ class DefineApplicationInput:
 		if buttonname in self.buttons:
 			outcome = self.buttons[buttonname].getdimensions()
 		else:
-			print "Invalid button name - ", buttonname
+			print("Invalid button name - ", buttonname)
 
 		return outcome
 

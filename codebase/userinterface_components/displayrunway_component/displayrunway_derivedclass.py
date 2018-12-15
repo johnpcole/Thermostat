@@ -2,7 +2,7 @@ from ...common_components.vector_datatype import vector_module as Vector
 from ...common_components.transition_datatype import transition_module as Transition
 from .. import display_sharedfunctions as DisplayFunction
 from . import runwaymetrics_baseclass as Metrics
-from schedulebuilder_subcomponent import schedulebuilder_module as ScheduleBuilder
+from .schedulebuilder_subcomponent import schedulebuilder_module as ScheduleBuilder
 from . import displayrunway_privatefunctions as RunwayFunction
 
 

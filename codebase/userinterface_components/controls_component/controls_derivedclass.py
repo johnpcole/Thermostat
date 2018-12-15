@@ -1,9 +1,9 @@
 from ...common_components.vector_datatype import vector_module as Vector
 from ...common_components.enumeration_datatype import enumeration_module as Enumeration
 from . import buttons_baseclass as Buttons
-from tempselector_subcomponent import tempselector_module as TempSelector
-from scheduleselector_subcomponent import scheduleselector_module as ScheduleSelector
-from instructionselector_subcomponent import instructionselector_module as InstructionSelector
+from .tempselector_subcomponent import tempselector_module as TempSelector
+from .scheduleselector_subcomponent import scheduleselector_module as ScheduleSelector
+from .instructionselector_subcomponent import instructionselector_module as InstructionSelector
 
 
 

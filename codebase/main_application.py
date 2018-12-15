@@ -1,11 +1,11 @@
-from boilercontroller_components import boilercontroller_module as BoilerController
+from .boilercontroller_components import boilercontroller_module as BoilerController
 
-from userinterface_components import userinterface_module as UserInterface
+from .userinterface_components import userinterface_module as UserInterface
 
-from miscellaneous_components.astro_component import astro_module as Astro
-from miscellaneous_components.timekeeper_component import timekeeper_module as TimeKeeper
+from .miscellaneous_components.astro_component import astro_module as Astro
+from .miscellaneous_components.timekeeper_component import timekeeper_module as TimeKeeper
 
-from common_components.userinterface_framework import userinterface_module as GUI
+from .common_components.userinterface_framework import userinterface_module as GUI
 
 def runapplication():
 
@@ -44,7 +44,7 @@ def runapplication():
 
 		# If the scehdule was updated, apply this
 		if (useraction.get("Modify Instruction") == True) or (useraction.get("Delete Instruction") == True):
-			print useraction.displaycurrent()
+			print(useraction.displaycurrent())
 			#boilercontroller.modifyschedule(userinterface)
 
 		# Update the boiler controller with latest current & desired temperatures,

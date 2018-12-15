@@ -28,7 +28,7 @@ class DefineDuration:
 			self.dvalue = DurationFunction.convertunit(dvalue, dunit, "Seconds")
 		else:
 			self.dvalue = 0
-			print "Invalid Unit - ", dunit
+			print("Invalid Unit - ", dunit)
 
 
 
@@ -74,7 +74,7 @@ class DefineDuration:
 			outcome = DurationFunction.convertunit(self.dvalue, "Seconds", unitlabel)
 		else:
 			outcome = 0
-			print "Invalid Unit - ", unitlabel
+			print("Invalid Unit - ", unitlabel)
 		return outcome
 
 
