@@ -46,8 +46,8 @@ class DefineAstro:
 						#if datamode == "Ast":
 							#print("Line 2:", twostarttime.gettext(), twostartvalid, twoendtime.gettext(), twoendvalid)
 
-				#else:
-			#print("Not updating sunrise/set times")
+		#else:
+		#	print("Not updating sunrise/set times")
 
 
 
