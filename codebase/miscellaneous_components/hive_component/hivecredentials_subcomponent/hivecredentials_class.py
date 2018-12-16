@@ -12,6 +12,7 @@ class DefineHiveCredentials:
 		self.password = self.decodecredentials(credentials[1])
 
 
+
 	def decodecredentials(self, encodedvalue):
 
 		stringlength = len(encodedvalue)
@@ -23,5 +24,8 @@ class DefineHiveCredentials:
 			if (stringindex + 1) < stringlength:
 
 				characternumber = int(encodedvalue[stringindex:stringindex+2])
+				characternumber = (characternumber + 10000 - ((1 + int(stringindex / 2)) * 10)) % 100
+
+				outcome = outcome + chr(characternumber + 31)
 
 		return outcome
