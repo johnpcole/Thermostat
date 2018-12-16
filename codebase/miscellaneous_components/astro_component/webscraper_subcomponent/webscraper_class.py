@@ -145,8 +145,6 @@ class DefineScraper:
 		url = url + "&lat_min=" + str(self.latmin)
 		url = url + "&tz=0"
 		url = url + "&tz_sign=1"
-		if mode == "Ast":
-			print(url)
 		return url
 
 
