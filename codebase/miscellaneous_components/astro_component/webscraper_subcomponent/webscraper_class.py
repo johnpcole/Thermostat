@@ -1,6 +1,7 @@
 from urllib.request import urlopen as GetWebPage
 from urllib.request import Request as GenerateWebRequest
 from urllib.request import URLError as WebError
+import ssl as Security
 from ....common_components.datetime_datatypes import datetime_module as DateTime
 from ....common_components.datetime_datatypes import duration_module as Duration
 from . import webscraper_privatefunctions as ScraperFunction
@@ -36,6 +37,8 @@ class DefineScraper:
 		self.lastresult["Nau"] = ""
 		self.lastresult["Civ"] = ""
 		self.lastresult["Ast"] = ""
+
+		self.securitycontext = Security._create_unverified_context()
 
 
 
@@ -85,7 +88,7 @@ class DefineScraper:
 
 		tries = 0
 
-		print("Downloading data for:", specifiedyear)
+		print("Downloading astro data for:", specifiedyear)
 
 		while tries < self.webcalltries:
 			try:
@@ -93,9 +96,11 @@ class DefineScraper:
 				for datamode in ("Day", "Nau", "Civ", "Ast"):
 					webresponse[datamode] = ""
 					url = self.buildurl(specifiedyear, datamode)
+					#print(url)
 					webrequest = GenerateWebRequest(url)
 					if self.connectionmode == True:
-						webresponse[datamode] = GetWebPage(webrequest).read(20000)
+						rawwebresponse = GetWebPage(webrequest, context=self.securitycontext).read(20000)
+						webresponse[datamode] = rawwebresponse.decode("utf-8")
 					else:
 						webresponse[datamode] = ScraperFunction.generatedummydata(datamode)
 					tries = 99999
