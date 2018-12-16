@@ -6,6 +6,7 @@
 .cache/
 _Source_/
 _OLD RATIO_/
+data/
 database/
 graphics/originals
 *.pyc
