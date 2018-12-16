@@ -2,6 +2,10 @@ from ...common_components.datetime_datatypes import datetime_module as DateTime
 from .hivecredentials_subcomponent import hivecredentials_module as Credentials
 #from .webscraper_subcomponent import webscraper_module as WebScraper
 #from .astroitem_subcomponent import astroitem_module as AstroItem
+from urllib.parse import urlencode as DataEncoder
+from urllib.request import urlopen as GetWebPage
+from urllib.request import Request as GenerateWebRequest
+from urllib.request import URLError as WebError
 
 
 
@@ -14,6 +18,17 @@ class DefineHiveInterface:
 		self.todaydate = DateTime.createdatefromtriplet(1, 1, 2000)
 
 		self.hivelibrary = []
+
+		self.body = '{ "sessions": [{ "username": ' + self.credentials.getusername() + ', "password": ' + self.credentials.getpassword() + ', "caller": "WEB"}] }'
+
+		self.urlendpointroot = "https://api-prod.bgchprod.info:443/omnia"
+
+		testeroutput = self.interactwithhive(self.body, "/auth/sessions")
+
+		print("\\/=======================================\\/")
+		print(testeroutput.read())
+		print("/\\=======================================/\\")
+
 
 		#self.webscraper = WebScraper.createscraper(locationname, longitude, latitude, timeshift, connectionmode)
 
@@ -66,3 +81,16 @@ class DefineHiveInterface:
 	# 	outcome.adjustdays(dayshift)
 	#
 	# 	return outcome
+
+
+	def interactwithhive(self, requestdata, endpoint):
+
+		fullurlendpoint = self.urlendpointroot + endpoint
+
+		webrequest = GenerateWebRequest(fullurlendpoint, data=requestdata.encode('ascii', 'ignore'))
+		webrequest.add_header('Content-Type', 'application/vnd.alertme.zoo-6.1+json')
+		webrequest.add_header('Accept', 'application/vnd.alertme.zoo-6.1+json')
+		webrequest.add_header('X-Omnia-Client', 'Hive Web Dashboard')
+		outcome = GetWebPage(webrequest)
+
+		return outcome

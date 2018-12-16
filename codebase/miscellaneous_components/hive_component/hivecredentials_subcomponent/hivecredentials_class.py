@@ -29,3 +29,11 @@ class DefineHiveCredentials:
 				outcome = outcome + chr(characternumber + 31)
 
 		return outcome
+
+
+
+	def getusername(self):
+		return ('"' + self.username + '"')
+
+	def getpassword(self):
+		return ('"' + self.password + '"')
