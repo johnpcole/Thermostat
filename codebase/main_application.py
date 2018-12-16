@@ -7,6 +7,8 @@ from .miscellaneous_components.timekeeper_component import timekeeper_module as 
 
 from .common_components.userinterface_framework import userinterface_module as GUI
 
+from .miscellaneous_components.hive_component import hive_module as Hive
+
 def runapplication():
 
 	# ===============================================================================================================
@@ -25,6 +27,7 @@ def runapplication():
 
 	connecttowebsite = True
 	astrodata = Astro.createlocation("Bristol+(UK)", -2.570310, 51.497772, 0, connecttowebsite, timekeeper) #51.497772
+	hiveinterface = Hive.createinterface()
 
 	# ===============================================================================================================
 	# ===============================================================================================================
