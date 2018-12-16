@@ -1,4 +1,5 @@
 from ...common_components.datetime_datatypes import datetime_module as DateTime
+from .hivecredentials_subcomponent import hivecredentials_module as Credentials
 #from .webscraper_subcomponent import webscraper_module as WebScraper
 #from .astroitem_subcomponent import astroitem_module as AstroItem
 
@@ -7,6 +8,8 @@ from ...common_components.datetime_datatypes import datetime_module as DateTime
 class DefineHiveInterface:
 
 	def __init__(self):
+
+		self.credentials = Credentials.createcredentials()
 
 		self.todaydate = DateTime.createdatefromtriplet(1, 1, 2000)
 
