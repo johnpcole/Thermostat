@@ -1,4 +1,4 @@
-from ....common_components.fileprocessing_framework import fileprocessing_module as FileSystem
+from .....common_components.fileprocessing_framework import fileprocessing_module as FileSystem
 
 
 class DefineHiveCredentials:
