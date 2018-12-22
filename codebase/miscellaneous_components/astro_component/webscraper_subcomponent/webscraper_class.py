@@ -106,7 +106,7 @@ class DefineScraper:
 					tries = 99999
 			except WebError as errorobject:
 				tries = tries + 1
-				print("Error accessing website: ", errorobject.reason)
+				print("Error accessing ASTRO website: ", errorobject.reason)
 
 		if tries == 99999:
 			#print("Access to website data Succeeded")
@@ -115,7 +115,7 @@ class DefineScraper:
 			self.lastsuccessfulwebcall = DateTime.createfromobject(currentdateobject)
 			self.lastsuccessfulyear = specifiedyear
 		else:
-			print("Access to website data Failed")
+			print("Gave up accessing to ASTRO website")
 
 
 

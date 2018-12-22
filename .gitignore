@@ -9,6 +9,7 @@ _OLD RATIO_/
 data/
 database/
 graphics/originals
+Example*.txt
 *.pyc
 *.xls*
 
